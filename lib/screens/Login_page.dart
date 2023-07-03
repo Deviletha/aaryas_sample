@@ -34,7 +34,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.teal.shade50,
         body: Column(
           children: [
             SizedBox(
@@ -132,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                       Fluttertoast.showToast(
                         msg: "Login success",
                         toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
+                        gravity: ToastGravity.SNACKBAR,
                         timeInSecForIosWeb: 1,
                         textColor: Colors.white,
                         fontSize: 16.0,
@@ -148,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                       Fluttertoast.showToast(
                         msg: "Login failed",
                         toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
+                        gravity: ToastGravity.SNACKBAR,
                         timeInSecForIosWeb: 1,
                         textColor: Colors.white,
                         fontSize: 16.0,
@@ -159,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                     Fluttertoast.showToast(
                       msg: "Please enter username and password",
                       toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
+                      gravity: ToastGravity.SNACKBAR,
                       timeInSecForIosWeb: 1,
                       textColor: Colors.white,
                       fontSize: 16.0,

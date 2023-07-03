@@ -77,7 +77,7 @@ class _ProductViewState extends State<ProductView> {
         Fluttertoast.showToast(
           msg: "Item added to Cart",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -88,7 +88,7 @@ class _ProductViewState extends State<ProductView> {
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -116,9 +116,12 @@ class _ProductViewState extends State<ProductView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.teal.shade50,
+
       appBar: AppBar(
-        title: Text(widget.productname),
+        title: Text(widget.productname,style:
+        TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.white,
           statusBarIconBrightness: Brightness.dark,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -11,9 +13,12 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.teal.shade50,
       appBar: AppBar(
-        title: Text("Settings"),
+        title: Text("SETTINGS",style:
+        TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -67,9 +72,25 @@ class _SettingsState extends State<Settings> {
                   width: 10,
                 ),
                 TextButton(
-                    onPressed: () {},
-                    child: Text("Logout",
-                        style: TextStyle(fontSize: 20)))
+                  onPressed: () async {
+                    // Clear the user session data
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.remove("UID");
+                    Fluttertoast.showToast(
+                      msg: "Logged out",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.SNACKBAR,
+                      timeInSecForIosWeb: 1,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  },
+                  child: Text(
+                    "Logout",
+                    style: TextStyle(color: Colors.teal,fontSize: 20),
+                  ),
+                )
+
               ],
             ),
           ),

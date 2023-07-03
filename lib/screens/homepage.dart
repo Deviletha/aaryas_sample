@@ -14,10 +14,12 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage> {
-
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin<HomePage> {
   String? UID;
   bool get wantKeepAlive => true;
+
+  bool isLoading = false; // Track API loading state
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
@@ -33,11 +35,20 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   List? Finalproductlist;
 
   ApiforCategory() async {
+    setState(() {
+      isLoading = true;
+    });
+
     var response = await ApiHelper().post(endpoint: "categories", body: {
       "offset": "0",
       "pageLimit": "5",
       "table": "categories"
     }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
     if (response != null) {
       setState(() {
         debugPrint('get products api successful:');
@@ -46,7 +57,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         Fluttertoast.showToast(
           msg: "Success ",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -57,7 +68,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -66,11 +77,19 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   }
 
   ApiforAllProducts() async {
-    var response =
-        await ApiHelper().post(endpoint: "products/ByCombination", body: {
+    setState(() {
+      isLoading = true;
+    });
+
+    var response = await ApiHelper().post(endpoint: "products/ByCombination", body: {
       "offset": "0",
       "pageLimit": "100",
     }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
     if (response != null) {
       setState(() {
         debugPrint('get products api successful:');
@@ -82,7 +101,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         Fluttertoast.showToast(
           msg: "Success ",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -93,7 +112,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -102,11 +121,20 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   }
 
   addTowishtist(String id, String combination) async {
+    setState(() {
+      isLoading = true;
+    });
+
     var response = await ApiHelper().post(endpoint: "wishList/add", body: {
       "userid": UID,
       "productid": id,
       "combination": combination
     }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
     if (response != null) {
       setState(() {
         debugPrint('addwishlist api successful:');
@@ -118,7 +146,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
         Fluttertoast.showToast(
           msg: "Added to Wishlist",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -129,7 +157,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       Fluttertoast.showToast(
         msg: "Add to wishlist failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -149,15 +177,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      backgroundColor: Colors.teal.shade50,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
-          "AARYAS",
+          "ARYAAS",
           style:
-              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+          TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
         ),
-        centerTitle: false,
-        backgroundColor: Colors.teal.shade50,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           Icon(
@@ -166,10 +194,10 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           ),
           IconButton(
               onPressed: () => Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return Wishlist();
-                    },
-                  )),
+                builder: (context) {
+                  return Wishlist();
+                },
+              )),
               icon: Icon(
                 Icons.favorite,
                 color: Colors.teal,
@@ -217,10 +245,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           const Heading(text: "Category"),
           Expanded(
             flex: 2,
-            child: GridView.builder(
+            child: isLoading
+                ? Center(
+              child: CircularProgressIndicator(),
+            )
+                : GridView.builder(
               physics: ScrollPhysics(),
               shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate:
+              const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 childAspectRatio: 1.2,
               ),
@@ -231,11 +264,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
           const Heading(text: "All Items"),
           Expanded(
             flex: 4,
-            child: ListView.builder(
+            child: isLoading
+                ? Center(
+              child: CircularProgressIndicator(),
+            )
+                : ListView.builder(
               physics: ScrollPhysics(),
               shrinkWrap: true,
               itemCount:
-                  Finalproductlist == null ? 0 : Finalproductlist?.length,
+              Finalproductlist == null ? 0 : Finalproductlist?.length,
               itemBuilder: (context, index) => getProducts(index),
             ),
           ),

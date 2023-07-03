@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Config/ApiHelper.dart';
 
@@ -19,6 +18,8 @@ class _Cart_pageState extends State<Cart_page> {
   int index = 0;
   var CID;
   String? UID;
+  bool isLoading = true;
+  bool isLoggedIn = false;
 
   @override
   void initState() {
@@ -30,13 +31,31 @@ class _Cart_pageState extends State<Cart_page> {
     final prefs = await SharedPreferences.getInstance();
     UID = prefs.getString("UID");
     print(UID);
-    APIforCart();
+    setState(() {
+      isLoggedIn = UID != null;
+    });
+    if (isLoggedIn) {
+      APIforCart();
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   APIforCart() async {
+    setState(() {
+      isLoading = true;
+    });
+
     var response = await ApiHelper().post(endpoint: "cart/get", body: {
       "userid": UID,
     }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
     if (response != null) {
       setState(() {
         debugPrint('cartpage successful:');
@@ -46,7 +65,7 @@ class _Cart_pageState extends State<Cart_page> {
         Fluttertoast.showToast(
           msg: "cartpage success",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -55,9 +74,9 @@ class _Cart_pageState extends State<Cart_page> {
     } else {
       debugPrint('api failed:');
       Fluttertoast.showToast(
-        msg: "cartpage loding failed",
+        msg: "cartpage loading failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -83,7 +102,7 @@ class _Cart_pageState extends State<Cart_page> {
         Fluttertoast.showToast(
           msg: "increased count",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -94,7 +113,7 @@ class _Cart_pageState extends State<Cart_page> {
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -117,7 +136,7 @@ class _Cart_pageState extends State<Cart_page> {
         Fluttertoast.showToast(
           msg: "decreased count",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -128,7 +147,7 @@ class _Cart_pageState extends State<Cart_page> {
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -151,7 +170,7 @@ class _Cart_pageState extends State<Cart_page> {
         Fluttertoast.showToast(
           msg: "Item Removed",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -162,7 +181,7 @@ class _Cart_pageState extends State<Cart_page> {
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -173,17 +192,42 @@ class _Cart_pageState extends State<Cart_page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.teal.shade50,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text("My Cart"),
+        title: Text("MY CART",style:
+        TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
       ),
-      body: GridView.builder(
+      body: isLoggedIn
+          ? isLoading
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: .7,
         ),
         itemCount: CartaddList == null ? 0 : CartaddList?.length,
         itemBuilder: (context, index) => getCartList(index),
+      )
+          : Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Image.asset("assets/img_1.png"),
+            Text(
+              "Please LogIn",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -12,14 +12,29 @@ class Wishlist extends StatefulWidget {
 }
 
 class _WishlistState extends State<Wishlist> {
-
   String? UID;
+  bool isLoading = true;
+  bool isLoggedIn = false;
+
+  @override
+  void initState() {
+    checkUser();
+    super.initState();
+  }
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-     UID = prefs.getString("UID");
-    print(UID);
-    APIcall();
+    UID = prefs.getString("UID");
+    setState(() {
+      isLoggedIn = UID != null;
+    });
+    if (isLoggedIn) {
+      APIcall();
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
@@ -32,15 +47,19 @@ class _WishlistState extends State<Wishlist> {
   List? Prlist;
   int index = 0;
 
-  void initState() {
-    super.initState();
-    checkUser();
-  }
-
   APIcall() async {
+    setState(() {
+      isLoading = true;
+    });
+
     var response = await ApiHelper().post(endpoint: "wishList/get", body: {
       "userid": UID,
     }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
     if (response != null) {
       setState(() {
         debugPrint('wishlist api successful:');
@@ -50,7 +69,7 @@ class _WishlistState extends State<Wishlist> {
         Fluttertoast.showToast(
           msg: "Wishlist page success",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -61,7 +80,7 @@ class _WishlistState extends State<Wishlist> {
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -83,7 +102,7 @@ class _WishlistState extends State<Wishlist> {
         Fluttertoast.showToast(
           msg: "Removed product",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -94,7 +113,7 @@ class _WishlistState extends State<Wishlist> {
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -106,13 +125,46 @@ class _WishlistState extends State<Wishlist> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("WishList"),
+        title: Text(
+          "WISHLIST",
+          style:
+              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
       ),
-      backgroundColor: Colors.teal.shade50,
-      body: ListView.builder(
-        itemCount: Prlist == null ? 0 : Prlist?.length,
-        itemBuilder: (context, index) => getWishlist(index),
-      ),
+      body: isLoggedIn
+          ? isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Prlist == null || Prlist!.isEmpty
+                  ? Center(
+                      child:
+                          Image.asset("assets/wishlist-empty.jpg"),
+
+                    )
+                  : ListView.builder(
+                      itemCount: Prlist == null ? 0 : Prlist?.length,
+                      itemBuilder: (context, index) => getWishlist(index),
+                    )
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset("assets/img_1.png"),
+                  Text(
+                    "Please LogIn",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 

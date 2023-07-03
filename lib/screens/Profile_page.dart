@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:aaryas_sample/screens/Orders_page.dart';
 import 'package:aaryas_sample/screens/Settings.dart';
 import 'package:aaryas_sample/screens/wishlist_page.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +16,11 @@ class Profile_page extends StatefulWidget {
 }
 
 class _Profile_pageState extends State<Profile_page> {
-
   String? UID;
   String? datas;
-  Map? data1;
-  List? datalist;
-
-  get index => null;
+  Map<String, dynamic>? data1;
+  List<dynamic>? datalist;
+  int index = 0;
 
   @override
   void initState() {
@@ -35,9 +33,9 @@ class _Profile_pageState extends State<Profile_page> {
     UID = prefs.getString("UID");
     print(UID);
   }
+
   Apicall() async {
-    var response =
-    await ApiHelper().post(endpoint: "common/profile", body: {
+    var response = await ApiHelper().post(endpoint: "common/profile", body: {
       "userid": UID,
     }).catchError((err) {});
     if (response != null) {
@@ -45,12 +43,13 @@ class _Profile_pageState extends State<Profile_page> {
         debugPrint('profile api successful:');
         datas = response.toString();
         data1 = jsonDecode(response);
-        datalist = data1!["data"];
+        datalist = data1?["data"];
+        print(response);
 
         Fluttertoast.showToast(
           msg: "Success ",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -61,7 +60,7 @@ class _Profile_pageState extends State<Profile_page> {
       Fluttertoast.showToast(
         msg: "failed",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         fontSize: 16.0,
@@ -69,16 +68,19 @@ class _Profile_pageState extends State<Profile_page> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-
-
     return Scaffold(
-      backgroundColor: Colors.teal.shade50,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text("ACCOUNT"),
+        title: Text(
+          "ACCOUNT",
+          style:
+              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -95,7 +97,9 @@ class _Profile_pageState extends State<Profile_page> {
                     backgroundColor: Colors.white,
                     child: Text("name"),
                   ),
-                  title: Text(datalist![index]["first_name"].toString(), style: TextStyle(fontSize: 35)),
+                  title: Text("FirstName",
+                      // datalist![index]["first_name"].toString(),
+                      style: TextStyle(fontSize: 35)),
                   subtitle: Text("emailId"),
                 ),
               ),
@@ -130,7 +134,11 @@ class _Profile_pageState extends State<Profile_page> {
                     width: 10,
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return MyOrders();
+                      },
+                    )),
                     child: Text("My Orders", style: TextStyle(fontSize: 20)),
                   )
                 ],
@@ -167,11 +175,12 @@ class _Profile_pageState extends State<Profile_page> {
                     width: 10,
                   ),
                   TextButton(
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return Settings();
-                        },
-                      )),
+                      onPressed: () =>
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return Settings();
+                            },
+                          )),
                       child: Text("Settings", style: TextStyle(fontSize: 20)))
                 ],
               ),
@@ -191,7 +200,9 @@ class _Profile_pageState extends State<Profile_page> {
                   TextButton(
                       onPressed: () {},
                       child: Text("Help & Support",
-                          style: TextStyle(fontSize: 20,)))
+                          style: TextStyle(
+                            fontSize: 20,
+                          )))
                 ],
               ),
             ),
