@@ -42,16 +42,20 @@ class _Category_ViewState extends State<Category_View> {
 
 
   addTowishtist(String id, String combination) async {
-    var response = await ApiHelper().post(endpoint: "wishList/add", body: {
-      "userid": UID,
-      "productid": id,
-      "combination": combination
-    }).catchError((err) {});
+    var response = await ApiHelper().post(
+      endpoint: "wishList/add",
+      body: {
+        "userid": UID,
+        "productid": id,
+        "combination": combination,
+      },
+    ).catchError((err) {});
+
     if (response != null) {
       setState(() {
         debugPrint('addwishlist api successful:');
         data = response.toString();
-        wscategorylist = jsonDecode(response) as List<dynamic>?;
+        wscategorylist = jsonDecode(data!) as List<dynamic>?;
 
         Fluttertoast.showToast(
           msg: "Added to Wishlist",
@@ -74,6 +78,7 @@ class _Category_ViewState extends State<Category_View> {
       );
     }
   }
+
 
   ApiforProductsBycategory() async {
     var response = await ApiHelper().post(
@@ -114,7 +119,7 @@ class _Category_ViewState extends State<Category_View> {
   void initState() {
     super.initState();
     ApiforProductsBycategory();
-    // checkUser();
+    checkUser();
   }
 
   @override

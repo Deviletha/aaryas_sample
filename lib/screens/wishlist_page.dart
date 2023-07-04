@@ -15,6 +15,8 @@ class _WishlistState extends State<Wishlist> {
   String? UID;
   bool isLoading = true;
   bool isLoggedIn = false;
+  GlobalKey<RefreshIndicatorState> refreshKey =
+  GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -47,7 +49,7 @@ class _WishlistState extends State<Wishlist> {
   List? Prlist;
   int index = 0;
 
-  APIcall() async {
+  Future<void> APIcall() async {
     setState(() {
       isLoading = true;
     });
@@ -88,7 +90,7 @@ class _WishlistState extends State<Wishlist> {
     }
   }
 
-  removeFromWishtist(String id) async {
+  Future<void> removeFromWishtist(String id) async {
     var response = await ApiHelper().post(endpoint: "wishList/remove", body: {
       "id": id,
     }).catchError((err) {});
@@ -108,6 +110,7 @@ class _WishlistState extends State<Wishlist> {
           fontSize: 16.0,
         );
       });
+
     } else {
       debugPrint('api failed:');
       Fluttertoast.showToast(
@@ -121,14 +124,19 @@ class _WishlistState extends State<Wishlist> {
     }
   }
 
+  Future<void> refreshPage() async {
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 1));
+    await APIcall();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "WISHLIST",
-          style:
-              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -136,35 +144,37 @@ class _WishlistState extends State<Wishlist> {
       ),
       body: isLoggedIn
           ? isLoading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : Prlist == null || Prlist!.isEmpty
-                  ? Center(
-                      child:
-                          Image.asset("assets/wishlist-empty.jpg"),
-
-                    )
-                  : ListView.builder(
-                      itemCount: Prlist == null ? 0 : Prlist?.length,
-                      itemBuilder: (context, index) => getWishlist(index),
-                    )
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : Prlist == null || Prlist!.isEmpty
+          ? Center(
+        child: Image.asset("assets/wishlist-empty.jpg"),
+      )
+          : RefreshIndicator(
+        key: refreshKey,
+        onRefresh: refreshPage,
+        child: ListView.builder(
+          itemCount: Prlist == null ? 0 : Prlist?.length,
+          itemBuilder: (context, index) => getWishlist(index),
+        ),
+      )
           : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset("assets/img_1.png"),
-                  Text(
-                    "Please LogIn",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset("assets/img_1.png"),
+            Text(
+              "Please LogIn",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -208,18 +218,16 @@ class _WishlistState extends State<Wishlist> {
                         Prlist == null
                             ? Text("null data")
                             : Text(
-                                Prlist![index]["name"].toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
+                          Prlist![index]["name"].toString(),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         SizedBox(
                           height: 10,
                         ),
                         Text(
                           Prlist![index]["description"].toString(),
                           maxLines: 2,
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(
                           height: 10,
@@ -227,9 +235,7 @@ class _WishlistState extends State<Wishlist> {
                         Text(
                           price,
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.green),
+                              fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green),
                         ),
                         SizedBox(
                           height: 10,
