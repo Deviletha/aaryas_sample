@@ -36,8 +36,6 @@ class ProductView extends StatefulWidget {
 
 class _ProductViewState extends State<ProductView> {
 
-  String? base =
-      "https://acbsdemo.hawkssolutions.com/public/uploads/Products/details/";
   int index = 0;
   Map? clist;
   List? CartList;
@@ -116,7 +114,6 @@ class _ProductViewState extends State<ProductView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         title: Text(widget.productname,style:
         TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),),

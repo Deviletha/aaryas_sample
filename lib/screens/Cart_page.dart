@@ -15,6 +15,9 @@ class _Cart_pageState extends State<Cart_page> {
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   Map? clist;
   List? CartaddList;
+  Map? order;
+  Map? orderlist;
+  List? FinalOrderlist;
   int index = 0;
   var CID;
   String? UID;
@@ -169,6 +172,46 @@ class _Cart_pageState extends State<Cart_page> {
 
         Fluttertoast.showToast(
           msg: "Item Removed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      });
+    } else {
+      debugPrint('api failed:');
+      Fluttertoast.showToast(
+        msg: "failed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.SNACKBAR,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  PlaceOrderApi() async {
+    var response = await ApiHelper().post(endpoint: "cart/placeOrder", body: {
+      "id": UID,
+      "address": "address",
+      "amount": "amount",
+      "paid": "paid",
+      "latitude": "latitude",
+      "longitude": "longitude",
+      "delivery_note": "delivery_note",
+      "tip" : "tip"
+    }).catchError((err) {});
+    if (response != null) {
+      setState(() {
+        debugPrint('place order api successful:');
+        order = jsonDecode(response);
+        orderlist = order!["data"];
+        FinalOrderlist = orderlist!["pageData"];
+
+        Fluttertoast.showToast(
+          msg: "Order Placed",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,

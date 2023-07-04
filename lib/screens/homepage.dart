@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Product_view.dart';
+import 'category_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,10 +15,9 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with AutomaticKeepAliveClientMixin<HomePage> {
+class _HomePageState extends State<HomePage> {
   String? UID;
-  bool get wantKeepAlive => true;
+
 
   bool isLoading = false; // Track API loading state
 
@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage>
 
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   List? categorylist;
+
   String? data;
   Map? productlist;
   Map? productlist1;
@@ -76,6 +77,7 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+
   ApiforAllProducts() async {
     setState(() {
       isLoading = true;
@@ -121,19 +123,12 @@ class _HomePageState extends State<HomePage>
   }
 
   addTowishtist(String id, String combination) async {
-    setState(() {
-      isLoading = true;
-    });
 
     var response = await ApiHelper().post(endpoint: "wishList/add", body: {
       "userid": UID,
       "productid": id,
       "combination": combination
     }).catchError((err) {});
-
-    setState(() {
-      isLoading = false;
-    });
 
     if (response != null) {
       setState(() {
@@ -175,7 +170,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -286,6 +280,20 @@ class _HomePageState extends State<HomePage>
     var itemName = categorylist![index]["name"].toString();
 
     return ListTile(
+      onTap:  () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Category_View(
+              url: image,
+              itemname: categorylist![index]["name"].toString(),
+              description: categorylist![index]["description"].toString(),
+              price: categorylist![index]["price"].toString(),
+              id: categorylist![index]["id"],
+            ),
+          ),
+        );
+      },
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
