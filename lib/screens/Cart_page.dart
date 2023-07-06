@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Config/ApiHelper.dart';
+import 'Login_page.dart';
 
 class Cart_page extends StatefulWidget {
   const Cart_page({Key? key}) : super(key: key);
@@ -262,11 +263,22 @@ class _Cart_pageState extends State<Cart_page> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Image.asset("assets/img_1.png"),
-            Text(
-              "Please LogIn",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage())
+                );
+              },style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                shadowColor: Colors.teal[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(10),
+                      topLeft: Radius.circular(10)),
+                )),
+              child: Text(
+                "Please LogIn",
               ),
             ),
           ],

@@ -4,6 +4,8 @@ import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Login_page.dart';
+
 class Wishlist extends StatefulWidget {
   const Wishlist({Key? key}) : super(key: key);
 
@@ -29,6 +31,7 @@ class _WishlistState extends State<Wishlist> {
     UID = prefs.getString("UID");
     setState(() {
       isLoggedIn = UID != null;
+      print(UID);
     });
     if (isLoggedIn) {
       APIcall();
@@ -133,6 +136,7 @@ class _WishlistState extends State<Wishlist> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           "WISHLIST",
@@ -165,11 +169,22 @@ class _WishlistState extends State<Wishlist> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset("assets/img_1.png"),
-            Text(
-              "Please LogIn",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage())
+                );
+              },style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                shadowColor: Colors.teal[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(10),
+                      topLeft: Radius.circular(10)),
+                )),
+              child: Text(
+                "Please LogIn",
               ),
             ),
           ],

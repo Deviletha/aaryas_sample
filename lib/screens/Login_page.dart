@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   bool showpass = true;
 
   final usernameController = TextEditingController();
-  final passController = TextEditingController();
+  final passwordController = TextEditingController();
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.only(
                   left: 10, right: 10, top: 20, bottom: 20),
               child: TextFormField(
-                controller: passController,
+                controller: passwordController,
                 obscureText: showpass,
                 obscuringCharacter: "*",
                 decoration: InputDecoration(
@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () async {
                   // Get the entered username and password
                   String username = usernameController.text.toString();
-                  String password = passController.text.toString();
+                  String password = passwordController.text.toString();
 
                   // Check if the username and password are not empty
                   if (username.isNotEmpty && password.isNotEmpty) {

@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:aaryas_sample/constants/Title_widget.dart';
-import 'package:aaryas_sample/screens/wishlist_page.dart';
+import 'package:aaryas_sample/screens/productview_popular.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'Notification_page.dart';
 import 'Product_view.dart';
 import 'category_view.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,7 +19,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? UID;
-
 
   bool isLoading = false; // Track API loading state
 
@@ -34,6 +35,10 @@ class _HomePageState extends State<HomePage> {
   Map? productlist;
   Map? productlist1;
   List? Finalproductlist;
+
+  Map? popularlist;
+  Map? popularlist1;
+  List? Finalpopularlist;
 
   ApiforCategory() async {
     setState(() {
@@ -77,15 +82,15 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
   ApiforAllProducts() async {
     setState(() {
       isLoading = true;
     });
 
-    var response = await ApiHelper().post(endpoint: "products/ByCombination", body: {
+    var response =
+        await ApiHelper().post(endpoint: "products/ByCombination", body: {
       "offset": "0",
-      "pageLimit": "100",
+      "pageLimit": "50",
     }).catchError((err) {});
 
     setState(() {
@@ -122,8 +127,52 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  addTowishtist(String id, String combination) async {
+  ApiforPopularProducts() async {
+    setState(() {
+      isLoading = true;
+    });
 
+    var response =
+        await ApiHelper().post(endpoint: "products/ByCombination", body: {
+      "offset": "0",
+      "pageLimit": "8",
+    }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (response != null) {
+      setState(() {
+        debugPrint('get products api successful:');
+        data = response.toString();
+        popularlist = jsonDecode(response);
+        popularlist1 = popularlist!["pagination"];
+        Finalpopularlist = popularlist1!["pageData"];
+
+        Fluttertoast.showToast(
+          msg: "Success ",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      });
+    } else {
+      debugPrint('api failed:');
+      Fluttertoast.showToast(
+        msg: "failed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.SNACKBAR,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  addTowishtist(String id, String combination) async {
     var response = await ApiHelper().post(endpoint: "wishList/add", body: {
       "userid": UID,
       "productid": id,
@@ -164,6 +213,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     ApiforCategory();
     ApiforAllProducts();
+    ApiforPopularProducts();
     checkUser();
     super.initState();
   }
@@ -176,32 +226,28 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           "ARYAAS",
           style:
-          TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
-          Icon(
-            Icons.location_on,
-            color: Colors.black,
-          ),
           IconButton(
               onPressed: () => Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return Wishlist();
-                },
-              )),
+                    builder: (context) {
+                      return Notifications();
+                    },
+                  )),
               icon: Icon(
-                Icons.favorite,
-                color: Colors.teal,
+                Icons.notifications_outlined,
+                color: Colors.black45,
               )),
           SizedBox(
             width: 15,
           ),
         ],
       ),
-      body: Column(
+      body: ListView(
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -237,50 +283,122 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           const Heading(text: "Category"),
-          Expanded(
-            flex: 2,
+          Container(
+              // flex: 2,
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : CarouselSlider.builder(
+                      itemCount:
+                          categorylist == null ? 0 : categorylist?.length,
+                      itemBuilder: (context, index, realIndex) {
+                        return getCategoryRow(index);
+                      },
+                      options: CarouselOptions(
+                        height: 300,
+                        aspectRatio: 15 / 6,
+                        viewportFraction: .6,
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        reverse: false,
+                        autoPlay: false,
+                        enlargeCenterPage: true,
+                        autoPlayInterval: Duration(seconds: 3),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        onPageChanged: (index, reason) {},
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    )),
+          const Heading(text: "Popular Items"),
+          Container(
             child: isLoading
                 ? Center(
-              child: CircularProgressIndicator(),
-            )
+                    child: CircularProgressIndicator(),
+                  )
                 : GridView.builder(
-              physics: ScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate:
-              const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                childAspectRatio: 1.2,
-              ),
-              itemCount: categorylist == null ? 0 : categorylist?.length,
-              itemBuilder: (context, index) => getCategoryRow(index),
-            ),
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      childAspectRatio: 1.2,
+                    ),
+                    itemCount:
+                    Finalpopularlist == null ? 0 : Finalpopularlist?.length,
+                    itemBuilder: (context, index) => getPopularRow(index),
+                  ),
           ),
           const Heading(text: "All Items"),
-          Expanded(
-            flex: 4,
+          Container(
             child: isLoading
                 ? Center(
-              child: CircularProgressIndicator(),
-            )
+                    child: CircularProgressIndicator(),
+                  )
                 : ListView.builder(
-              physics: ScrollPhysics(),
-              shrinkWrap: true,
-              itemCount:
-              Finalproductlist == null ? 0 : Finalproductlist?.length,
-              itemBuilder: (context, index) => getProducts(index),
-            ),
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount:
+                        Finalproductlist == null ? 0 : Finalproductlist?.length,
+                    itemBuilder: (context, index) => getProducts(index),
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget  getCategoryRow(int index) {
+  Widget getPopularRow(int index) {
+    var image = base! + Finalpopularlist![index]["image"];
+    var itemName = Finalpopularlist![index]["combinationName"].toString();
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductView1(
+              id: Finalpopularlist![index]["id"].toString(),
+              productname:
+                  Finalpopularlist![index]["combinationName"].toString(),
+              url: image,
+              description: Finalpopularlist![index]["description"].toString(),
+              amount: Finalpopularlist![index]["combinationPrice"].toString(),
+              combinationId:
+                  Finalpopularlist![index]["combinationId"].toString(),
+              quantity: Finalpopularlist![index]["quantity"].toString(),
+              category: Finalpopularlist![index]["category"].toString(),
+              psize: Finalpopularlist![index]["combinationSize"].toString(),
+            ),
+          ),
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          CircleAvatar(
+            backgroundImage: NetworkImage(image),
+            radius: 25,
+          ),
+          SizedBox(
+            height: 3,
+          ),
+          Text(
+            itemName,
+            style: TextStyle(fontSize: 12),
+            maxLines: 1,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getCategoryRow(int index) {
     var image = base! + categorylist![index]["image"];
     var itemName = categorylist![index]["name"].toString();
 
-    return ListTile(
-      onTap:  () {
+    return InkWell(
+      onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -294,20 +412,40 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       },
-      leading: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            itemName,
-          ),
-          SizedBox(
-            height: 3,
-          ),
-          CircleAvatar(
-            backgroundImage: NetworkImage(image),
-            radius: 20,
-          ),
-        ],
+      child: Container(
+        height: 300,
+        width: 250,
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(20),
+            image:
+                DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+              ),
+              child: Text(
+                itemName,
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                categorylist![index]["description"].toString(),
+                maxLines: 2,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

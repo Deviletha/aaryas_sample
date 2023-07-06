@@ -88,7 +88,6 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.teal.shade50,
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(15),
@@ -103,7 +102,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                      const EdgeInsets.only(left: 10, right: 10,top: 10 ),
                   child: TextFormField(
                     controller: contactController,
                     decoration: InputDecoration(
@@ -125,7 +124,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 10, right: 10, top: 20, bottom: 10),
+                      left: 10, right: 10, top: 15, bottom: 15),
                   child: TextFormField(
                     controller: emailController,
                     decoration: InputDecoration(
@@ -357,8 +356,8 @@ class _SignupPageState extends State<SignupPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       apiforSignup();
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                      // Navigator.pushReplacement(context,
+                      //     MaterialPageRoute(builder: (context) => LoginPage()));
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,

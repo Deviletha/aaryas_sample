@@ -1,4 +1,5 @@
 import 'package:aaryas_sample/screens/BottomNavBar.dart';
+import 'package:aaryas_sample/screens/SplashScreen.dart';
 import 'package:aaryas_sample/screens/homepage.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: BottomNav(),
+      home: SplashScreen(),
     );
   }
 }
