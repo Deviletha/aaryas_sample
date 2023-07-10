@@ -3,55 +3,58 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Config/ApiHelper.dart';
 
-class ChangeProfile extends StatefulWidget {
-  const ChangeProfile({Key? key}) : super(key: key);
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({Key? key}) : super(key: key);
 
   @override
-  State<ChangeProfile> createState() => _ChangeProfileState();
+  State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _ChangeProfileState extends State<ChangeProfile> {
+class _ForgotPasswordState extends State<ForgotPassword> {
+
+
+  final MobileController = TextEditingController();
+  final newPassController = TextEditingController();
   String? UID;
-
-  final firstnameController = TextEditingController();
-  final lastnameController = TextEditingController();
-  final emailIdController = TextEditingController();
-
-
-
-  Map? FinalUserlist;
+  bool showpass = true;
+  Map? passlist;
+  Map? passlist1;
+  Map? Finalpasswrd;
   int index = 0;
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     UID = prefs.getString("UID");
     print(UID);
-
+    Fluttertoast.showToast(
+      msg: UID.toString(),
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.SNACKBAR,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
-  EditProfile() async {
+  forgetPassword() async {
     var response = await ApiHelper().post(
-      endpoint: "common/updateProfile",
+      endpoint: "common/forgetPassword",
       body: {
-        "first_name": firstnameController.text,
-        "last_name": lastnameController.text,
-        "email": emailIdController.text,
-        "dob" : "21/06/1998",
-        "id" : UID
+        "username": MobileController.text,
       },
     ).catchError((err) {});
 
     if (response != null) {
       setState(() {
-        debugPrint('edit profile api successful:');
-        FinalUserlist = jsonDecode(response);
-
+        debugPrint('change password api successful:');
+        passlist = jsonDecode(response);
+        passlist1 = passlist!["status"];
+        Finalpasswrd = passlist1!["user"];
 
         Fluttertoast.showToast(
-          msg: "Profile Edited Successfully",
+          msg: "Password Changed",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
@@ -62,9 +65,9 @@ class _ChangeProfileState extends State<ChangeProfile> {
         Navigator.pop(context);
       });
     } else {
-      debugPrint('edit profile failed:');
+      debugPrint('reset password failed:');
       Fluttertoast.showToast(
-        msg: "Failed",
+        msg: "reset password failed",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 1,
@@ -85,7 +88,7 @@ class _ChangeProfileState extends State<ChangeProfile> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Edit Profile",
+          "Change Password",
           style: TextStyle(color: Colors.teal[900]),
         ),
         backgroundColor: Colors.transparent,
@@ -96,40 +99,19 @@ class _ChangeProfileState extends State<ChangeProfile> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20, bottom: 20),
+                left: 10, right: 10, top: 20),
             child: TextFormField(
-              controller: firstnameController,
+              controller: MobileController,
               decoration: InputDecoration(
-                labelText: "First Name",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Enter a valid name';
-                } else {
-                  return null;
-                }
-              },
-              textInputAction: TextInputAction.done,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20, bottom: 20),
-            child: TextFormField(
-              controller: lastnameController,
-              decoration: InputDecoration(
-                labelText: "Last Name",
+                labelText: "Phone",
+                prefixIcon: Icon(Icons.account_circle_outlined,color: Colors.black),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
               ),validator: (value) {
               if (value!.isEmpty) {
-                return 'Enter a valid name';
+                return 'Enter your phone number';
               } else {
                 return null;
               }
@@ -141,22 +123,39 @@ class _ChangeProfileState extends State<ChangeProfile> {
             padding: const EdgeInsets.only(
                 left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
-              controller: emailIdController,
+              controller: newPassController,
+              obscureText: showpass,
+              obscuringCharacter: "*",
               decoration: InputDecoration(
-                labelText: "Email Id ",
+                suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        if (showpass) {
+                          showpass = false;
+                        } else {
+                          showpass = true;
+                        }
+                      });
+                    },
+                    icon: Icon(
+                      showpass == true
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    )),
+                labelText: "New Password",
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
               ),
-              validator: (value) {
-              if (value!.isEmpty || !value.contains('@')) {
-                return 'Enter a valid Email ID';
-              } else {
-                return null;
-              }
-            },
               textInputAction: TextInputAction.done,
+              validator: (Password) {
+                if (Password!.isEmpty || Password.length < 6) {
+                  return "Enter new password";
+                } else {
+                  return null;
+                }
+              },
             ),
           ),
           SizedBox(
@@ -164,7 +163,7 @@ class _ChangeProfileState extends State<ChangeProfile> {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                EditProfile();
+                forgetPassword();
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,

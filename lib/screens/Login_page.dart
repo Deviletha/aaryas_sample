@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Map? user;
   List? UserList;
-
+  String? UID;
   bool showpass = true;
 
   final usernameController = TextEditingController();
@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    String? UID = prefs.getString("UID");
+    UID = prefs.getString("UID");
     print(UID);
   }
 

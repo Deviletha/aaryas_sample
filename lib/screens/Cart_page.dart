@@ -236,7 +236,7 @@ class _Cart_pageState extends State<Cart_page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("MY CART",style:
         TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),),
@@ -252,7 +252,7 @@ class _Cart_pageState extends State<Cart_page> {
           : GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: .7,
+          childAspectRatio: .5,
         ),
         itemCount: CartaddList == null ? 0 : CartaddList?.length,
         itemBuilder: (context, index) => getCartList(index),

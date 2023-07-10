@@ -1,7 +1,7 @@
 import 'package:aaryas_sample/screens/wishlist_page.dart';
 import 'package:flutter/material.dart';
 import 'Cart_page.dart';
-import 'Profile_page.dart';
+import 'Account_page.dart';
 import 'homepage.dart';
 
 class BottomNav extends StatefulWidget {
@@ -14,7 +14,7 @@ class BottomNav extends StatefulWidget {
 class _BottomNavState extends State<BottomNav> {
   int selectindex = 0;
 
-  List body = <Widget>[HomePage(), Cart_page(), Wishlist(), Profile_page()];
+  List body = <Widget>[HomePage(), Cart_page(), Wishlist(), Accounts()];
 
   void onitemtapped(int index) {
     setState(() {

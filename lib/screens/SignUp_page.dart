@@ -13,12 +13,13 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  String? UID;
   Map? signuplist;
   List? slist;
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    String? UID = prefs.getString("UID");
+    UID = prefs.getString("UID");
     print(UID);
   }
 
@@ -50,11 +51,13 @@ class _SignupPageState extends State<SignupPage> {
       "longitude": longitudeController.text,
     }).catchError((err) {});
     if (response != null) {
-      setState(() {
+      setState(() async {
         debugPrint('api successful:');
         signuplist = jsonDecode(response);
 
         print(response);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString("UID", signuplist![0]["id"].toString());
         checkUser();
         Fluttertoast.showToast(
           msg: "Signup success",
