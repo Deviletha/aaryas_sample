@@ -29,14 +29,6 @@ class _ChangePasswordState extends State<ChangePassword> {
     final prefs = await SharedPreferences.getInstance();
     UID = prefs.getString("UID");
     print(UID);
-    Fluttertoast.showToast(
-      msg: UID.toString(),
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.SNACKBAR,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
   }
 
   ChangePassword() async {
@@ -68,14 +60,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       });
     } else {
       debugPrint('reset password failed:');
-      Fluttertoast.showToast(
-        msg: "reset password failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
     }
   }
 

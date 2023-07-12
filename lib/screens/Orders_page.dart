@@ -16,7 +16,6 @@ class MyOrders extends StatefulWidget {
 
 class _MyOrdersState extends State<MyOrders> {
 
-
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   String? UID;
   Map? order;
@@ -51,25 +50,11 @@ class _MyOrdersState extends State<MyOrders> {
         order = jsonDecode(response);
         order1 = order!["data"];
         orderList = order1!["pageData"];
-        Fluttertoast.showToast(
-          msg: "My Orders list",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 

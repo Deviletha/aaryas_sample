@@ -63,38 +63,16 @@ class _AddAddressState extends State<AddAddress> {
           }
           print(responseData.toString());
 
-          Fluttertoast.showToast(
-            msg: "Success",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.SNACKBAR,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
         });
       }
 
       else {
         debugPrint('api failed:');
-        Fluttertoast.showToast(
-          msg: "failed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+
       }
     } catch (err) {
       debugPrint('An error occurred: $err');
-      Fluttertoast.showToast(
-        msg: "An error occurred",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 

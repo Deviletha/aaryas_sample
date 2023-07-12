@@ -55,38 +55,46 @@ class _AccountsState extends State<Accounts> {
           dataList = responseData?["data"];
           print(responseData.toString());
 
-          Fluttertoast.showToast(
-            msg: "Success",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.SNACKBAR,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
         });
       } else {
         debugPrint('api failed:');
-        Fluttertoast.showToast(
-          msg: "failed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
       }
     } catch (err) {
       debugPrint('An error occurred: $err');
-      Fluttertoast.showToast(
-        msg: "An error occurred",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
+
+    }
+  }
+  void openGmail() async {
+    final url = "mailto:aryaashelp&support@gmail.com?subject=&body=";
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Open Gmail"),
+            content: Text("Are you sure"),
+            actions: [
+              TextButton(
+                child: Text("No"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text("Yes"),
+                onPressed: () {
+                  launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
+                },
+              ),
+            ],
+          );
+        },
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -243,8 +251,10 @@ class _AccountsState extends State<Accounts> {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
-                        launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
+                        openGmail();
+                        // launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
                       },
+
                       child: Row(
                         children: [
                           Icon(

@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'Notification_page.dart';
+import 'Orderdetails.dart';
 import 'Product_view.dart';
 import 'Search Page.dart';
 import 'category_view.dart';
@@ -23,24 +24,62 @@ class _HomePageState extends State<HomePage> {
 
   bool isLoading = false; // Track API loading state
 
-  checkUser() async {
+  Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    setState(() {
+      UID = prefs.getString("UID");
+      print(UID);
+    });
+    getMyOrders();
   }
 
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
+
+  ///OrderList
+  Map? order;
+  Map? order1;
+  List? orderList;
+  ///CategoryList
   List? categorylist;
 
+  ///ProductList
   String? data;
   Map? productlist;
   Map? productlist1;
   List? Finalproductlist;
 
+  ///PopularProductList
   Map? popularlist;
   Map? popularlist1;
   List? Finalpopularlist;
   int index = 0;
+
+  getMyOrders() async {
+    setState(() {
+      isLoading = true;
+    });
+    var response =
+    await ApiHelper().post(endpoint: "common/getMyOrders", body: {
+      "userid": UID,
+      "offset": "0",
+      "pageLimit": "1",
+    }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (response != null) {
+      setState(() {
+        debugPrint('get address api successful:');
+        order = jsonDecode(response);
+        order1 = order!["data"];
+        orderList = order1!["pageData"];
+      });
+    } else {
+      debugPrint('api failed:');
+    }
+  }
 
   ApiforCategory() async {
     setState(() {
@@ -62,25 +101,9 @@ class _HomePageState extends State<HomePage> {
         debugPrint('get products api successful:');
         categorylist = jsonDecode(response);
 
-        Fluttertoast.showToast(
-          msg: "Success ",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
     }
   }
 
@@ -107,25 +130,10 @@ class _HomePageState extends State<HomePage> {
         productlist1 = productlist!["pagination"];
         Finalproductlist = productlist1!["pageData"];
 
-        Fluttertoast.showToast(
-          msg: "Success ",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 
@@ -152,25 +160,11 @@ class _HomePageState extends State<HomePage> {
         popularlist1 = popularlist!["pagination"];
         Finalpopularlist = popularlist1!["pageData"];
 
-        Fluttertoast.showToast(
-          msg: "Success ",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 
@@ -200,29 +194,16 @@ class _HomePageState extends State<HomePage> {
       });
     } else {
       debugPrint('Add to wishlist failed:');
-      Fluttertoast.showToast(
-        msg: "Add to wishlist failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
-  // void dispose(){
-  //   ApiforCategory();
-  //   ApiforAllProducts();
-  //   ApiforPopularProducts();
-  //   super.dispose();
-  // }
-
 
   @override
   void initState() {
     ApiforCategory();
     ApiforAllProducts();
     ApiforPopularProducts();
+    getMyOrders();
     checkUser();
     super.initState();
   }
@@ -289,7 +270,36 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          const Heading(text: "Category"),
+          const Heading(text: "Recent Orders"),
+        Container(
+          child: isLoading
+              ? Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: ListView.builder(
+              physics: ScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: 1, // Set a fixed count for shimmer effect
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  height: 100, // Adjust the height as needed
+                );
+              },
+            ),
+          )
+              : ListView.builder(
+            physics: ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: orderList == null ? 0 : orderList?.length,
+            itemBuilder: (context, index) => getOrderList(index),
+          ),
+        ),
+        const Heading(text: "Category"),
           Container(
             child: isLoading
                 ? Shimmer.fromColors(
@@ -709,5 +719,75 @@ class _HomePageState extends State<HomePage> {
             child: Icon(Icons.favorite_sharp),
           )),
     );
+  }
+  Widget getOrderList(int index) {
+    var image = base! + orderList![index]["image"].toString();
+    return Card(
+        color: Colors.grey.shade50,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderDetails(
+                  id: orderList![index]["id"].toString(),
+                ),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ClipRRect(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        borderRadius: BorderRadius.circular(20), // Image border
+                        child: SizedBox.fromSize(
+                          size: Size.fromRadius(40), // Image radius
+                          child: Image.network(
+                            image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            orderList == null
+                              ? Text("null data")
+                              : Text("Order Placed",style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 17
+                            ),),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              orderList![index]["cartName"].toString(),
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }

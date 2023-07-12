@@ -53,7 +53,7 @@ class _OrderDetailsState extends State<OrderDetails> {
         Orderreturn = jsonDecode(response);
         returnlist = Orderreturn!["data"];
         Fluttertoast.showToast(
-          msg: "order returned successful",
+          msg: "order returned successfully",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
@@ -63,14 +63,6 @@ class _OrderDetailsState extends State<OrderDetails> {
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "return failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
     }
   }
 
@@ -87,25 +79,11 @@ class _OrderDetailsState extends State<OrderDetails> {
         order = jsonDecode(response);
         order1 = order!["data"];
         orderList = order1!["pageData"];
-        Fluttertoast.showToast(
-          msg: "My Orders list",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 

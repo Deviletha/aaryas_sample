@@ -73,14 +73,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
       );
     } else {
       debugPrint('place order api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 

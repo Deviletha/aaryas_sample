@@ -71,25 +71,11 @@ class _WishlistState extends State<Wishlist> {
         prlist = jsonDecode(response);
         prlist1 = prlist!["pagination"];
         Prlist = prlist1!["pageData"];
-        Fluttertoast.showToast(
-          msg: "Wishlist page success",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 
@@ -116,14 +102,7 @@ class _WishlistState extends State<Wishlist> {
 
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 

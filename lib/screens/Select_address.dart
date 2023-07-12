@@ -4,6 +4,7 @@ import 'package:aaryas_sample/screens/place_order.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../Config/ApiHelper.dart';
 
@@ -45,25 +46,10 @@ class _SetectAddressState extends State<SetectAddress> {
         address = jsonDecode(response);
         Addresslist = address!["status"];
 
-        Fluttertoast.showToast(
-          msg: "User Address",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 
@@ -71,8 +57,13 @@ class _SetectAddressState extends State<SetectAddress> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Select your Address",style:
-        TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold)),
+        title: Text(
+          "Select your Address",
+          style: TextStyle(
+            color: Colors.teal[900],
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -80,21 +71,46 @@ class _SetectAddressState extends State<SetectAddress> {
       body: ListView(
         children: [
           Addresslist == null
-              ? CircularProgressIndicator()
+              ? Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Column(
+              children: [
+                SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  height: 100,
+                  color: Colors.white,
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  height: 100,
+                  color: Colors.white,
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  height: 100,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          )
               : Column(
-                  children: [
-                    Text(
-                      "Your Order will be shipped to this address",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    ListView.builder(
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: Addresslist == null ? 0 : Addresslist?.length,
-                      itemBuilder: (context, index) => getAddressRow(index),
-                    ),
-                  ],
-                )
+            children: [
+              Text(
+                "Your Order will be shipped to this address",
+                style: TextStyle(fontSize: 15),
+              ),
+              ListView.builder(
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: Addresslist == null ? 0 : Addresslist?.length,
+                itemBuilder: (context, index) => getAddressRow(index),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -120,38 +136,38 @@ class _SetectAddressState extends State<SetectAddress> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Addresslist == null
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
+                  ? Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  width: double.infinity,
+                  height: 20,
+                  color: Colors.white,
+                ),
+              )
                   : Text(
-                      Addresslist![index]["address"].toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-              SizedBox(
-                height: 5,
+                Addresslist![index]["address"].toString(),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
+              SizedBox(height: 5),
               Text(
                 Addresslist![index]["phone"].toString(),
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.red),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              SizedBox(height: 5),
               Text(
                 Addresslist![index]["city"].toString(),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              SizedBox(height: 5),
               Text(
                 Addresslist![index]["pincode"].toString(),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              SizedBox(height: 5),
               Text(
                 Addresslist![index]["state"].toString(),
                 style: const TextStyle(fontWeight: FontWeight.bold),

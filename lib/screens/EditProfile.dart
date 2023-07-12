@@ -63,14 +63,7 @@ class _ChangeProfileState extends State<ChangeProfile> {
       });
     } else {
       debugPrint('edit profile failed:');
-      Fluttertoast.showToast(
-        msg: "Failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 

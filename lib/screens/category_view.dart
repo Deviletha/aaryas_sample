@@ -68,14 +68,7 @@ class _Category_ViewState extends State<Category_View> {
       });
     } else {
       debugPrint('Add to wishlist failed:');
-      Fluttertoast.showToast(
-        msg: "Add to wishlist failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 
@@ -93,25 +86,11 @@ class _Category_ViewState extends State<Category_View> {
       setState(() {
         debugPrint('get products api successful:');
         prcategorylist = jsonDecode(response) as List<dynamic>?;
-        Fluttertoast.showToast(
-          msg: "Success",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+
       });
     } else {
       debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+
     }
   }
 
