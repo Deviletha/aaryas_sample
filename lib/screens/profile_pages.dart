@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../Config/ApiHelper.dart';
 import '../Utils/imagepicker.dart';
@@ -31,6 +32,8 @@ class _ProfileState extends State<Profile> {
   Map? responseData;
   List? dataList;
   int index = 0;
+  Map? address;
+  List? Addresslist;
 
   @override
   void initState() {
@@ -45,6 +48,7 @@ class _ProfileState extends State<Profile> {
       print(UID);
     });
     Apicall();
+    getUserAddress();
   }
 
   Future<void> Apicall() async {
@@ -93,6 +97,38 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  getUserAddress() async {
+    var response = await ApiHelper().post(endpoint: "user/getAddress", body: {
+      "userid": UID,
+    }).catchError((err) {});
+    if (response != null) {
+      setState(() {
+        debugPrint('get address api successful:');
+        address = jsonDecode(response);
+        Addresslist = address!["status"];
+
+        Fluttertoast.showToast(
+          msg: "User Address",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      });
+    } else {
+      debugPrint('api failed:');
+      Fluttertoast.showToast(
+        msg: "failed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.SNACKBAR,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,7 +166,44 @@ class _ProfileState extends State<Profile> {
               ],
             ),
             dataList == null
-                ? CircularProgressIndicator() // Display a circular progress indicator
+                ? Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+                  Container(
+                    width: 120,
+                    height: 30,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    width: 80,
+                    height: 20,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    width: 120,
+                    height: 20,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    width: 80,
+                    height: 20,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    width: 100,
+                    height: 20,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            )
                 : Column(
               children: [
                 Text(
@@ -146,11 +219,81 @@ class _ProfileState extends State<Profile> {
                 Text(
                   dataList![index]["dob"].toString(),
                 ),
+                ListView.builder(
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: Addresslist == null ? 0 : Addresslist!.length,
+                  itemBuilder: (context, index) => getAddressRow(index),
+                ),
               ],
             ),
           ],
         ),
       ),
+
     );
   }
+
+  Widget getAddressRow(int index) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Addresslist == null
+                        ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                        : Text(
+                      Addresslist![index]["address"]
+                          .toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      Addresslist![index]["phone"]
+                          .toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,color: Colors.red),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      Addresslist![index]["city"]
+                          .toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      Addresslist![index]["pincode"]
+                          .toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      Addresslist![index]["state"]
+                          .toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold),
+                    ),
+
+              ],
+        ),
+      ),
+    );
+  }
+
+
 }

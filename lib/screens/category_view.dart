@@ -199,8 +199,8 @@ class _Category_ViewState extends State<Category_View> {
             Text(
               prcategorylist == null
                   ? 'Loading...'
-                  : prcategorylist![index]["price"].toString(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+                  :  prcategorylist![index]["price"].toString(),
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
             ),
             SizedBox(
               height: 15,

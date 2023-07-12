@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Config/ApiHelper.dart';
 import 'Login_page.dart';
+import 'Select_address.dart';
 
 class Cart_page extends StatefulWidget {
   const Cart_page({Key? key}) : super(key: key);
@@ -16,9 +17,6 @@ class _Cart_pageState extends State<Cart_page> {
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   Map? clist;
   List? CartaddList;
-  Map? order;
-  Map? orderlist;
-  List? FinalOrderlist;
   int index = 0;
   var CID;
   String? UID;
@@ -193,45 +191,6 @@ class _Cart_pageState extends State<Cart_page> {
     }
   }
 
-  PlaceOrderApi() async {
-    var response = await ApiHelper().post(endpoint: "cart/placeOrder", body: {
-      "id": UID,
-      "address": "address",
-      "amount": "amount",
-      "paid": "paid",
-      "latitude": "latitude",
-      "longitude": "longitude",
-      "delivery_note": "delivery_note",
-      "tip" : "tip"
-    }).catchError((err) {});
-    if (response != null) {
-      setState(() {
-        debugPrint('place order api successful:');
-        order = jsonDecode(response);
-        orderlist = order!["data"];
-        FinalOrderlist = orderlist!["pageData"];
-
-        Fluttertoast.showToast(
-          msg: "Order Placed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      });
-    } else {
-      debugPrint('api failed:');
-      Fluttertoast.showToast(
-        msg: "failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -249,14 +208,47 @@ class _Cart_pageState extends State<Cart_page> {
           ? Center(
         child: CircularProgressIndicator(),
       )
-          : GridView.builder(
+          : Container(
+            child: ListView(
+              children: [
+                Card(
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text("${CartaddList!.length} Items in Cart",style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold
+                      ),),
+                      ElevatedButton(onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return SetectAddress();
+                        }),
+                      ),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              shadowColor: Colors.teal[300],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(10),
+                                    topLeft: Radius.circular(10)),
+                              )),
+
+                          child: Text("Place Order"))
+                    ],
+                  ),
+                ),
+                GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: .5,
+                crossAxisCount: 2,
+                childAspectRatio: .5,
         ),
         itemCount: CartaddList == null ? 0 : CartaddList?.length,
         itemBuilder: (context, index) => getCartList(index),
-      )
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+      ),
+              ],
+            ),
+          )
           : Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
