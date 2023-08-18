@@ -108,22 +108,16 @@ class _LoginPageState extends State<LoginPage> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () async {
-                  // Get the entered username and password
                   String username = usernameController.text.toString();
                   String password = passwordController.text.toString();
-
-                  // Check if the username and password are not empty
                   if (username.isNotEmpty && password.isNotEmpty) {
-                    // Make the API call with the entered credentials
                     var response = await ApiHelper().post(endpoint: "common/authenticate", body: {
                       'username': username,
                       'password': password,
                     }).catchError((err) {});
                     if (response != null) {
-                      // API call succeeded
                       setState(() {
-                        debugPrint('API successful:');
-                        UserList = jsonDecode(response);
+                        debugPrint('API successful:'); UserList = jsonDecode(response);
                       });
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setString("UID", UserList![0]["id"].toString());
@@ -136,11 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                         textColor: Colors.white,
                         fontSize: 16.0,
                       );
-                      // Navigate to the home screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BottomNav()),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNav()),);
                     } else {
                       // API call failed
                       debugPrint('API failed:');

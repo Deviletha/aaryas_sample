@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:aaryas_sample/constants/Title_widget.dart';
@@ -22,7 +23,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? UID;
 
-  bool isLoading = false; // Track API loading state
+  bool isLoading = false;
+  bool isLoadingCategories = true; // Track API loading state
 
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
@@ -93,9 +95,10 @@ class _HomePageState extends State<HomePage> {
     }).catchError((err) {});
 
     setState(() {
-      isLoading = false;
+      Timer(const Duration(seconds: 3), () {
+        isLoading = false;
+      });
     });
-
     if (response != null) {
       setState(() {
         debugPrint('get products api successful:');
@@ -200,7 +203,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    ApiforCategory();
+    ApiforCategory().then((_) {
+      setState(() {
+        isLoadingCategories = false;
+      });
+    });
     ApiforAllProducts();
     ApiforPopularProducts();
     getMyOrders();
@@ -299,31 +306,32 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) => getOrderList(index),
           ),
         ),
-        const Heading(text: "Category"),
+          const Heading(text: "Category"),
           Container(
-            child: isLoading
+            child: isLoadingCategories
                 ? Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
               child: CarouselSlider.builder(
-                itemCount: categorylist == null ? 0 : categorylist?.length,
+                itemCount:
+                5, // Set a fixed count for shimmer effect
                 itemBuilder: (context, index, realIndex) {
                   return getCategoryRow(index);
                 },
                 options: CarouselOptions(
-                  height: 300,
-                  aspectRatio: 15 / 6,
-                  viewportFraction: .6,
-                  initialPage: 0,
-                  enableInfiniteScroll: true,
-                  reverse: false,
-                  autoPlay: false,
-                  enlargeCenterPage: true,
-                  autoPlayInterval: Duration(seconds: 3),
-                  autoPlayAnimationDuration: Duration(milliseconds: 800),
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  onPageChanged: (index, reason) {},
-                  scrollDirection: Axis.horizontal,
+                    height: 300,
+                    aspectRatio: 15 / 6,
+                    viewportFraction: .6,
+                    initialPage: 0,
+                    enableInfiniteScroll: true,
+                    reverse: false,
+                    autoPlay: false,
+                    enlargeCenterPage: true,
+                    autoPlayInterval: Duration(seconds: 3),
+                    autoPlayAnimationDuration: Duration(milliseconds: 800),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    onPageChanged: (index, reason) {},
+                    scrollDirection: Axis.horizontal,
                 ),
               ),
             )
@@ -388,7 +396,7 @@ class _HomePageState extends State<HomePage> {
 
           const Heading(text: "Top Picks For You"),
           Container(
-              child: isLoading
+              child: isLoadingCategories
                   ? Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
                 highlightColor: Colors.grey[100]!,
@@ -518,6 +526,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getCategoryImage(int index) {
+    if (categorylist == null) {
+      return Container();
+    }
     var image = base! + categorylist![index]["image"];
 
     return InkWell(
@@ -548,6 +559,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getCategoryRow(int index) {
+      if (categorylist == null) {
+        return Container(); // Handle the case when categorylist is null
+      }
     var image = base! + categorylist![index]["image"];
     var itemName = categorylist![index]["name"].toString();
 
