@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Config/ApiHelper.dart';
-import 'Login_page.dart';
+import 'login_page.dart';
 
 class ProductView extends StatefulWidget {
-  final String productname;
+  final String productName;
   final String url;
   final String description;
   final String amount;
@@ -17,9 +17,9 @@ class ProductView extends StatefulWidget {
   final String category;
   final String psize;
 
-  ProductView(
+  const ProductView(
       {Key? key,
-      required this.productname,
+      required this.productName,
       required this.url,
       required this.description,
       required this.amount,
@@ -37,9 +37,9 @@ class ProductView extends StatefulWidget {
 class _ProductViewState extends State<ProductView> {
 
   int index = 0;
-  Map? clist;
-  List? CartList;
-  String? UID;
+  Map? cList;
+  List? cartList;
+  String? uID;
 
   @override
   void initState() {
@@ -48,15 +48,14 @@ class _ProductViewState extends State<ProductView> {
   }
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    uID = prefs.getString("UID");
   }
 
-  APIforCart() async {
+  apiForCart() async {
     var response = await ApiHelper().post(endpoint: "cart/add", body: {
-      "userid": UID,
+      "userid": uID,
       "productid": widget.id.toString(),
-      "product": widget.productname.toString(),
+      "product": widget.productName.toString(),
       "price": widget.amount.toString(),
       "quantity": "1",
       "tax": "tax",
@@ -69,8 +68,8 @@ class _ProductViewState extends State<ProductView> {
     if (response != null) {
       setState(() {
         debugPrint('cartpage successful:');
-        clist = jsonDecode(response);
-        CartList = clist!["cart"];
+        cList = jsonDecode(response);
+        cartList = cList!["cart"];
 
         Fluttertoast.showToast(
           msg: "Item added to Cart",
@@ -93,7 +92,7 @@ class _ProductViewState extends State<ProductView> {
 
     if (loginId != null && loginId.isNotEmpty) {
       // User is logged in, proceed with adding to cart
-      APIforCart();
+      apiForCart();
     } else {
       // User is not logged in, navigate to LoginPage
       Navigator.push(
@@ -108,7 +107,7 @@ class _ProductViewState extends State<ProductView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.productname,style:
+        title: Text(widget.productName,style:
         TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -148,7 +147,7 @@ class _ProductViewState extends State<ProductView> {
                     height: 15,
                   ),
                   Text(
-                    widget.productname.toString(),
+                    widget.productName.toString(),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(

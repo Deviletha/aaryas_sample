@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Config/ApiHelper.dart';
-import 'Product_view.dart';
+import 'product_view.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -16,20 +16,17 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
-  String? UID;
+  String? uID;
   Map? search;
   Map? search1;
-  List? searchlist;
+  List? searchList;
   String? searchKeyword;
-  Map? productlist;
-  Map? productlist1;
-  List? Finalproductlist;
   int index = 0;
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    uID = prefs.getString("UID");
+
   }
 
   final TextEditingController _searchController = TextEditingController();
@@ -40,22 +37,20 @@ class _SearchState extends State<Search> {
     super.initState();
   }
 
-  addTowishtist(
+  addToWishlist(
     String id,
-      String Comid
+      String comId
   ) async {
     var response = await ApiHelper().post(endpoint: "wishList/add", body: {
-      "userid": UID,
+      "userid": uID,
       "productid": id,
-      "combination": Comid
+      "combination": comId
     }).catchError((err) {});
 
     if (response != null) {
       setState(() {
-        debugPrint('addwishlist api successful:');
-        productlist = jsonDecode(response);
-        productlist1 = productlist!["pagination"];
-        Finalproductlist = productlist1!["pageData"];
+        debugPrint('add wishlist api successful:');
+
 
         Fluttertoast.showToast(
           msg: "Added to Wishlist",
@@ -88,7 +83,7 @@ class _SearchState extends State<Search> {
         debugPrint('search successful:');
         search = jsonDecode(response);
         search1 = search!["data"];
-        searchlist = search1!["pageData"];
+        searchList = search1!["pageData"];
       });
     } else {
       debugPrint('api failed:');
@@ -135,13 +130,11 @@ class _SearchState extends State<Search> {
                 ),
               ),
             ),
-            Container(
-              child: ListView.builder(
-                physics: ScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: searchlist == null ? 0 : searchlist?.length,
-                itemBuilder: (context, index) => getSearchList(index),
-              ),
+            ListView.builder(
+              physics: ScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: searchList == null ? 0 : searchList?.length,
+              itemBuilder: (context, index) => getSearchList(index),
             )
           ],
         ),
@@ -150,23 +143,23 @@ class _SearchState extends State<Search> {
   }
 
   Widget getSearchList(int index) {
-    var image = base! + searchlist![index]["image"].toString();
-    var price = "₹" + searchlist![index]["price"].toString();
-    var PID =  searchlist![index]["id"].toString();
+    var image = base! + searchList![index]["image"].toString();
+    var price = "₹${searchList![index]["price"]}";
+    var pID =  searchList![index]["id"].toString();
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ProductView(
-                id: searchlist![index]["id"].toString(),
-                productname: searchlist![index]["name"].toString(),
+                id: searchList![index]["id"].toString(),
+                productName: searchList![index]["name"].toString(),
                 url: image,
-                description: searchlist![index]["description"].toString(),
+                description: searchList![index]["description"].toString(),
                 amount: price,
-                combinationId: searchlist![index]["id"].toString(),
-                quantity: searchlist![index]["quantity"].toString(),
-                category: searchlist![index]["categories"].toString(),
+                combinationId: searchList![index]["id"].toString(),
+                quantity: searchList![index]["quantity"].toString(),
+                category: searchList![index]["categories"].toString(),
                 psize: "0"),
           ),
         );
@@ -203,10 +196,10 @@ class _SearchState extends State<Search> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      searchlist == null
+                      searchList == null
                           ? Text("null data")
                           : Text(
-                              searchlist![index]["name"].toString(),
+                        searchList![index]["name"].toString(),
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
@@ -224,14 +217,14 @@ class _SearchState extends State<Search> {
                         height: 10,
                       ),
                       Text(
-                        searchlist![index]["description"].toString(),
+                        searchList![index]["description"].toString(),
                         maxLines: 2,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            addTowishtist(
-                             PID,PID
+                            addToWishlist(
+                                pID,pID
                             );
                           },
                           style: ElevatedButton.styleFrom(

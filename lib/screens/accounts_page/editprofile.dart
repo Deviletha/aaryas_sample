@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Config/ApiHelper.dart';
+import '../../Config/ApiHelper.dart';
 
 class ChangeProfile extends StatefulWidget {
   const ChangeProfile({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class ChangeProfile extends StatefulWidget {
 }
 
 class _ChangeProfileState extends State<ChangeProfile> {
-  String? UID;
+  String? uID;
 
   final firstnameController = TextEditingController();
   final lastnameController = TextEditingController();
@@ -22,17 +23,19 @@ class _ChangeProfileState extends State<ChangeProfile> {
 
 
 
-  Map? FinalUserlist;
+  Map? finalUserList;
   int index = 0;
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    uID = prefs.getString("UID");
+    if (kDebugMode) {
+      print(uID);
+    }
 
   }
 
-  EditProfile() async {
+  editProfile() async {
     var response = await ApiHelper().post(
       endpoint: "common/updateProfile",
       body: {
@@ -40,14 +43,14 @@ class _ChangeProfileState extends State<ChangeProfile> {
         "last_name": lastnameController.text,
         "email": emailIdController.text,
         "dob" : "21/06/1998",
-        "id" : UID
+        "id" : uID
       },
     ).catchError((err) {});
 
     if (response != null) {
       setState(() {
         debugPrint('edit profile api successful:');
-        FinalUserlist = jsonDecode(response);
+        finalUserList = jsonDecode(response);
 
 
         Fluttertoast.showToast(
@@ -157,7 +160,7 @@ class _ChangeProfileState extends State<ChangeProfile> {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                EditProfile();
+                editProfile();
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,

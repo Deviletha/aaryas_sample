@@ -1,4 +1,4 @@
-import 'package:aaryas_sample/screens/SplashScreen.dart';
+import 'package:aaryas_sample/screens/splashscreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {

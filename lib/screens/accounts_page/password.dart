@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Config/ApiHelper.dart';
+import '../../Config/ApiHelper.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({Key? key}) : super(key: key);
@@ -18,24 +16,23 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   final passwordController = TextEditingController();
   final newPassController = TextEditingController();
-  String? UID;
-  bool showpass = true;
-  Map? passlist;
-  Map? passlist1;
-  Map? Finalpasswrd;
+  String? uID;
+  bool showPass = true;
+  Map? passList;
+  Map? passList1;
+  Map? finalPassword;
   int index = 0;
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    uID = prefs.getString("UID");
   }
 
-  ChangePassword() async {
+  changePassword() async {
     var response = await ApiHelper().post(
       endpoint: "common/resetPassword",
       body: {
-        "id": UID,
+        "id": uID,
         "password": newPassController.text,
       },
     ).catchError((err) {});
@@ -43,9 +40,9 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (response != null) {
       setState(() {
         debugPrint('change password api successful:');
-        passlist = jsonDecode(response);
-        passlist1 = passlist!["status"];
-        Finalpasswrd = passlist1!["user"];
+        passList = jsonDecode(response);
+        passList1 = passList!["status"];
+        finalPassword = passList1!["user"];
 
         Fluttertoast.showToast(
           msg: "Password Changed",
@@ -88,21 +85,21 @@ class _ChangePasswordState extends State<ChangePassword> {
                 left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
               controller: passwordController,
-              obscureText: showpass,
+              obscureText: showPass,
               obscuringCharacter: "*",
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
-                        if (showpass) {
-                          showpass = false;
+                        if (showPass) {
+                          showPass = false;
                         } else {
-                          showpass = true;
+                          showPass = true;
                         }
                       });
                     },
                     icon: Icon(
-                      showpass == true
+                      showPass == true
                           ? Icons.visibility_off
                           : Icons.visibility,
                     )),
@@ -113,8 +110,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         bottomLeft: Radius.circular(10))),
               ),
               textInputAction: TextInputAction.done,
-              validator: (Password) {
-                if (Password!.isEmpty || Password.length < 6) {
+              validator: (password) {
+                if (password!.isEmpty || password.length < 6) {
                   return "Enter a valid Password, length should be greater than 6";
                 } else {
                   return null;
@@ -127,21 +124,21 @@ class _ChangePasswordState extends State<ChangePassword> {
                 left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
               controller: newPassController,
-              obscureText: showpass,
+              obscureText: showPass,
               obscuringCharacter: "*",
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
-                        if (showpass) {
-                          showpass = false;
+                        if (showPass) {
+                          showPass = false;
                         } else {
-                          showpass = true;
+                          showPass = true;
                         }
                       });
                     },
                     icon: Icon(
-                      showpass == true
+                      showPass == true
                           ? Icons.visibility_off
                           : Icons.visibility,
                     )),
@@ -152,8 +149,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         bottomLeft: Radius.circular(10))),
               ),
               textInputAction: TextInputAction.done,
-              validator: (Password) {
-                if (Password!.isEmpty || Password.length < 6) {
+              validator: (password) {
+                if (password!.isEmpty || password.length < 6) {
                   return "Enter the same Password, as above";
                 } else {
                   return null;

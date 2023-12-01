@@ -1,16 +1,15 @@
 import 'dart:convert';
-import 'package:aaryas_sample/screens/Add_address.dart';
-import 'package:aaryas_sample/screens/Orders_page.dart';
-import 'package:aaryas_sample/screens/Settings.dart';
-import 'package:aaryas_sample/screens/profile_pages.dart';
+import 'package:aaryas_sample/screens/accounts_page/add_address.dart';
+import 'package:aaryas_sample/screens/orders_page.dart';
+import 'package:aaryas_sample/screens/accounts_page/settings.dart';
+import 'package:aaryas_sample/screens/accounts_page/profile_pages.dart';
 import 'package:aaryas_sample/screens/wishlist_page.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../Config/ApiHelper.dart';
-import 'Login_page.dart';
+import '../../Config/ApiHelper.dart';
+import '../login_page.dart';
 
 class Accounts extends StatefulWidget {
   const Accounts({Key? key}) : super(key: key);
@@ -20,8 +19,8 @@ class Accounts extends StatefulWidget {
 }
 
 class _AccountsState extends State<Accounts> {
-  String? UID;
-  String? datas;
+  String? uID;
+  String? data;
   Map? responseData;
   List? dataList;
   int index = 0;
@@ -36,24 +35,23 @@ class _AccountsState extends State<Accounts> {
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      UID = prefs.getString("UID");
-      isLoggedIn = UID != null;
+      uID = prefs.getString("UID");
+      isLoggedIn = uID != null;
     });
-    Apicall();
+    apiCall();
   }
 
-  Future<void> Apicall() async {
+  Future<void> apiCall() async {
     try {
       var response = await ApiHelper().post(endpoint: "common/profile", body: {
-        "id": UID,
+        "id": uID,
       });
       if (response != null) {
         setState(() {
           debugPrint('profile api successful:');
-          datas = response.toString();
+          data = response.toString();
           responseData = jsonDecode(response);
           dataList = responseData?["data"];
-          print(responseData.toString());
 
         });
       } else {
@@ -181,7 +179,7 @@ class _AccountsState extends State<Accounts> {
                         }),
                       ),
                       child: Row(
-                        children: [
+                        children: const [
                           Icon(Icons.add_home_outlined, size: 25),
                           SizedBox(width: 10),
                           Text("Add Address", style: TextStyle(fontSize: 20)),
@@ -200,7 +198,7 @@ class _AccountsState extends State<Accounts> {
                         }),
                       ),
                       child: Row(
-                        children: [
+                        children: const [
                           Icon(Icons.shopping_bag_outlined, size: 25),
                           SizedBox(width: 10),
                           Text("My Orders", style: TextStyle(fontSize: 20)),
@@ -219,7 +217,7 @@ class _AccountsState extends State<Accounts> {
                         }),
                       ),
                       child: Row(
-                        children: [
+                        children: const [
                           Icon(Icons.favorite_border_sharp, size: 25),
                           SizedBox(width: 10),
                           Text("My Wishlist", style: TextStyle(fontSize: 20)),
@@ -238,7 +236,7 @@ class _AccountsState extends State<Accounts> {
                         }),
                       ),
                       child: Row(
-                        children: [
+                        children: const [
                           Icon(Icons.settings_outlined, size: 25),
                           SizedBox(width: 10),
                           Text("Settings", style: TextStyle(fontSize: 20)),
@@ -256,7 +254,7 @@ class _AccountsState extends State<Accounts> {
                       },
 
                       child: Row(
-                        children: [
+                        children: const [
                           Icon(
                             Icons.help_outline_rounded,
                             size: 25,

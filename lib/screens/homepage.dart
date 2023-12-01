@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
-import 'package:aaryas_sample/constants/Title_widget.dart';
+import 'package:aaryas_sample/constants/title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
-import 'Notification_page.dart';
-import 'Orderdetails.dart';
-import 'Product_view.dart';
-import 'Search Page.dart';
+import 'notification_page.dart';
+import 'order_details.dart';
+import 'product_view.dart';
+import 'search_page.dart';
 import 'category_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -21,7 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? UID;
+  String? uID;
 
   bool isLoading = false;
   bool isLoadingCategories = true; // Track API loading state
@@ -29,8 +29,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      UID = prefs.getString("UID");
-      print(UID);
+      uID = prefs.getString("UID");
     });
     getMyOrders();
   }
@@ -42,18 +41,18 @@ class _HomePageState extends State<HomePage> {
   Map? order1;
   List? orderList;
   ///CategoryList
-  List? categorylist;
+  List? categoryList;
 
   ///ProductList
   String? data;
-  Map? productlist;
-  Map? productlist1;
-  List? Finalproductlist;
+  Map? productList;
+  Map? productList1;
+  List? finalProductList;
 
   ///PopularProductList
-  Map? popularlist;
-  Map? popularlist1;
-  List? Finalpopularlist;
+  Map? popularList;
+  Map? popularList1;
+  List? finalPopularList;
   int index = 0;
 
   getMyOrders() async {
@@ -62,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     });
     var response =
     await ApiHelper().post(endpoint: "common/getMyOrders", body: {
-      "userid": UID,
+      "userid": uID,
       "offset": "0",
       "pageLimit": "1",
     }).catchError((err) {});
@@ -83,7 +82,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  ApiforCategory() async {
+  apiForCategory() async {
     setState(() {
       isLoading = true;
     });
@@ -102,7 +101,7 @@ class _HomePageState extends State<HomePage> {
     if (response != null) {
       setState(() {
         debugPrint('get products api successful:');
-        categorylist = jsonDecode(response);
+        categoryList = jsonDecode(response);
 
       });
     } else {
@@ -110,7 +109,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  ApiforAllProducts() async {
+  apiForAllProducts() async {
     setState(() {
       isLoading = true;
     });
@@ -129,9 +128,9 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         debugPrint('get products api successful:');
         data = response.toString();
-        productlist = jsonDecode(response);
-        productlist1 = productlist!["pagination"];
-        Finalproductlist = productlist1!["pageData"];
+        productList = jsonDecode(response);
+        productList1 = productList!["pagination"];
+        finalProductList = productList1!["pageData"];
 
       });
     } else {
@@ -140,7 +139,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  ApiforPopularProducts() async {
+  apiForPopularProducts() async {
     setState(() {
       isLoading = true;
     });
@@ -159,9 +158,9 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         debugPrint('get products api successful:');
         data = response.toString();
-        popularlist = jsonDecode(response);
-        popularlist1 = popularlist!["pagination"];
-        Finalpopularlist = popularlist1!["pageData"];
+        popularList = jsonDecode(response);
+        popularList1 = popularList!["pagination"];
+        finalPopularList = popularList1!["pageData"];
 
 
       });
@@ -171,20 +170,18 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  addTowishtist(String id, String combination) async {
+  addToWishlist(String id, String combination) async {
     var response = await ApiHelper().post(endpoint: "wishList/add", body: {
-      "userid": UID,
+      "userid": uID,
       "productid": id,
       "combination": combination
     }).catchError((err) {});
 
     if (response != null) {
       setState(() {
-        debugPrint('addwishlist api successful:');
+        debugPrint('add wishlist api successful:');
         data = response.toString();
-        productlist = jsonDecode(response);
-        productlist1 = productlist!["pagination"];
-        Finalproductlist = productlist1!["pageData"];
+
 
         Fluttertoast.showToast(
           msg: "Added to Wishlist",
@@ -203,13 +200,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    ApiforCategory().then((_) {
+    apiForCategory().then((_) {
       setState(() {
         isLoadingCategories = false;
       });
     });
-    ApiforAllProducts();
-    ApiforPopularProducts();
+    apiForAllProducts();
+    apiForPopularProducts();
     getMyOrders();
     checkUser();
     super.initState();
@@ -221,7 +218,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
-          "ARYAAS",
+          "ARYAS",
           style:
           TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
         ),
@@ -267,7 +264,7 @@ class _HomePageState extends State<HomePage> {
                       border: Border.all(color: Colors.teal)
                     ),
                     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: const [
                         Text( "Search..."),
                         Icon(Icons.search)
                       ],
@@ -336,7 +333,7 @@ class _HomePageState extends State<HomePage> {
               ),
             )
                 : CarouselSlider.builder(
-              itemCount: categorylist == null ? 0 : categorylist?.length,
+              itemCount: categoryList == null ? 0 : categoryList?.length,
               itemBuilder: (context, index, realIndex) {
                 return getCategoryRow(index);
               },
@@ -389,7 +386,7 @@ class _HomePageState extends State<HomePage> {
                 crossAxisCount: 4,
                 childAspectRatio: 1.2,
               ),
-              itemCount: Finalpopularlist == null ? 0 : Finalpopularlist?.length,
+              itemCount: finalPopularList == null ? 0 : finalPopularList?.length,
               itemBuilder: (context, index) => getPopularRow(index),
             ),
           ),
@@ -401,7 +398,7 @@ class _HomePageState extends State<HomePage> {
                 baseColor: Colors.grey[300]!,
                 highlightColor: Colors.grey[100]!,
                 child: CarouselSlider.builder(
-                  itemCount: categorylist == null ? 0 : categorylist?.length,
+                  itemCount: categoryList == null ? 0 : categoryList?.length,
                   itemBuilder: (context, index, realIndex) {
                     return getCategoryRow(index);
                   },
@@ -424,7 +421,7 @@ class _HomePageState extends State<HomePage> {
               )
                   : CarouselSlider.builder(
                 itemCount:
-                categorylist == null ? 0 : categorylist?.length,
+                categoryList == null ? 0 : categoryList?.length,
                 itemBuilder: (context, index, realIndex) {
                   return getCategoryImage(index);
                 },
@@ -469,7 +466,7 @@ class _HomePageState extends State<HomePage> {
                 : ListView.builder(
               physics: ScrollPhysics(),
               shrinkWrap: true,
-              itemCount: Finalproductlist == null ? 0 : Finalproductlist?.length,
+              itemCount: finalProductList == null ? 0 : finalProductList?.length,
               itemBuilder: (context, index) => getProducts(index),
             ),
           ),
@@ -479,8 +476,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getPopularRow(int index) {
-    var image = base! + Finalpopularlist![index]["image"];
-    var itemName = Finalpopularlist![index]["combinationName"].toString();
+    var image = base! + finalPopularList![index]["image"];
+    var itemName = finalPopularList![index]["combinationName"].toString();
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -488,19 +485,19 @@ class _HomePageState extends State<HomePage> {
           MaterialPageRoute(
             builder: (context) =>
                 ProductView(
-                  id: Finalpopularlist![index]["id"].toString(),
-                  productname:
-                  Finalpopularlist![index]["combinationName"].toString(),
+                  id: finalPopularList![index]["id"].toString(),
+                  productName:
+                  finalPopularList![index]["combinationName"].toString(),
                   url: image,
-                  description: Finalpopularlist![index]["description"]
+                  description: finalPopularList![index]["description"]
                       .toString(),
-                  amount: Finalpopularlist![index]["combinationPrice"]
+                  amount: finalPopularList![index]["combinationPrice"]
                       .toString(),
                   combinationId:
-                  Finalpopularlist![index]["combinationId"].toString(),
-                  quantity: Finalpopularlist![index]["quantity"].toString(),
-                  category: Finalpopularlist![index]["category"].toString(),
-                  psize: Finalpopularlist![index]["combinationSize"].toString(),
+                  finalPopularList![index]["combinationId"].toString(),
+                  quantity: finalPopularList![index]["quantity"].toString(),
+                  category: finalPopularList![index]["category"].toString(),
+                  psize: finalPopularList![index]["combinationSize"].toString(),
                 ),
           ),
         );
@@ -526,10 +523,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getCategoryImage(int index) {
-    if (categorylist == null) {
+    if (categoryList == null) {
       return Container();
     }
-    var image = base! + categorylist![index]["image"];
+    var image = base! + categoryList![index]["image"];
 
     return InkWell(
       onTap: () {
@@ -537,12 +534,12 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                Category_View(
+                CategoryView(
                   url: image,
-                  itemname: categorylist![index]["name"].toString(),
-                  description: categorylist![index]["description"].toString(),
-                  price: categorylist![index]["price"].toString(),
-                  id: categorylist![index]["id"],
+                  itemname: categoryList![index]["name"].toString(),
+                  description: categoryList![index]["description"].toString(),
+                  price: categoryList![index]["price"].toString(),
+                  id: categoryList![index]["id"],
                 ),
           ),
         );
@@ -559,11 +556,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getCategoryRow(int index) {
-      if (categorylist == null) {
-        return Container(); // Handle the case when categorylist is null
+      if (categoryList == null) {
+        return Container(); // Handle the case when categoryList is null
       }
-    var image = base! + categorylist![index]["image"];
-    var itemName = categorylist![index]["name"].toString();
+    var image = base! + categoryList![index]["image"];
+    var itemName = categoryList![index]["name"].toString();
 
     return InkWell(
       onTap: () {
@@ -571,12 +568,12 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                Category_View(
+                CategoryView(
                   url: image,
-                  itemname: categorylist![index]["name"].toString(),
-                  description: categorylist![index]["description"].toString(),
-                  price: categorylist![index]["price"].toString(),
-                  id: categorylist![index]["id"],
+                  itemname: categoryList![index]["name"].toString(),
+                  description: categoryList![index]["description"].toString(),
+                  price: categoryList![index]["price"].toString(),
+                  id: categoryList![index]["id"],
                 ),
           ),
         );
@@ -606,7 +603,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                categorylist![index]["description"].toString(),
+                categoryList![index]["description"].toString(),
                 maxLines: 2,
                 style: TextStyle(
                   color: Colors.white,
@@ -620,10 +617,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProducts(int index) {
-    var image = base! + Finalproductlist![index]["image"];
-    var price = "₹" + Finalproductlist![index]["combinationPrice"].toString();
-    var PID = Finalproductlist![index]["id"].toString();
-    var CombID = Finalproductlist![index]["combinationId"].toString();
+    var image = base! + finalProductList![index]["image"];
+    var price = "₹${finalProductList![index]["combinationPrice"]}";
+    var pID = finalProductList![index]["id"].toString();
+    var combID = finalProductList![index]["combinationId"].toString();
     return Card(
       child: ListTile(
           onTap: () {
@@ -632,19 +629,19 @@ class _HomePageState extends State<HomePage> {
               MaterialPageRoute(
                 builder: (context) =>
                     ProductView(
-                      id: Finalproductlist![index]["id"].toString(),
-                      productname:
-                      Finalproductlist![index]["combinationName"].toString(),
+                      id: finalProductList![index]["id"].toString(),
+                      productName:
+                      finalProductList![index]["combinationName"].toString(),
                       url: image,
                       description:
-                      Finalproductlist![index]["description"].toString(),
+                      finalProductList![index]["description"].toString(),
                       amount:
-                      Finalproductlist![index]["combinationPrice"].toString(),
+                      finalProductList![index]["combinationPrice"].toString(),
                       combinationId:
-                      Finalproductlist![index]["combinationId"].toString(),
-                      quantity: Finalproductlist![index]["quantity"].toString(),
-                      category: Finalproductlist![index]["category"].toString(),
-                      psize: Finalproductlist![index]["combinationSize"]
+                      finalProductList![index]["combinationId"].toString(),
+                      quantity: finalProductList![index]["quantity"].toString(),
+                      category: finalProductList![index]["category"].toString(),
+                      psize: finalProductList![index]["combinationSize"]
                           .toString(),
                     ),
               ),
@@ -681,10 +678,10 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Finalproductlist == null
+                        finalProductList == null
                             ? Text("null data")
                             : Text(
-                          Finalproductlist![index]["combinationName"]
+                          finalProductList![index]["combinationName"]
                               .toString(),
                           style: const TextStyle(
                               fontWeight: FontWeight.bold),
@@ -693,7 +690,7 @@ class _HomePageState extends State<HomePage> {
                           height: 10,
                         ),
                         Text(
-                          Finalproductlist![index]["description"].toString(),
+                          finalProductList![index]["description"].toString(),
                           maxLines: 2,
                           style:
                           const TextStyle(fontSize: 12, color: Colors.grey),
@@ -720,7 +717,7 @@ class _HomePageState extends State<HomePage> {
           ),
           trailing: ElevatedButton(
             onPressed: () {
-              addTowishtist(PID, CombID);
+              addToWishlist(pID, combID);
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,

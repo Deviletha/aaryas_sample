@@ -1,10 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Config/ApiHelper.dart';
-import 'Orders_page.dart';
+import 'orders_page.dart';
 
 class PlaceOrder extends StatefulWidget {
   final String id;
@@ -16,10 +15,10 @@ class PlaceOrder extends StatefulWidget {
 }
 
 class _PlaceOrderState extends State<PlaceOrder> {
-  String? UID;
+  String? uID;
   Map? order;
-  Map? orderlist;
-  List? FinalOrderlist;
+  Map? orderList;
+  List? finalOrderList;
 
   final tipController = TextEditingController();
   final noteController = TextEditingController();
@@ -33,14 +32,14 @@ class _PlaceOrderState extends State<PlaceOrder> {
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      UID = prefs.getString("UID");
-      print(UID);
+      uID = prefs.getString("UID");
+
     });
   }
 
-  PlaceOrderApi() async {
+  placeOrderApi() async {
     var response = await ApiHelper().post(endpoint: "cart/placeOrder", body: {
-      "id": UID,
+      "id": uID,
       "address": widget.id,
       "amount": " ",
       "paid": "1",
@@ -53,8 +52,8 @@ class _PlaceOrderState extends State<PlaceOrder> {
       setState(() {
         debugPrint('place order api successful:');
         order = jsonDecode(response);
-        orderlist = order!["data"];
-        FinalOrderlist = orderlist!["pageData"];
+        orderList = order!["data"];
+        finalOrderList = orderList!["pageData"];
 
         Fluttertoast.showToast(
           msg: "Order Placed",
@@ -65,7 +64,9 @@ class _PlaceOrderState extends State<PlaceOrder> {
           fontSize: 16.0,
         );
       }
-      );Navigator.push(
+      );
+
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MyOrders(),
@@ -134,7 +135,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  PlaceOrderApi();
+                  placeOrderApi();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,

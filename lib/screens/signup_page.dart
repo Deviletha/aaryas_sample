@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
-import 'package:aaryas_sample/screens/Login_page.dart';
+import 'package:aaryas_sample/screens/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,17 +13,16 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  String? UID;
-  Map? signuplist;
-  List? slist;
+  String? uID;
+  Map? signupList;
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    uID = prefs.getString("UID");
+
   }
 
-  bool showpass = true;
+  bool showPass = true;
   TextEditingController contactController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
@@ -36,7 +35,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController latitudeController = TextEditingController();
   TextEditingController longitudeController = TextEditingController();
 
-  apiforSignup() async {
+  apiForSignup() async {
     var response = await ApiHelper().post(endpoint: "common/signUP", body: {
       "contact": contactController.text,
       "email": emailController.text,
@@ -53,11 +52,10 @@ class _SignupPageState extends State<SignupPage> {
     if (response != null) {
       setState(() async {
         debugPrint('api successful:');
-        signuplist = jsonDecode(response);
+        signupList = jsonDecode(response);
 
-        print(response);
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("UID", signuplist![0]["id"].toString());
+        await prefs.setString("UID", signupList![0]["id"].toString());
         checkUser();
         Fluttertoast.showToast(
           msg: "Signup success",
@@ -74,11 +72,7 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
-  @override
-  void initState() {
-    apiforSignup();
-    super.initState();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +264,7 @@ class _SignupPageState extends State<SignupPage> {
                       const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                   child: TextFormField(
                     controller: passwordController,
-                    obscureText: showpass,
+                    obscureText: showPass,
                     obscuringCharacter: "*",
                     decoration: InputDecoration(
                         isDense: true,
@@ -278,15 +272,15 @@ class _SignupPageState extends State<SignupPage> {
                         suffixIcon: IconButton(
                             onPressed: () {
                               setState(() {
-                                if (showpass) {
-                                  showpass = false;
+                                if (showPass) {
+                                  showPass = false;
                                 } else {
-                                  showpass = true;
+                                  showPass = true;
                                 }
                               });
                             },
                             icon: Icon(
-                              showpass == true
+                              showPass == true
                                   ? Icons.visibility_off
                                   : Icons.visibility,
                             )),
@@ -295,8 +289,8 @@ class _SignupPageState extends State<SignupPage> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10))),
                     textInputAction: TextInputAction.done,
-                    validator: (Password) {
-                      if (Password!.isEmpty || Password.length < 6) {
+                    validator: (password) {
+                      if (password!.isEmpty || password.length < 6) {
                         return "Enter a valid Password, length should be greater than 6";
                       } else {
                         return null;
@@ -351,7 +345,7 @@ class _SignupPageState extends State<SignupPage> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      apiforSignup();
+                      apiForSignup();
                       // Navigator.pushReplacement(context,
                       //     MaterialPageRoute(builder: (context) => LoginPage()));
                     },

@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Config/ApiHelper.dart';
-import 'Orderdetails.dart';
+import 'order_details.dart';
 
 class MyOrders extends StatefulWidget {
   const MyOrders({Key? key}) : super(key: key);
@@ -17,7 +16,7 @@ class MyOrders extends StatefulWidget {
 class _MyOrdersState extends State<MyOrders> {
 
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
-  String? UID;
+  String? uID;
   Map? order;
   Map? order1;
   List? orderList;
@@ -31,8 +30,8 @@ class _MyOrdersState extends State<MyOrders> {
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      UID = prefs.getString("UID");
-      print(UID);
+      uID = prefs.getString("UID");
+
     });
     getMyOrders();
   }
@@ -40,7 +39,7 @@ class _MyOrdersState extends State<MyOrders> {
   getMyOrders() async {
     var response =
         await ApiHelper().post(endpoint: "common/getMyOrders", body: {
-      "userid": UID,
+      "userid": uID,
       "offset": "0",
       "pageLimit": "10",
     }).catchError((err) {});
@@ -81,7 +80,7 @@ class _MyOrdersState extends State<MyOrders> {
 
   Widget getOrderList(int index) {
     var image = base! + orderList![index]["image"].toString();
-    var price = "₹" + orderList![index]["total"].toString();
+    var price = "₹${orderList![index]["total"]}";
     return Card(
         color: Colors.grey.shade50,
         child: InkWell(
@@ -122,8 +121,8 @@ class _MyOrdersState extends State<MyOrders> {
                       ),
                     ),
                     Column(
-                      children: [
-                        Text("ARYAAS"),
+                      children: const [
+                        Text("ARYAS"),
                         Text("Expected delivery time : null"),
                       ],
                     ),

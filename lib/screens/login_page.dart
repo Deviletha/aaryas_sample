@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
-import 'package:aaryas_sample/screens/BottomNavBar.dart';
+import 'package:aaryas_sample/screens/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'SignUp_page.dart';
-import 'homepage.dart';
+import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -17,17 +16,17 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 
   Map? user;
-  List? UserList;
-  String? UID;
-  bool showpass = true;
+  List? userList;
+  String? uID;
+  bool showPass = true;
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    uID = prefs.getString("UID");
+    print(uID);
   }
 
   @override
@@ -68,21 +67,21 @@ class _LoginPageState extends State<LoginPage> {
                   left: 10, right: 10, top: 20, bottom: 20),
               child: TextFormField(
                 controller: passwordController,
-                obscureText: showpass,
+                obscureText: showPass,
                 obscuringCharacter: "*",
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
                       onPressed: () {
                         setState(() {
-                          if (showpass) {
-                            showpass = false;
+                          if (showPass) {
+                            showPass = false;
                           } else {
-                            showpass = true;
+                            showPass = true;
                           }
                         });
                       },
                       icon: Icon(
-                        showpass == true
+                        showPass == true
                             ? Icons.visibility_off
                             : Icons.visibility,
                       )),
@@ -93,8 +92,8 @@ class _LoginPageState extends State<LoginPage> {
                           topRight: Radius.circular(10),
                           bottomLeft: Radius.circular(10))),),
                 textInputAction: TextInputAction.done,
-                validator: (Password) {
-                  if (Password!.isEmpty || Password.length < 6) {
+                validator: (password) {
+                  if (password!.isEmpty || password.length < 6) {
                     return "Enter a valid Password, length should be greater than 6";
                   } else {
                     return null;
@@ -117,10 +116,10 @@ class _LoginPageState extends State<LoginPage> {
                     }).catchError((err) {});
                     if (response != null) {
                       setState(() {
-                        debugPrint('API successful:'); UserList = jsonDecode(response);
+                        debugPrint('API successful:'); userList = jsonDecode(response);
                       });
                       final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString("UID", UserList![0]["id"].toString());
+                      await prefs.setString("UID", userList![0]["id"].toString());
                       checkUser();
                       Fluttertoast.showToast(
                         msg: "Login success",

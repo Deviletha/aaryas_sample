@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Config/ApiHelper.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -18,13 +16,13 @@ class OrderDetails extends StatefulWidget {
 class _OrderDetailsState extends State<OrderDetails> {
   final TextEditingController reasonController = TextEditingController();
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
-  String? UID;
+  String? uID;
   Map? order;
   Map? order1;
   List? orderList;
 
-  Map? Orderreturn;
-  Map? returnlist;
+  Map? orderReturn;
+  Map? returnList;
 
   @override
   void initState() {
@@ -35,13 +33,12 @@ class _OrderDetailsState extends State<OrderDetails> {
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      UID = prefs.getString("UID");
-      print(UID);
+      uID = prefs.getString("UID");
     });
     getMyOrders();
   }
 
-  RetunItemApi() async {
+  returnItem() async {
     var response =
         await ApiHelper().post(endpoint: "common/orderReturn", body: {
       "orderid": widget.id,
@@ -50,8 +47,8 @@ class _OrderDetailsState extends State<OrderDetails> {
     if (response != null) {
       setState(() {
         debugPrint('return api successful:');
-        Orderreturn = jsonDecode(response);
-        returnlist = Orderreturn!["data"];
+        orderReturn = jsonDecode(response);
+        returnList = orderReturn!["data"];
         Fluttertoast.showToast(
           msg: "order returned successfully",
           toastLength: Toast.LENGTH_SHORT,
@@ -110,7 +107,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   Widget getOrderList(int index) {
     var image = base! + orderList![index]["image"].toString();
-    var price = "₹" + orderList![index]["price"].toString();
+    var price = "₹${orderList![index]["price"]}";
     return Card(
         color: Colors.grey.shade50,
         child: Padding(
@@ -167,7 +164,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ],
               ),
               ElevatedButton(onPressed: (){
-                RetunItemApi();
+                returnItem();
               },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,

@@ -1,25 +1,25 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Config/ApiHelper.dart';
-import 'Login_page.dart';
-import 'Select_address.dart';
+import 'login_page.dart';
+import 'select_address.dart';
 
-class Cart_page extends StatefulWidget {
-  const Cart_page({Key? key}) : super(key: key);
+class CartPage extends StatefulWidget {
+  const CartPage({Key? key}) : super(key: key);
 
   @override
-  State<Cart_page> createState() => _Cart_pageState();
+  State<CartPage> createState() => _CartPageState();
 }
 
-class _Cart_pageState extends State<Cart_page> {
+class _CartPageState extends State<CartPage> {
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
-  Map? clist;
-  List? CartaddList;
+  Map? cList;
+  List? cartAddList;
   int index = 0;
-  var CID;
-  String? UID;
+  String? uID;
   bool isLoading = true;
   bool isLoggedIn = false;
 
@@ -31,13 +31,15 @@ class _Cart_pageState extends State<Cart_page> {
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    uID = prefs.getString("UID");
+    if (kDebugMode) {
+      print(uID);
+    }
     setState(() {
-      isLoggedIn = UID != null;
+      isLoggedIn = uID != null;
     });
     if (isLoggedIn) {
-      APIforCart();
+      apiForCart();
     } else {
       setState(() {
         isLoading = false;
@@ -45,13 +47,13 @@ class _Cart_pageState extends State<Cart_page> {
     }
   }
 
-  APIforCart() async {
+  apiForCart() async {
     setState(() {
       isLoading = true;
     });
 
     var response = await ApiHelper().post(endpoint: "cart/get", body: {
-      "userid": UID,
+      "userid": uID,
     }).catchError((err) {});
 
     setState(() {
@@ -61,68 +63,56 @@ class _Cart_pageState extends State<Cart_page> {
     if (response != null) {
       setState(() {
         debugPrint('cartpage successful:');
-        clist = jsonDecode(response);
-        CartaddList = clist!["cart"];
-
+        cList = jsonDecode(response);
+        cartAddList = cList!["cart"];
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
   incrementQty(
     String productID,
-    String Size,
+    String size,
   ) async {
     var response = await ApiHelper().post(endpoint: "cart/increment", body: {
-      "userid": UID,
+      "userid": uID,
       "productid": productID,
-      "size": Size,
+      "size": size,
     }).catchError((err) {});
     if (response != null) {
       setState(() {
         debugPrint('cartpage successful:');
-        clist = jsonDecode(response);
-        CartaddList = clist!["cart"];
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
   decrementQty(String productId, String size) async {
     var response = await ApiHelper().post(endpoint: "cart/decrement", body: {
-      "userid": UID,
+      "userid": uID,
       "productid": productId,
       "size": size,
     }).catchError((err) {});
     if (response != null) {
       setState(() {
         debugPrint('cartpage successful:');
-        clist = jsonDecode(response);
-        CartaddList = clist!["cart"];
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
   removeFromCart(String productId, String size) async {
     var response = await ApiHelper().post(endpoint: "cart/remove", body: {
-      "userid": UID,
+      "userid": uID,
       "productid": productId,
       "size": size,
     }).catchError((err) {});
     if (response != null) {
       setState(() {
         debugPrint('cartpage successful:');
-        clist = jsonDecode(response);
-        CartaddList = clist!["cart"];
 
         Fluttertoast.showToast(
           msg: "Item Removed",
@@ -135,103 +125,106 @@ class _Cart_pageState extends State<Cart_page> {
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("MY CART",style:
-        TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),),
+        title: Text(
+          "MY CART",
+          style:
+              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
       ),
       body: isLoggedIn
           ? isLoading
-          ? Center(
-        child: CircularProgressIndicator(),
-      )
-          : Container(
-            child: ListView(
-              children: [
-                Card(
-                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text("${CartaddList!.length} Items in Cart",style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold
-                      ),),
-                      ElevatedButton(onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return SetectAddress();
-                        }),
-                      ),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
-                              shadowColor: Colors.teal[300],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    bottomRight: Radius.circular(10),
-                                    topLeft: Radius.circular(10)),
-                              )),
-
-                          child: Text("Place Order"))
-                    ],
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ListView(
+                children: [
+                  Card(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          "${cartAddList!.length} Items in Cart",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        ElevatedButton(
+                            onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) {
+                                    return SelectAddress();
+                                  }),
+                                ),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                shadowColor: Colors.teal[300],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10)),
+                                )),
+                            child: Text("Place Order"))
+                      ],
+                    ),
                   ),
-                ),
-                GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: .5,
-        ),
-        itemCount: CartaddList == null ? 0 : CartaddList?.length,
-        itemBuilder: (context, index) => getCartList(index),
-                  physics: ScrollPhysics(),
-                  shrinkWrap: true,
-      ),
-              ],
-            ),
-          )
+                  GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: .5,
+                    ),
+                    itemCount:
+                    cartAddList == null ? 0 : cartAddList?.length,
+                    itemBuilder: (context, index) => getCartList(index),
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                  ),
+                ],
+              )
           : Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset("assets/img_1.png"),
-            ElevatedButton(
-              onPressed: (){
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage())
-                );
-              },style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                shadowColor: Colors.teal[300],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(10),
-                      topLeft: Radius.circular(10)),
-                )),
-              child: Text(
-                "Please LogIn",
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Image.asset("assets/img_1.png"),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        shadowColor: Colors.teal[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(10),
+                              topLeft: Radius.circular(10)),
+                        )),
+                    child: Text(
+                      "Please LogIn",
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
   Widget getCartList(int index) {
-    var image = base! + CartaddList![index]["image"];
-    int quantity = CartaddList![index]["quantity"];
-    int price = CartaddList![index]["price"];
-    int totalamount = quantity * price;
+    var image = base! + cartAddList![index]["image"];
+    int quantity = cartAddList![index]["quantity"];
+    int price = cartAddList![index]["price"];
+    int totalAmount = quantity * price;
     return Padding(
       padding: const EdgeInsets.only(left: 5, right: 5),
       child: Card(
@@ -261,17 +254,17 @@ class _Cart_pageState extends State<Cart_page> {
             SizedBox(
               height: 10,
             ),
-            CartaddList == null
+            cartAddList == null
                 ? Text("null data")
                 : Text(
-                    CartaddList![index]["product"].toString(),
+              cartAddList![index]["product"].toString(),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
             SizedBox(
               height: 10,
             ),
             Text(
-              totalamount.toString(),
+              totalAmount.toString(),
               style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -283,23 +276,23 @@ class _Cart_pageState extends State<Cart_page> {
                 IconButton(
                     onPressed: () {
                       decrementQty(
-                        CartaddList![index]["product_id"].toString(),
-                        CartaddList![index]["size"].toString(),
+                        cartAddList![index]["product_id"].toString(),
+                        cartAddList![index]["size"].toString(),
                       );
                     },
                     icon: Icon(Icons.remove_circle_outline_rounded)),
                 TextButton(
                     onPressed: () {},
                     child: Text(
-                      CartaddList![index]["quantity"].toString(),
+                      cartAddList![index]["quantity"].toString(),
                       style: TextStyle(
                           color: Colors.green, fontWeight: FontWeight.bold),
                     )),
                 IconButton(
                     onPressed: () {
                       incrementQty(
-                        CartaddList![index]["product_id"].toString(),
-                        CartaddList![index]["size"].toString(),
+                        cartAddList![index]["product_id"].toString(),
+                        cartAddList![index]["size"].toString(),
                       );
                     },
                     icon: Icon(Icons.add_circle_outline_rounded)),
@@ -308,8 +301,8 @@ class _Cart_pageState extends State<Cart_page> {
             ElevatedButton(
                 onPressed: () {
                   removeFromCart(
-                    CartaddList![index]["product_id"].toString(),
-                    CartaddList![index]["size"].toString(),
+                    cartAddList![index]["product_id"].toString(),
+                    cartAddList![index]["size"].toString(),
                   );
                 },
                 style: ElevatedButton.styleFrom(

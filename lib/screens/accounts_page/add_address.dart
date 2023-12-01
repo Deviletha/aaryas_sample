@@ -1,10 +1,8 @@
 import 'dart:convert';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Config/ApiHelper.dart';
+import '../../Config/ApiHelper.dart';
 
 class AddAddress extends StatefulWidget {
   const AddAddress({Key? key}) : super(key: key);
@@ -15,16 +13,15 @@ class AddAddress extends StatefulWidget {
 
 class _AddAddressState extends State<AddAddress> {
 
-  String? UID;
-  String? datas;
+  String? uID;
+  String? data;
   Map? responseData;
-  List? userAddresslist;
+  List? userAddressList;
 
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      UID = prefs.getString("UID");
-      print(UID);
+      uID = prefs.getString("UID");
     });
     AddAddress();
   }
@@ -37,7 +34,7 @@ class _AddAddressState extends State<AddAddress> {
   final locationController = TextEditingController();
   final stateController = TextEditingController();
 
-  Future<void> AddAddress() async {
+  Future<void> addAddress() async {
     try {
       var response = await ApiHelper().post(endpoint: "user/saveAddress", body: {
         "name": nameController.text,
@@ -49,19 +46,21 @@ class _AddAddressState extends State<AddAddress> {
         "state" : stateController.text,
         "latitude": "123",
         "longitude": "1234",
-        "userid" : UID
+        "userid" : data
       });
       if (response != null) {
         setState(() {
           debugPrint('profile api successful:');
-          datas = response.toString();
+          data = response.toString();
           responseData = jsonDecode(response);
           if (responseData?["status"] is List<dynamic>) {
-            userAddresslist = responseData?["status"] as List<dynamic>?;
+            userAddressList = responseData?["status"] as List<dynamic>?;
           } else {
-            userAddresslist = null; // or handle the case when the response is not a list
+            userAddressList = null; // or handle the case when the response is not a list
           }
-          print(responseData.toString());
+          if (kDebugMode) {
+            print(responseData.toString());
+          }
 
         });
       }

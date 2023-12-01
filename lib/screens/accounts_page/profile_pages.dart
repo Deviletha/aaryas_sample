@@ -1,14 +1,12 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../Config/ApiHelper.dart';
-import '../Utils/imagepicker.dart';
+import '../../Config/ApiHelper.dart';
+import '../../Utils/imagepicker.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -27,13 +25,13 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  String? UID;
-  String? datas;
+  String? uID;
+  String? data;
   Map? responseData;
   List? dataList;
   int index = 0;
   Map? address;
-  List? Addresslist;
+  List? addressList;
 
   @override
   void initState() {
@@ -44,26 +42,23 @@ class _ProfileState extends State<Profile> {
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      UID = prefs.getString("UID");
-      print(UID);
+      uID = prefs.getString("UID");
     });
-    Apicall();
+    apiCall();
     getUserAddress();
   }
 
-  Future<void> Apicall() async {
+  Future<void> apiCall() async {
     try {
       var response = await ApiHelper().post(endpoint: "common/profile", body: {
-        "id": UID,
+        "id": uID,
       });
       if (response != null) {
         setState(() {
           debugPrint('profile api successful:');
-          datas = response.toString();
+          data = response.toString();
           responseData = jsonDecode(response);
           dataList = responseData?["data"];
-          print(responseData.toString());
-
         });
       } else {
         debugPrint('api failed:');
@@ -77,13 +72,13 @@ class _ProfileState extends State<Profile> {
 
   getUserAddress() async {
     var response = await ApiHelper().post(endpoint: "user/getAddress", body: {
-      "userid": UID,
+      "userid": uID,
     }).catchError((err) {});
     if (response != null) {
       setState(() {
         debugPrint('get address api successful:');
         address = jsonDecode(response);
-        Addresslist = address!["status"];
+        addressList = address!["status"];
 
       });
     } else {
@@ -182,7 +177,7 @@ class _ProfileState extends State<Profile> {
                 ListView.builder(
                   physics: ScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: Addresslist == null ? 0 : Addresslist!.length,
+                  itemCount: addressList == null ? 0 : addressList!.length,
                   itemBuilder: (context, index) => getAddressRow(index),
                 ),
               ],
@@ -202,12 +197,12 @@ class _ProfileState extends State<Profile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Addresslist == null
+                    addressList == null
                         ? Center(
                       child: CircularProgressIndicator(),
                     )
                         : Text(
-                      Addresslist![index]["address"]
+                      addressList![index]["address"]
                           .toString(),
                       style: const TextStyle(
                           fontWeight: FontWeight.bold),
@@ -216,7 +211,7 @@ class _ProfileState extends State<Profile> {
                       height: 5,
                     ),
                     Text(
-                      Addresslist![index]["phone"]
+                      addressList![index]["phone"]
                           .toString(),
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,color: Colors.red),
@@ -225,7 +220,7 @@ class _ProfileState extends State<Profile> {
                       height: 5,
                     ),
                     Text(
-                      Addresslist![index]["city"]
+                      addressList![index]["city"]
                           .toString(),
                       style: const TextStyle(
                           fontWeight: FontWeight.bold),
@@ -234,7 +229,7 @@ class _ProfileState extends State<Profile> {
                       height: 5,
                     ),
                     Text(
-                      Addresslist![index]["pincode"]
+                      addressList![index]["pincode"]
                           .toString(),
                       style: const TextStyle(
                           fontWeight: FontWeight.bold),
@@ -243,7 +238,7 @@ class _ProfileState extends State<Profile> {
                       height: 5,
                     ),
                     Text(
-                      Addresslist![index]["state"]
+                      addressList![index]["state"]
                           .toString(),
                       style: const TextStyle(
                           fontWeight: FontWeight.bold),

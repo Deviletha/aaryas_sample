@@ -6,14 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Config/ApiHelper.dart';
 
-class Category_View extends StatefulWidget {
+class CategoryView extends StatefulWidget {
   final String itemname;
   final String description;
   final String price;
   final String url;
   final int id;
 
-  const Category_View({
+  const CategoryView({
     Key? key,
     required this.itemname,
     required this.description,
@@ -23,29 +23,28 @@ class Category_View extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<Category_View> createState() => _Category_ViewState();
+  State<CategoryView> createState() => _CategoryViewState();
 }
 
-class _Category_ViewState extends State<Category_View> {
+class _CategoryViewState extends State<CategoryView> {
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
-  List<dynamic>? prcategorylist;
-  List<dynamic>? wscategorylist;
+  List<dynamic>? prCategoryList;
+  List<dynamic>? wsCategoryList;
   bool isLoading = false;
-  String? UID;
+  String? uID;
   String? data;
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
-    print(UID);
+    uID = prefs.getString("UID");
   }
 
 
-  addTowishtist(String id, String combination) async {
+  addToWishlist(String id, String combination) async {
     var response = await ApiHelper().post(
       endpoint: "wishList/add",
       body: {
-        "userid": UID,
+        "userid": uID,
         "productid": id,
         "combination": combination,
       },
@@ -53,9 +52,9 @@ class _Category_ViewState extends State<Category_View> {
 
     if (response != null) {
       setState(() {
-        debugPrint('addwishlist api successful:');
+        debugPrint('add wishlist api successful:');
         data = response.toString();
-        wscategorylist = jsonDecode(data!) as List<dynamic>?;
+        wsCategoryList = jsonDecode(data!) as List<dynamic>?;
 
         Fluttertoast.showToast(
           msg: "Added to Wishlist",
@@ -73,7 +72,7 @@ class _Category_ViewState extends State<Category_View> {
   }
 
 
-  ApiforProductsBycategory() async {
+  apiForProductsByCategory() async {
     var response = await ApiHelper().post(
       endpoint: "categories/getProducts",
       body: {
@@ -85,7 +84,7 @@ class _Category_ViewState extends State<Category_View> {
     if (response != null) {
       setState(() {
         debugPrint('get products api successful:');
-        prcategorylist = jsonDecode(response) as List<dynamic>?;
+        prCategoryList = jsonDecode(response) as List<dynamic>?;
 
       });
     } else {
@@ -97,7 +96,7 @@ class _Category_ViewState extends State<Category_View> {
   @override
   void initState() {
     super.initState();
-    ApiforProductsBycategory();
+    apiForProductsByCategory();
     checkUser();
   }
 
@@ -131,7 +130,7 @@ class _Category_ViewState extends State<Category_View> {
               Expanded(
                 child: ListView.builder(
                   scrollDirection: Axis.vertical,
-                  itemCount: prcategorylist?.length ?? 0,
+                  itemCount: prCategoryList?.length ?? 0,
                   itemBuilder: (context, index) => getCatView(index),
                 ),
               ),
@@ -143,9 +142,9 @@ class _Category_ViewState extends State<Category_View> {
   }
 
   Widget getCatView(int index) {
-    var image = base! + prcategorylist![index]["image"].toString();
-    var PID = prcategorylist![index]["id"].toString();
-    var CombID = prcategorylist![index]["combinationId"].toString();
+    var image = base! + prCategoryList![index]["image"].toString();
+    var pID = prCategoryList![index]["id"].toString();
+    var combID = prCategoryList![index]["combinationId"].toString();
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -167,27 +166,27 @@ class _Category_ViewState extends State<Category_View> {
               height: 15,
             ),
             Text(
-              prcategorylist == null
+              prCategoryList == null
                   ? 'Loading...'
-                  : prcategorylist![index]["name"].toString(),
+                  : prCategoryList![index]["name"].toString(),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(
               height: 15,
             ),
             Text(
-              prcategorylist == null
+              prCategoryList == null
                   ? 'Loading...'
-                  :  prcategorylist![index]["price"].toString(),
+                  :  prCategoryList![index]["price"].toString(),
               style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
             ),
             SizedBox(
               height: 15,
             ),
             Text(
-              prcategorylist == null
+              prCategoryList == null
                   ? 'Loading...'
-                  : prcategorylist![index]["description"].toString(),
+                  : prCategoryList![index]["description"].toString(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -196,7 +195,7 @@ class _Category_ViewState extends State<Category_View> {
               padding: const EdgeInsets.only(top: 50),
               child: ElevatedButton(
                 onPressed: () {
-                  addTowishtist(PID, CombID);
+                  addToWishlist(pID, combID);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,

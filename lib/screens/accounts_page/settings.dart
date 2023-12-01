@@ -1,5 +1,5 @@
-import 'package:aaryas_sample/screens/EditProfile.dart';
-import 'package:aaryas_sample/screens/password.dart';
+import 'package:aaryas_sample/screens/accounts_page/editprofile.dart';
+import 'package:aaryas_sample/screens/accounts_page/password.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -98,7 +98,7 @@ class _SettingsState extends State<Settings> {
                     return ChangePassword();
                   })),
               child: Row(
-                children: [
+                children: const [
                   Icon(
                     Icons.keyboard_outlined,
                     size: 25,

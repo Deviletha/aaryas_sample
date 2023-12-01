@@ -1,8 +1,10 @@
 import 'dart:async';
-import 'package:aaryas_sample/screens/BottomNavBar.dart';
+import 'package:aaryas_sample/screens/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   State<StatefulWidget> createState() => _SplashScreenState();
 }
@@ -39,7 +41,7 @@ class _SplashScreenState extends State {
             height: 20,
           ),
           Text(
-            "Hotel Aryaas",
+            "Hotel Aryas",
             style: TextStyle(
                 fontSize: 35,
                 color: Colors.teal[900],

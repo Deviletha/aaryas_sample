@@ -4,7 +4,7 @@ import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Login_page.dart';
+import 'login_page.dart';
 
 class Wishlist extends StatefulWidget {
   const Wishlist({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class Wishlist extends StatefulWidget {
 }
 
 class _WishlistState extends State<Wishlist> {
-  String? UID;
+  String? uID;
   bool isLoading = true;
   bool isLoggedIn = false;
   GlobalKey<RefreshIndicatorState> refreshKey =
@@ -28,13 +28,12 @@ class _WishlistState extends State<Wishlist> {
 
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
-    UID = prefs.getString("UID");
+    uID = prefs.getString("UID");
     setState(() {
-      isLoggedIn = UID != null;
-      print(UID);
+      isLoggedIn = uID != null;
     });
     if (isLoggedIn) {
-      APIcall();
+      apiCall();
     } else {
       setState(() {
         isLoading = false;
@@ -43,22 +42,21 @@ class _WishlistState extends State<Wishlist> {
   }
 
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
-  var WID;
-  Map? wslist;
-  List? WsList;
+  String? wID;
 
-  Map? prlist;
-  Map? prlist1;
-  List? Prlist;
+
+  Map? prList;
+  Map? prList1;
+  List? finalPrList;
   int index = 0;
 
-  Future<void> APIcall() async {
+  Future<void> apiCall() async {
     setState(() {
       isLoading = true;
     });
 
     var response = await ApiHelper().post(endpoint: "wishList/get", body: {
-      "userid": UID,
+      "userid": uID,
     }).catchError((err) {});
 
     setState(() {
@@ -68,9 +66,9 @@ class _WishlistState extends State<Wishlist> {
     if (response != null) {
       setState(() {
         debugPrint('wishlist api successful:');
-        prlist = jsonDecode(response);
-        prlist1 = prlist!["pagination"];
-        Prlist = prlist1!["pageData"];
+        prList = jsonDecode(response);
+        prList1 = prList!["pagination"];
+        finalPrList = prList1!["pageData"];
 
       });
     } else {
@@ -79,16 +77,13 @@ class _WishlistState extends State<Wishlist> {
     }
   }
 
-  Future<void> removeFromWishtist(String id) async {
+  Future<void> removeFromWishlist(String id) async {
     var response = await ApiHelper().post(endpoint: "wishList/remove", body: {
       "id": id,
     }).catchError((err) {});
     if (response != null) {
       setState(() {
         debugPrint('Remove api successful:');
-        prlist = jsonDecode(response);
-        wslist = prlist!["pagination"];
-        WsList = wslist!["pageData"];
 
         Fluttertoast.showToast(
           msg: "Removed product",
@@ -109,7 +104,7 @@ class _WishlistState extends State<Wishlist> {
   Future<void> refreshPage() async {
     refreshKey.currentState?.show(atTop: false);
     await Future.delayed(Duration(seconds: 1));
-    await APIcall();
+    await apiCall();
   }
 
   @override
@@ -130,7 +125,7 @@ class _WishlistState extends State<Wishlist> {
           ? Center(
         child: CircularProgressIndicator(),
       )
-          : Prlist == null || Prlist!.isEmpty
+          : finalPrList == null || finalPrList!.isEmpty
           ? Center(
         child: Image.asset("assets/wishlist-empty.jpg"),
       )
@@ -138,7 +133,7 @@ class _WishlistState extends State<Wishlist> {
         key: refreshKey,
         onRefresh: refreshPage,
         child: ListView.builder(
-          itemCount: Prlist == null ? 0 : Prlist?.length,
+          itemCount: finalPrList == null ? 0 : finalPrList?.length,
           itemBuilder: (context, index) => getWishlist(index),
         ),
       )
@@ -173,9 +168,9 @@ class _WishlistState extends State<Wishlist> {
   }
 
   Widget getWishlist(int index) {
-    var image = base! + Prlist![index]["image"];
-    var price = "₹ " + Prlist![index]["combinationPrice"].toString();
-    WID = Prlist![index]["wishlistId"].toString();
+    var image = base! + finalPrList![index]["image"];
+    var price = "₹ ${finalPrList![index]["combinationPrice"]}";
+    wID = finalPrList![index]["wishlistId"].toString();
     return Card(
       child: ListTile(
           title: Column(
@@ -209,17 +204,17 @@ class _WishlistState extends State<Wishlist> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Prlist == null
+                        finalPrList == null
                             ? Text("null data")
                             : Text(
-                          Prlist![index]["name"].toString(),
+                          finalPrList![index]["name"].toString(),
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
                           height: 10,
                         ),
                         Text(
-                          Prlist![index]["description"].toString(),
+                          finalPrList![index]["description"].toString(),
                           maxLines: 2,
                           style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
@@ -243,7 +238,7 @@ class _WishlistState extends State<Wishlist> {
           ),
           trailing: TextButton(
             onPressed: () {
-              removeFromWishtist(WID);
+              removeFromWishlist(wID!);
             },
             child: Text(
               "Remove",
