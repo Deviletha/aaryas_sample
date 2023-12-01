@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Config/ApiHelper.dart';
 import 'product_view.dart';
 
@@ -26,7 +24,6 @@ class _SearchState extends State<Search> {
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     uID = prefs.getString("UID");
-
   }
 
   final TextEditingController _searchController = TextEditingController();
@@ -37,10 +34,7 @@ class _SearchState extends State<Search> {
     super.initState();
   }
 
-  addToWishlist(
-    String id,
-      String comId
-  ) async {
+  addToWishlist(String id, String comId) async {
     var response = await ApiHelper().post(endpoint: "wishList/add", body: {
       "userid": uID,
       "productid": id,
@@ -50,7 +44,6 @@ class _SearchState extends State<Search> {
     if (response != null) {
       setState(() {
         debugPrint('add wishlist api successful:');
-
 
         Fluttertoast.showToast(
           msg: "Added to Wishlist",
@@ -63,7 +56,6 @@ class _SearchState extends State<Search> {
       });
     } else {
       debugPrint('Add to wishlist failed:');
-
     }
   }
 
@@ -87,7 +79,6 @@ class _SearchState extends State<Search> {
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -145,7 +136,7 @@ class _SearchState extends State<Search> {
   Widget getSearchList(int index) {
     var image = base! + searchList![index]["image"].toString();
     var price = "₹${searchList![index]["price"]}";
-    var pID =  searchList![index]["id"].toString();
+    var pID = searchList![index]["id"].toString();
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -199,7 +190,7 @@ class _SearchState extends State<Search> {
                       searchList == null
                           ? Text("null data")
                           : Text(
-                        searchList![index]["name"].toString(),
+                              searchList![index]["name"].toString(),
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
@@ -223,9 +214,7 @@ class _SearchState extends State<Search> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            addToWishlist(
-                                pID,pID
-                            );
+                            addToWishlist(pID, pID);
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.teal,

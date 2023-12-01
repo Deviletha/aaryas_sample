@@ -33,7 +33,6 @@ class _PlaceOrderState extends State<PlaceOrder> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       uID = prefs.getString("UID");
-
     });
   }
 
@@ -63,8 +62,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-      }
-      );
+      });
 
       Navigator.push(
         context,
@@ -74,7 +72,6 @@ class _PlaceOrderState extends State<PlaceOrder> {
       );
     } else {
       debugPrint('place order api failed:');
-
     }
   }
 

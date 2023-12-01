@@ -32,7 +32,8 @@ class _SplashScreenState extends State {
             borderRadius: BorderRadius.circular(20), // Image border
             child: SizedBox.fromSize(
               size: Size.fromRadius(60), // Image radius
-              child: Image.asset("assets/img.png",
+              child: Image.asset(
+                "assets/img.png",
                 fit: BoxFit.cover,
               ),
             ),

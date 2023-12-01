@@ -14,7 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   Map? user;
   List? userList;
   String? uID;
@@ -26,7 +25,6 @@ class _LoginPageState extends State<LoginPage> {
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     uID = prefs.getString("UID");
-    print(uID);
   }
 
   @override
@@ -34,11 +32,16 @@ class _LoginPageState extends State<LoginPage> {
     return SafeArea(
       child: Scaffold(
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               height: 15,
             ),
-            Text("Login",style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            Text(
+              "Login",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             Padding(
               padding: const EdgeInsets.only(
                   left: 10, right: 10, top: 40, bottom: 20),
@@ -51,7 +54,8 @@ class _LoginPageState extends State<LoginPage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10))),),
+                          bottomLeft: Radius.circular(10))),
+                ),
                 textInputAction: TextInputAction.next,
                 validator: (uname) {
                   if (uname!.isEmpty || !uname.contains('')) {
@@ -90,7 +94,8 @@ class _LoginPageState extends State<LoginPage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10))),),
+                          bottomLeft: Radius.circular(10))),
+                ),
                 textInputAction: TextInputAction.done,
                 validator: (password) {
                   if (password!.isEmpty || password.length < 6) {
@@ -101,7 +106,6 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
             ),
-
             SizedBox(
               width: 350,
               height: 50,
@@ -110,16 +114,19 @@ class _LoginPageState extends State<LoginPage> {
                   String username = usernameController.text.toString();
                   String password = passwordController.text.toString();
                   if (username.isNotEmpty && password.isNotEmpty) {
-                    var response = await ApiHelper().post(endpoint: "common/authenticate", body: {
+                    var response = await ApiHelper()
+                        .post(endpoint: "common/authenticate", body: {
                       'username': username,
                       'password': password,
                     }).catchError((err) {});
                     if (response != null) {
                       setState(() {
-                        debugPrint('API successful:'); userList = jsonDecode(response);
+                        debugPrint('API successful:');
+                        userList = jsonDecode(response);
                       });
                       final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString("UID", userList![0]["id"].toString());
+                      await prefs.setString(
+                          "UID", userList![0]["id"].toString());
                       checkUser();
                       Fluttertoast.showToast(
                         msg: "Login success",
@@ -129,7 +136,10 @@ class _LoginPageState extends State<LoginPage> {
                         textColor: Colors.white,
                         fontSize: 16.0,
                       );
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNav()),);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => BottomNav()),
+                      );
                     } else {
                       // API call failed
                       debugPrint('API failed:');
@@ -158,7 +168,9 @@ class _LoginPageState extends State<LoginPage> {
                     backgroundColor: Colors.teal,
                     shadowColor: Colors.teal[300],
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),topRight: Radius.circular(10)),
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          topRight: Radius.circular(10)),
                     )),
                 child: Text("Login"),
               ),

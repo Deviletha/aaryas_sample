@@ -30,7 +30,6 @@ class _SelectAddressState extends State<SelectAddress> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       uID = prefs.getString("UID");
-
     });
     getUserAddress();
   }
@@ -44,11 +43,9 @@ class _SelectAddressState extends State<SelectAddress> {
         debugPrint('get address api successful:');
         address = jsonDecode(response);
         addressList = address!["status"];
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -71,45 +68,45 @@ class _SelectAddressState extends State<SelectAddress> {
         children: [
           addressList == null
               ? Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: Column(
-              children: [
-                SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  height: 100,
-                  color: Colors.white,
-                ),
-                SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  height: 100,
-                  color: Colors.white,
-                ),
-                SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  height: 100,
-                  color: Colors.white,
-                ),
-              ],
-            ),
-          )
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        height: 100,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        height: 100,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        height: 100,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                )
               : Column(
-            children: [
-              Text(
-                "Your Order will be shipped to this address",
-                style: TextStyle(fontSize: 15),
-              ),
-              ListView.builder(
-                physics: ScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: addressList == null ? 0 : addressList?.length,
-                itemBuilder: (context, index) => getAddressRow(index),
-              ),
-            ],
-          ),
+                  children: [
+                    Text(
+                      "Your Order will be shipped to this address",
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    ListView.builder(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: addressList == null ? 0 : addressList?.length,
+                      itemBuilder: (context, index) => getAddressRow(index),
+                    ),
+                  ],
+                ),
         ],
       ),
     );
@@ -136,18 +133,18 @@ class _SelectAddressState extends State<SelectAddress> {
             children: [
               addressList == null
                   ? Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  width: double.infinity,
-                  height: 20,
-                  color: Colors.white,
-                ),
-              )
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: double.infinity,
+                        height: 20,
+                        color: Colors.white,
+                      ),
+                    )
                   : Text(
-                addressList![index]["address"].toString(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+                      addressList![index]["address"].toString(),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
               SizedBox(height: 5),
               Text(
                 addressList![index]["phone"].toString(),

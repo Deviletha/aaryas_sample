@@ -70,8 +70,8 @@ class _SettingsState extends State<Settings> {
             child: InkWell(
               onTap: () =>
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ChangeProfile();
-                  })),
+                return ChangeProfile();
+              })),
               child: Row(
                 children: const [
                   Icon(
@@ -95,8 +95,8 @@ class _SettingsState extends State<Settings> {
             child: InkWell(
               onTap: () =>
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ChangePassword();
-                  })),
+                return ChangePassword();
+              })),
               child: Row(
                 children: const [
                   Icon(

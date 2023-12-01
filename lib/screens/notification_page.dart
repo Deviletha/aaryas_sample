@@ -21,7 +21,10 @@ class _NotificationsState extends State<Notifications> {
         centerTitle: true,
       ),
       body: Center(
-        child: Text("No Notification",style: TextStyle(color: Colors.grey),),
+        child: Text(
+          "No Notification",
+          style: TextStyle(color: Colors.grey),
+        ),
       ),
     );
   }

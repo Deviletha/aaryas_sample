@@ -19,7 +19,6 @@ class _SignupPageState extends State<SignupPage> {
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     uID = prefs.getString("UID");
-
   }
 
   bool showPass = true;
@@ -68,11 +67,8 @@ class _SignupPageState extends State<SignupPage> {
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -91,8 +87,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.only(left: 10, right: 10,top: 10 ),
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
                   child: TextFormField(
                     controller: contactController,
                     decoration: InputDecoration(

@@ -65,7 +65,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   getMyOrders() async {
     var response =
-    await ApiHelper().post(endpoint: "common/getOrderDetails", body: {
+        await ApiHelper().post(endpoint: "common/getOrderDetails", body: {
       "orderid": widget.id,
       "offset": "0",
       "pageLimit": "10",
@@ -76,11 +76,9 @@ class _OrderDetailsState extends State<OrderDetails> {
         order = jsonDecode(response);
         order1 = order!["data"];
         orderList = order1!["pageData"];
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -141,9 +139,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                   orderList == null
                       ? Text("null data")
                       : Text(
-                    orderList![index]["product"].toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                          orderList![index]["product"].toString(),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                   SizedBox(
                     height: 10,
                   ),
@@ -163,9 +161,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                   ),
                 ],
               ),
-              ElevatedButton(onPressed: (){
-                returnItem();
-              },
+              ElevatedButton(
+                  onPressed: () {
+                    returnItem();
+                  },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                       shadowColor: Colors.teal[300],

@@ -35,7 +35,6 @@ class ProductView extends StatefulWidget {
 }
 
 class _ProductViewState extends State<ProductView> {
-
   int index = 0;
   Map? cList;
   List? cartList;
@@ -46,6 +45,7 @@ class _ProductViewState extends State<ProductView> {
     checkUser();
     super.initState();
   }
+
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     uID = prefs.getString("UID");
@@ -82,7 +82,6 @@ class _ProductViewState extends State<ProductView> {
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -102,13 +101,15 @@ class _ProductViewState extends State<ProductView> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.productName,style:
-        TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),),
+        title: Text(
+          widget.productName,
+          style:
+              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle: const SystemUiOverlayStyle(

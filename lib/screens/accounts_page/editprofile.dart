@@ -21,8 +21,6 @@ class _ChangeProfileState extends State<ChangeProfile> {
   final lastnameController = TextEditingController();
   final emailIdController = TextEditingController();
 
-
-
   Map? finalUserList;
   int index = 0;
 
@@ -32,7 +30,6 @@ class _ChangeProfileState extends State<ChangeProfile> {
     if (kDebugMode) {
       print(uID);
     }
-
   }
 
   editProfile() async {
@@ -42,8 +39,8 @@ class _ChangeProfileState extends State<ChangeProfile> {
         "first_name": firstnameController.text,
         "last_name": lastnameController.text,
         "email": emailIdController.text,
-        "dob" : "21/06/1998",
-        "id" : uID
+        "dob": "21/06/1998",
+        "id": uID
       },
     ).catchError((err) {});
 
@@ -51,7 +48,6 @@ class _ChangeProfileState extends State<ChangeProfile> {
       setState(() {
         debugPrint('edit profile api successful:');
         finalUserList = jsonDecode(response);
-
 
         Fluttertoast.showToast(
           msg: "Profile Edited Successfully",
@@ -66,7 +62,6 @@ class _ChangeProfileState extends State<ChangeProfile> {
       });
     } else {
       debugPrint('edit profile failed:');
-
     }
   }
 
@@ -91,8 +86,8 @@ class _ChangeProfileState extends State<ChangeProfile> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20, bottom: 20),
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
               controller: firstnameController,
               decoration: InputDecoration(
@@ -113,8 +108,8 @@ class _ChangeProfileState extends State<ChangeProfile> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20, bottom: 20),
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
               controller: lastnameController,
               decoration: InputDecoration(
@@ -123,19 +118,20 @@ class _ChangeProfileState extends State<ChangeProfile> {
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
-              ),validator: (value) {
-              if (value!.isEmpty) {
-                return 'Enter a valid name';
-              } else {
-                return null;
-              }
-            },
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Enter a valid name';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20, bottom: 20),
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
               controller: emailIdController,
               decoration: InputDecoration(
@@ -146,12 +142,12 @@ class _ChangeProfileState extends State<ChangeProfile> {
                         bottomLeft: Radius.circular(10))),
               ),
               validator: (value) {
-              if (value!.isEmpty || !value.contains('@')) {
-                return 'Enter a valid Email ID';
-              } else {
-                return null;
-              }
-            },
+                if (value!.isEmpty || !value.contains('@')) {
+                  return 'Enter a valid Email ID';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),

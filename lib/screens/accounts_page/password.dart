@@ -12,8 +12,6 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-
-
   final passwordController = TextEditingController();
   final newPassController = TextEditingController();
   String? uID;
@@ -81,8 +79,8 @@ class _ChangePasswordState extends State<ChangePassword> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20, bottom: 20),
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
               controller: passwordController,
               obscureText: showPass,
@@ -120,8 +118,8 @@ class _ChangePasswordState extends State<ChangePassword> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20, bottom: 20),
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
               controller: newPassController,
               obscureText: showPass,

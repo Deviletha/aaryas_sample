@@ -39,7 +39,6 @@ class _CategoryViewState extends State<CategoryView> {
     uID = prefs.getString("UID");
   }
 
-
   addToWishlist(String id, String combination) async {
     var response = await ApiHelper().post(
       endpoint: "wishList/add",
@@ -67,10 +66,8 @@ class _CategoryViewState extends State<CategoryView> {
       });
     } else {
       debugPrint('Add to wishlist failed:');
-
     }
   }
-
 
   apiForProductsByCategory() async {
     var response = await ApiHelper().post(
@@ -85,11 +82,9 @@ class _CategoryViewState extends State<CategoryView> {
       setState(() {
         debugPrint('get products api successful:');
         prCategoryList = jsonDecode(response) as List<dynamic>?;
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -177,8 +172,9 @@ class _CategoryViewState extends State<CategoryView> {
             Text(
               prCategoryList == null
                   ? 'Loading...'
-                  :  prCategoryList![index]["price"].toString(),
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                  : prCategoryList![index]["price"].toString(),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.green),
             ),
             SizedBox(
               height: 15,

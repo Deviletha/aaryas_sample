@@ -14,7 +14,6 @@ class MyOrders extends StatefulWidget {
 }
 
 class _MyOrdersState extends State<MyOrders> {
-
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   String? uID;
   Map? order;
@@ -31,7 +30,6 @@ class _MyOrdersState extends State<MyOrders> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       uID = prefs.getString("UID");
-
     });
     getMyOrders();
   }
@@ -49,11 +47,9 @@ class _MyOrdersState extends State<MyOrders> {
         order = jsonDecode(response);
         order1 = order!["data"];
         orderList = order1!["pageData"];
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -85,18 +81,19 @@ class _MyOrdersState extends State<MyOrders> {
         color: Colors.grey.shade50,
         child: InkWell(
           onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OrderDetails(
-            id: orderList![index]["id"].toString(),
-          ),
-        ),
-      );
-      },
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderDetails(
+                  id: orderList![index]["id"].toString(),
+                ),
+              ),
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Row(
@@ -127,12 +124,13 @@ class _MyOrdersState extends State<MyOrders> {
                       ],
                     ),
                     Container(
-                      height: 40,width: 80,
-                      decoration: BoxDecoration(color: Colors.green,borderRadius: BorderRadius.circular(10)),
+                      height: 40,
+                      width: 80,
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(10)),
                       child: Center(
-                        child: Text(
-                          "Order Placed"
-                        ),
+                        child: Text("Order Placed"),
                       ),
                     )
                   ],

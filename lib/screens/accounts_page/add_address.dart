@@ -12,7 +12,6 @@ class AddAddress extends StatefulWidget {
 }
 
 class _AddAddressState extends State<AddAddress> {
-
   String? uID;
   String? data;
   Map? responseData;
@@ -36,17 +35,18 @@ class _AddAddressState extends State<AddAddress> {
 
   Future<void> addAddress() async {
     try {
-      var response = await ApiHelper().post(endpoint: "user/saveAddress", body: {
+      var response =
+          await ApiHelper().post(endpoint: "user/saveAddress", body: {
         "name": nameController.text,
         "contact": contactController.text,
         "locality": localityController.text,
-        "postal" : postalController.text,
-        "address" : addressController.text,
-        "location" : locationController.text,
-        "state" : stateController.text,
+        "postal": postalController.text,
+        "address": addressController.text,
+        "location": locationController.text,
+        "state": stateController.text,
         "latitude": "123",
         "longitude": "1234",
-        "userid" : data
+        "userid": data
       });
       if (response != null) {
         setState(() {
@@ -56,22 +56,18 @@ class _AddAddressState extends State<AddAddress> {
           if (responseData?["status"] is List<dynamic>) {
             userAddressList = responseData?["status"] as List<dynamic>?;
           } else {
-            userAddressList = null; // or handle the case when the response is not a list
+            userAddressList =
+                null; // or handle the case when the response is not a list
           }
           if (kDebugMode) {
             print(responseData.toString());
           }
-
         });
-      }
-
-      else {
+      } else {
         debugPrint('api failed:');
-
       }
     } catch (err) {
       debugPrint('An error occurred: $err');
-
     }
   }
 
@@ -85,160 +81,174 @@ class _AddAddressState extends State<AddAddress> {
       backgroundColor: Colors.white,
       body: ListView(
         children: [
-          Text("Hey, User!",textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 35,color: Colors.teal[900]),),
-          Text("Complete your profile",textAlign: TextAlign.center,),
+          Text(
+            "Hey, User!",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 35, color: Colors.teal[900]),
+          ),
+          Text(
+            "Complete your profile",
+            textAlign: TextAlign.center,
+          ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: nameController,
               decoration: InputDecoration(
                 labelText: "Name",
-                prefixIcon: Icon(Icons.account_circle_outlined,color: Colors.black),
+                prefixIcon:
+                    Icon(Icons.account_circle_outlined, color: Colors.black),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
-              ),validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter your name';
-              } else {
-                return null;
-              }
-            },
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter your name';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: localityController,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.location_city_rounded,color: Colors.black),
+                prefixIcon:
+                    Icon(Icons.location_city_rounded, color: Colors.black),
                 labelText: "City",
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
-              ),validator: (value) {
-              if (value!.isEmpty) {
-                return 'Enter your city';
-              } else {
-                return null;
-              }
-            },
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Enter your city';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: contactController,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.phone_android_outlined,color: Colors.black),
+                prefixIcon:
+                    Icon(Icons.phone_android_outlined, color: Colors.black),
                 labelText: "Mobile",
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
-              ),validator: (value) {
-              if (value!.isEmpty) {
-                return 'Enter your Number';
-              } else {
-                return null;
-              }
-            },
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Enter your Number';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: addressController,
               decoration: InputDecoration(
                 labelText: "Address",
-                prefixIcon: Icon(Icons.mail_outlined,color: Colors.black),
+                prefixIcon: Icon(Icons.mail_outlined, color: Colors.black),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
-              ),validator: (value) {
-              if (value!.isEmpty) {
-                return 'Enter your address';
-              } else {
-                return null;
-              }
-            },
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Enter your address';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: locationController,
               decoration: InputDecoration(
                 labelText: "Town",
-                prefixIcon: Icon(Icons.villa_outlined,color: Colors.black),
+                prefixIcon: Icon(Icons.villa_outlined, color: Colors.black),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
-              ),validator: (value) {
-              if (value!.isEmpty) {
-                return 'Enter your town';
-              } else {
-                return null;
-              }
-            },
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Enter your town';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: postalController,
               decoration: InputDecoration(
                 labelText: "Pin code",
-                prefixIcon: Icon(Icons.person_pin_circle_outlined,color: Colors.black),
+                prefixIcon:
+                    Icon(Icons.person_pin_circle_outlined, color: Colors.black),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
-              ),validator: (value) {
-              if (value!.isEmpty) {
-                return 'Enter you pin code';
-              } else {
-                return null;
-              }
-            },
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Enter you pin code';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 10, right: 10, top: 20, bottom: 20),
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
             child: TextFormField(
               controller: stateController,
               decoration: InputDecoration(
                 labelText: "State",
-                prefixIcon: Icon(Icons.edit_location_alt_outlined,color: Colors.black,),
+                prefixIcon: Icon(
+                  Icons.edit_location_alt_outlined,
+                  color: Colors.black,
+                ),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomLeft: Radius.circular(10))),
-              ),validator: (value) {
-              if (value!.isEmpty) {
-                return 'Enter your state';
-              } else {
-                return null;
-              }
-            },
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Enter your state';
+                } else {
+                  return null;
+                }
+              },
               textInputAction: TextInputAction.done,
             ),
           ),
@@ -250,7 +260,8 @@ class _AddAddressState extends State<AddAddress> {
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
-                  shadowColor: Colors.teal[300],minimumSize: Size.fromHeight(50),
+                  shadowColor: Colors.teal[300],
+                  minimumSize: Size.fromHeight(50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(15),

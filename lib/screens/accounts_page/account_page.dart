@@ -52,16 +52,15 @@ class _AccountsState extends State<Accounts> {
           data = response.toString();
           responseData = jsonDecode(response);
           dataList = responseData?["data"];
-
         });
       } else {
         debugPrint('api failed:');
       }
     } catch (err) {
       debugPrint('An error occurred: $err');
-
     }
   }
+
   void openGmail() async {
     final url = "mailto:aryaashelp&support@gmail.com?subject=&body=";
     if (await canLaunch(url)) {
@@ -83,7 +82,8 @@ class _AccountsState extends State<Accounts> {
               TextButton(
                 child: Text("Yes"),
                 onPressed: () {
-                  launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
+                  launch(
+                      "mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
                 },
               ),
             ],
@@ -92,7 +92,6 @@ class _AccountsState extends State<Accounts> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -128,44 +127,44 @@ class _AccountsState extends State<Accounts> {
                         color: Colors.orangeAccent,
                       ),
                       height: 100,
-                      child:Center(
+                      child: Center(
                         child: dataList == null
                             ? Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              child: Text(
-                                '',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ),
-                            title: Text(
-                              '',
-                              style: TextStyle(fontSize: 35),
-                            ),
-                            subtitle: Text(''),
-                          ),
-                        )
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    child: Text(
+                                      '',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    '',
+                                    style: TextStyle(fontSize: 35),
+                                  ),
+                                  subtitle: Text(''),
+                                ),
+                              )
                             : ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child: Text(
-                              dataList![index]["first_name"][0].toString(),
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
-                          title: Text(
-                            dataList![index]["first_name"].toString(),
-                            style: TextStyle(fontSize: 35),
-                          ),
-                          subtitle: Text(
-                            dataList![index]["email"].toString(),
-                          ),
-                        ),
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Text(
+                                    dataList![index]["first_name"][0]
+                                        .toString(),
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
+                                title: Text(
+                                  dataList![index]["first_name"].toString(),
+                                  style: TextStyle(fontSize: 35),
+                                ),
+                                subtitle: Text(
+                                  dataList![index]["email"].toString(),
+                                ),
+                              ),
                       ),
-
                     ),
                   ),
                   SizedBox(height: 15),
@@ -248,11 +247,10 @@ class _AccountsState extends State<Accounts> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
-                      onTap: (){
+                      onTap: () {
                         openGmail();
                         // launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
                       },
-
                       child: Row(
                         children: const [
                           Icon(
@@ -275,9 +273,9 @@ class _AccountsState extends State<Accounts> {
               ),
             )
           : Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Image.asset("assets/img_1.png"),
                   ElevatedButton(
@@ -301,7 +299,7 @@ class _AccountsState extends State<Accounts> {
                   ),
                 ],
               ),
-          ),
+            ),
     );
   }
 }

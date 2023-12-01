@@ -148,49 +148,48 @@ class _CartPageState extends State<CartPage> {
                   child: CircularProgressIndicator(),
                 )
               : ListView(
-                children: [
-                  Card(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          "${cartAddList!.length} Items in Cart",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        ElevatedButton(
-                            onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) {
-                                    return SelectAddress();
-                                  }),
-                                ),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                shadowColor: Colors.teal[300],
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(10),
-                                      topLeft: Radius.circular(10)),
-                                )),
-                            child: Text("Place Order"))
-                      ],
+                  children: [
+                    Card(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "${cartAddList!.length} Items in Cart",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          ElevatedButton(
+                              onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) {
+                                      return SelectAddress();
+                                    }),
+                                  ),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  shadowColor: Colors.teal[300],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        bottomRight: Radius.circular(10),
+                                        topLeft: Radius.circular(10)),
+                                  )),
+                              child: Text("Place Order"))
+                        ],
+                      ),
                     ),
-                  ),
-                  GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: .5,
+                    GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: .5,
+                      ),
+                      itemCount: cartAddList == null ? 0 : cartAddList?.length,
+                      itemBuilder: (context, index) => getCartList(index),
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
                     ),
-                    itemCount:
-                    cartAddList == null ? 0 : cartAddList?.length,
-                    itemBuilder: (context, index) => getCartList(index),
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                  ),
-                ],
-              )
+                  ],
+                )
           : Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -257,7 +256,7 @@ class _CartPageState extends State<CartPage> {
             cartAddList == null
                 ? Text("null data")
                 : Text(
-              cartAddList![index]["product"].toString(),
+                    cartAddList![index]["product"].toString(),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
             SizedBox(

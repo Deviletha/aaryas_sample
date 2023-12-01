@@ -18,7 +18,7 @@ class _WishlistState extends State<Wishlist> {
   bool isLoading = true;
   bool isLoggedIn = false;
   GlobalKey<RefreshIndicatorState> refreshKey =
-  GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -44,7 +44,6 @@ class _WishlistState extends State<Wishlist> {
   String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   String? wID;
 
-
   Map? prList;
   Map? prList1;
   List? finalPrList;
@@ -69,11 +68,9 @@ class _WishlistState extends State<Wishlist> {
         prList = jsonDecode(response);
         prList1 = prList!["pagination"];
         finalPrList = prList1!["pageData"];
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -94,10 +91,8 @@ class _WishlistState extends State<Wishlist> {
           fontSize: 16.0,
         );
       });
-
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -114,7 +109,8 @@ class _WishlistState extends State<Wishlist> {
       appBar: AppBar(
         title: Text(
           "WISHLIST",
-          style: TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+          style:
+              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -122,48 +118,48 @@ class _WishlistState extends State<Wishlist> {
       ),
       body: isLoggedIn
           ? isLoading
-          ? Center(
-        child: CircularProgressIndicator(),
-      )
-          : finalPrList == null || finalPrList!.isEmpty
-          ? Center(
-        child: Image.asset("assets/wishlist-empty.jpg"),
-      )
-          : RefreshIndicator(
-        key: refreshKey,
-        onRefresh: refreshPage,
-        child: ListView.builder(
-          itemCount: finalPrList == null ? 0 : finalPrList?.length,
-          itemBuilder: (context, index) => getWishlist(index),
-        ),
-      )
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : finalPrList == null || finalPrList!.isEmpty
+                  ? Center(
+                      child: Image.asset("assets/wishlist-empty.jpg"),
+                    )
+                  : RefreshIndicator(
+                      key: refreshKey,
+                      onRefresh: refreshPage,
+                      child: ListView.builder(
+                        itemCount:
+                            finalPrList == null ? 0 : finalPrList?.length,
+                        itemBuilder: (context, index) => getWishlist(index),
+                      ),
+                    )
           : Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset("assets/img_1.png"),
-            ElevatedButton(
-              onPressed: (){
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage())
-                );
-              },style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                shadowColor: Colors.teal[300],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(10),
-                      topLeft: Radius.circular(10)),
-                )),
-              child: Text(
-                "Please LogIn",
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset("assets/img_1.png"),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        shadowColor: Colors.teal[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(10),
+                              topLeft: Radius.circular(10)),
+                        )),
+                    child: Text(
+                      "Please LogIn",
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -207,16 +203,18 @@ class _WishlistState extends State<Wishlist> {
                         finalPrList == null
                             ? Text("null data")
                             : Text(
-                          finalPrList![index]["name"].toString(),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                                finalPrList![index]["name"].toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
                         SizedBox(
                           height: 10,
                         ),
                         Text(
                           finalPrList![index]["description"].toString(),
                           maxLines: 2,
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(
                           height: 10,
@@ -224,7 +222,9 @@ class _WishlistState extends State<Wishlist> {
                         Text(
                           price,
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.green),
                         ),
                         SizedBox(
                           height: 10,

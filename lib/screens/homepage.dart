@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   Map? order;
   Map? order1;
   List? orderList;
+
   ///CategoryList
   List? categoryList;
 
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
       isLoading = true;
     });
     var response =
-    await ApiHelper().post(endpoint: "common/getMyOrders", body: {
+        await ApiHelper().post(endpoint: "common/getMyOrders", body: {
       "userid": uID,
       "offset": "0",
       "pageLimit": "1",
@@ -102,7 +103,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         debugPrint('get products api successful:');
         categoryList = jsonDecode(response);
-
       });
     } else {
       debugPrint('api failed:');
@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     var response =
-    await ApiHelper().post(endpoint: "products/ByCombination", body: {
+        await ApiHelper().post(endpoint: "products/ByCombination", body: {
       "offset": "0",
       "pageLimit": "50",
     }).catchError((err) {});
@@ -131,11 +131,9 @@ class _HomePageState extends State<HomePage> {
         productList = jsonDecode(response);
         productList1 = productList!["pagination"];
         finalProductList = productList1!["pageData"];
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -145,7 +143,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     var response =
-    await ApiHelper().post(endpoint: "products/ByCombination", body: {
+        await ApiHelper().post(endpoint: "products/ByCombination", body: {
       "offset": "0",
       "pageLimit": "8",
     }).catchError((err) {});
@@ -161,12 +159,9 @@ class _HomePageState extends State<HomePage> {
         popularList = jsonDecode(response);
         popularList1 = popularList!["pagination"];
         finalPopularList = popularList1!["pageData"];
-
-
       });
     } else {
       debugPrint('api failed:');
-
     }
   }
 
@@ -182,7 +177,6 @@ class _HomePageState extends State<HomePage> {
         debugPrint('add wishlist api successful:');
         data = response.toString();
 
-
         Fluttertoast.showToast(
           msg: "Added to Wishlist",
           toastLength: Toast.LENGTH_SHORT,
@@ -194,7 +188,6 @@ class _HomePageState extends State<HomePage> {
       });
     } else {
       debugPrint('Add to wishlist failed:');
-
     }
   }
 
@@ -220,15 +213,14 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           "ARYAS",
           style:
-          TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
-              onPressed: () =>
-                  Navigator.push(context, MaterialPageRoute(
+              onPressed: () => Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
                       return Notifications();
                     },
@@ -261,13 +253,10 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
-                      border: Border.all(color: Colors.teal)
-                    ),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text( "Search..."),
-                        Icon(Icons.search)
-                      ],
+                        border: Border.all(color: Colors.teal)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [Text("Search..."), Icon(Icons.search)],
                     ),
                   ),
                 ),
@@ -275,200 +264,205 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           const Heading(text: "Recent Orders"),
-        Container(
-          child: isLoading
-              ? Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: ListView.builder(
-              physics: ScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 1, // Set a fixed count for shimmer effect
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
+          Container(
+            child: isLoading
+                ? Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: ListView.builder(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 1, // Set a fixed count for shimmer effect
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          height: 100, // Adjust the height as needed
+                        );
+                      },
+                    ),
+                  )
+                : ListView.builder(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: orderList == null ? 0 : orderList?.length,
+                    itemBuilder: (context, index) => getOrderList(index),
                   ),
-                  height: 100, // Adjust the height as needed
-                );
-              },
-            ),
-          )
-              : ListView.builder(
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: orderList == null ? 0 : orderList?.length,
-            itemBuilder: (context, index) => getOrderList(index),
           ),
-        ),
           const Heading(text: "Category"),
           Container(
             child: isLoadingCategories
                 ? Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: CarouselSlider.builder(
-                itemCount:
-                5, // Set a fixed count for shimmer effect
-                itemBuilder: (context, index, realIndex) {
-                  return getCategoryRow(index);
-                },
-                options: CarouselOptions(
-                    height: 300,
-                    aspectRatio: 15 / 6,
-                    viewportFraction: .6,
-                    initialPage: 0,
-                    enableInfiniteScroll: true,
-                    reverse: false,
-                    autoPlay: false,
-                    enlargeCenterPage: true,
-                    autoPlayInterval: Duration(seconds: 3),
-                    autoPlayAnimationDuration: Duration(milliseconds: 800),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    onPageChanged: (index, reason) {},
-                    scrollDirection: Axis.horizontal,
-                ),
-              ),
-            )
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: CarouselSlider.builder(
+                      itemCount: 5, // Set a fixed count for shimmer effect
+                      itemBuilder: (context, index, realIndex) {
+                        return getCategoryRow(index);
+                      },
+                      options: CarouselOptions(
+                        height: 300,
+                        aspectRatio: 15 / 6,
+                        viewportFraction: .6,
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        reverse: false,
+                        autoPlay: false,
+                        enlargeCenterPage: true,
+                        autoPlayInterval: Duration(seconds: 3),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        onPageChanged: (index, reason) {},
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    ),
+                  )
                 : CarouselSlider.builder(
-              itemCount: categoryList == null ? 0 : categoryList?.length,
-              itemBuilder: (context, index, realIndex) {
-                return getCategoryRow(index);
-              },
-              options: CarouselOptions(
-                height: 300,
-                aspectRatio: 15 / 6,
-                viewportFraction: .6,
-                initialPage: 0,
-                enableInfiniteScroll: true,
-                reverse: false,
-                autoPlay: false,
-                enlargeCenterPage: true,
-                autoPlayInterval: Duration(seconds: 3),
-                autoPlayAnimationDuration: Duration(milliseconds: 800),
-                autoPlayCurve: Curves.fastOutSlowIn,
-                onPageChanged: (index, reason) {},
-                scrollDirection: Axis.horizontal,
-              ),
-            ),
+                    itemCount: categoryList == null ? 0 : categoryList?.length,
+                    itemBuilder: (context, index, realIndex) {
+                      return getCategoryRow(index);
+                    },
+                    options: CarouselOptions(
+                      height: 300,
+                      aspectRatio: 15 / 6,
+                      viewportFraction: .6,
+                      initialPage: 0,
+                      enableInfiniteScroll: true,
+                      reverse: false,
+                      autoPlay: false,
+                      enlargeCenterPage: true,
+                      autoPlayInterval: Duration(seconds: 3),
+                      autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      onPageChanged: (index, reason) {},
+                      scrollDirection: Axis.horizontal,
+                    ),
+                  ),
           ),
           const Heading(text: "Popular Items"),
           Container(
             child: isLoading
                 ? Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: GridView.builder(
-                physics: ScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  childAspectRatio: 1.2,
-                ),
-                itemCount: 8, // Set a fixed count for shimmer effect
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: GridView.builder(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        childAspectRatio: 1.2,
+                      ),
+                      itemCount: 8,
+                      // Set a fixed count for shimmer effect
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            )
+                  )
                 : GridView.builder(
-              physics: ScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                childAspectRatio: 1.2,
-              ),
-              itemCount: finalPopularList == null ? 0 : finalPopularList?.length,
-              itemBuilder: (context, index) => getPopularRow(index),
-            ),
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      childAspectRatio: 1.2,
+                    ),
+                    itemCount:
+                        finalPopularList == null ? 0 : finalPopularList?.length,
+                    itemBuilder: (context, index) => getPopularRow(index),
+                  ),
           ),
-
           const Heading(text: "Top Picks For You"),
           Container(
               child: isLoadingCategories
                   ? Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: CarouselSlider.builder(
-                  itemCount: categoryList == null ? 0 : categoryList?.length,
-                  itemBuilder: (context, index, realIndex) {
-                    return getCategoryRow(index);
-                  },
-                  options: CarouselOptions(
-                    height: 200,
-                    aspectRatio: 15 / 6,
-                    viewportFraction: .8,
-                    initialPage: 0,
-                    enableInfiniteScroll: true,
-                    reverse: false,
-                    autoPlay: false,
-                    enlargeCenterPage: true,
-                    autoPlayInterval: Duration(seconds: 3),
-                    autoPlayAnimationDuration: Duration(milliseconds: 800),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    onPageChanged: (index, reason) {},
-                    scrollDirection: Axis.horizontal,
-                  ),
-                ),
-              )
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: CarouselSlider.builder(
+                        itemCount:
+                            categoryList == null ? 0 : categoryList?.length,
+                        itemBuilder: (context, index, realIndex) {
+                          return getCategoryRow(index);
+                        },
+                        options: CarouselOptions(
+                          height: 200,
+                          aspectRatio: 15 / 6,
+                          viewportFraction: .8,
+                          initialPage: 0,
+                          enableInfiniteScroll: true,
+                          reverse: false,
+                          autoPlay: false,
+                          enlargeCenterPage: true,
+                          autoPlayInterval: Duration(seconds: 3),
+                          autoPlayAnimationDuration:
+                              Duration(milliseconds: 800),
+                          autoPlayCurve: Curves.fastOutSlowIn,
+                          onPageChanged: (index, reason) {},
+                          scrollDirection: Axis.horizontal,
+                        ),
+                      ),
+                    )
                   : CarouselSlider.builder(
-                itemCount:
-                categoryList == null ? 0 : categoryList?.length,
-                itemBuilder: (context, index, realIndex) {
-                  return getCategoryImage(index);
-                },
-                options: CarouselOptions(
-                  height: 200,
-                  aspectRatio: 15 / 6,
-                  viewportFraction: .8,
-                  initialPage: 0,
-                  enableInfiniteScroll: true,
-                  reverse: false,
-                  autoPlay: true,
-                  enlargeCenterPage: false,
-                  autoPlayInterval: Duration(seconds: 3),
-                  autoPlayAnimationDuration: Duration(milliseconds: 800),
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  onPageChanged: (index, reason) {},
-                  scrollDirection: Axis.horizontal,
-                ),
-              )),
+                      itemCount:
+                          categoryList == null ? 0 : categoryList?.length,
+                      itemBuilder: (context, index, realIndex) {
+                        return getCategoryImage(index);
+                      },
+                      options: CarouselOptions(
+                        height: 200,
+                        aspectRatio: 15 / 6,
+                        viewportFraction: .8,
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        reverse: false,
+                        autoPlay: true,
+                        enlargeCenterPage: false,
+                        autoPlayInterval: Duration(seconds: 3),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        onPageChanged: (index, reason) {},
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    )),
           const Heading(text: "All Items"),
           Container(
             child: isLoading
                 ? Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: ListView.builder(
-                physics: ScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: 10, // Set a fixed count for shimmer effect
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: ListView.builder(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 10, // Set a fixed count for shimmer effect
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          height: 100, // Adjust the height as needed
+                        );
+                      },
                     ),
-                    height: 100, // Adjust the height as needed
-                  );
-                },
-              ),
-            )
+                  )
                 : ListView.builder(
-              physics: ScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: finalProductList == null ? 0 : finalProductList?.length,
-              itemBuilder: (context, index) => getProducts(index),
-            ),
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount:
+                        finalProductList == null ? 0 : finalProductList?.length,
+                    itemBuilder: (context, index) => getProducts(index),
+                  ),
           ),
         ],
       ),
@@ -483,22 +477,19 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                ProductView(
-                  id: finalPopularList![index]["id"].toString(),
-                  productName:
+            builder: (context) => ProductView(
+              id: finalPopularList![index]["id"].toString(),
+              productName:
                   finalPopularList![index]["combinationName"].toString(),
-                  url: image,
-                  description: finalPopularList![index]["description"]
-                      .toString(),
-                  amount: finalPopularList![index]["combinationPrice"]
-                      .toString(),
-                  combinationId:
+              url: image,
+              description: finalPopularList![index]["description"].toString(),
+              amount: finalPopularList![index]["combinationPrice"].toString(),
+              combinationId:
                   finalPopularList![index]["combinationId"].toString(),
-                  quantity: finalPopularList![index]["quantity"].toString(),
-                  category: finalPopularList![index]["category"].toString(),
-                  psize: finalPopularList![index]["combinationSize"].toString(),
-                ),
+              quantity: finalPopularList![index]["quantity"].toString(),
+              category: finalPopularList![index]["category"].toString(),
+              psize: finalPopularList![index]["combinationSize"].toString(),
+            ),
           ),
         );
       },
@@ -533,14 +524,13 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                CategoryView(
-                  url: image,
-                  itemname: categoryList![index]["name"].toString(),
-                  description: categoryList![index]["description"].toString(),
-                  price: categoryList![index]["price"].toString(),
-                  id: categoryList![index]["id"],
-                ),
+            builder: (context) => CategoryView(
+              url: image,
+              itemname: categoryList![index]["name"].toString(),
+              description: categoryList![index]["description"].toString(),
+              price: categoryList![index]["price"].toString(),
+              id: categoryList![index]["id"],
+            ),
           ),
         );
       },
@@ -550,15 +540,15 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             image:
-            DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
+                DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
       ),
     );
   }
 
   Widget getCategoryRow(int index) {
-      if (categoryList == null) {
-        return Container(); // Handle the case when categoryList is null
-      }
+    if (categoryList == null) {
+      return Container(); // Handle the case when categoryList is null
+    }
     var image = base! + categoryList![index]["image"];
     var itemName = categoryList![index]["name"].toString();
 
@@ -567,14 +557,13 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                CategoryView(
-                  url: image,
-                  itemname: categoryList![index]["name"].toString(),
-                  description: categoryList![index]["description"].toString(),
-                  price: categoryList![index]["price"].toString(),
-                  id: categoryList![index]["id"],
-                ),
+            builder: (context) => CategoryView(
+              url: image,
+              itemname: categoryList![index]["name"].toString(),
+              description: categoryList![index]["description"].toString(),
+              price: categoryList![index]["price"].toString(),
+              id: categoryList![index]["id"],
+            ),
           ),
         );
       },
@@ -585,7 +574,7 @@ class _HomePageState extends State<HomePage> {
             border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(20),
             image:
-            DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
+                DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -597,7 +586,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 itemName,
                 style:
-                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
             Padding(
@@ -627,23 +616,21 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    ProductView(
-                      id: finalProductList![index]["id"].toString(),
-                      productName:
+                builder: (context) => ProductView(
+                  id: finalProductList![index]["id"].toString(),
+                  productName:
                       finalProductList![index]["combinationName"].toString(),
-                      url: image,
-                      description:
+                  url: image,
+                  description:
                       finalProductList![index]["description"].toString(),
-                      amount:
+                  amount:
                       finalProductList![index]["combinationPrice"].toString(),
-                      combinationId:
+                  combinationId:
                       finalProductList![index]["combinationId"].toString(),
-                      quantity: finalProductList![index]["quantity"].toString(),
-                      category: finalProductList![index]["category"].toString(),
-                      psize: finalProductList![index]["combinationSize"]
-                          .toString(),
-                    ),
+                  quantity: finalProductList![index]["quantity"].toString(),
+                  category: finalProductList![index]["category"].toString(),
+                  psize: finalProductList![index]["combinationSize"].toString(),
+                ),
               ),
             );
           },
@@ -681,11 +668,11 @@ class _HomePageState extends State<HomePage> {
                         finalProductList == null
                             ? Text("null data")
                             : Text(
-                          finalProductList![index]["combinationName"]
-                              .toString(),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold),
-                        ),
+                                finalProductList![index]["combinationName"]
+                                    .toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
                         SizedBox(
                           height: 10,
                         ),
@@ -693,7 +680,7 @@ class _HomePageState extends State<HomePage> {
                           finalProductList![index]["description"].toString(),
                           maxLines: 2,
                           style:
-                          const TextStyle(fontSize: 12, color: Colors.grey),
+                              const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(
                           height: 10,
@@ -731,6 +718,7 @@ class _HomePageState extends State<HomePage> {
           )),
     );
   }
+
   Widget getOrderList(int index) {
     var image = base! + orderList![index]["image"].toString();
     return Card(
@@ -748,7 +736,8 @@ class _HomePageState extends State<HomePage> {
           },
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Row(
@@ -775,20 +764,26 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             orderList == null
-                              ? Text("null data")
-                              : Text("Order Placed",style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17
-                            ),),
+                                ? Text("null data")
+                                : Text(
+                                    "Order Placed",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17),
+                                  ),
                             SizedBox(
                               height: 10,
                             ),
                             Text(
                               orderList![index]["cartName"].toString(),
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blueGrey),
                             ),
                           ],
                         ),
