@@ -4,11 +4,14 @@ import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:aaryas_sample/constants/title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../Config/image_url_const.dart';
+import '../../theme/colors.dart';
+import '../product_view/product_view.dart';
 import 'notification_page.dart';
-import 'order_details.dart';
-import 'product_view.dart';
+import '../orders/order_details.dart';
 import 'search_page.dart';
 import 'category_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -24,7 +27,6 @@ class _HomePageState extends State<HomePage> {
   String? uID;
 
   bool isLoading = false;
-  bool isLoadingCategories = true; // Track API loading state
 
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
@@ -32,9 +34,8 @@ class _HomePageState extends State<HomePage> {
       uID = prefs.getString("UID");
     });
     getMyOrders();
+    apiForCart();
   }
-
-  String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
 
   ///OrderList
   Map? order;
@@ -56,15 +57,13 @@ class _HomePageState extends State<HomePage> {
   List? finalPopularList;
   int index = 0;
 
-  getMyOrders() async {
-    setState(() {
-      isLoading = true;
-    });
-    var response =
-        await ApiHelper().post(endpoint: "common/getMyOrders", body: {
+
+  Map? cList;
+  List? cartAddList;
+
+  apiForCart() async {
+    var response = await ApiHelper().post(endpoint: "cart/get", body: {
       "userid": uID,
-      "offset": "0",
-      "pageLimit": "1",
     }).catchError((err) {});
 
     setState(() {
@@ -73,13 +72,62 @@ class _HomePageState extends State<HomePage> {
 
     if (response != null) {
       setState(() {
-        debugPrint('get address api successful:');
-        order = jsonDecode(response);
-        order1 = order!["data"];
-        orderList = order1!["pageData"];
+        debugPrint('cartpage successful:');
+        cList = jsonDecode(response);
+        cartAddList = cList!["cart"];
+
+        // Check if cartAddList is not empty
+        if (cartAddList != null && cartAddList!.isNotEmpty) {
+          // Show a green snackBar
+          showGreenSnackBar("Cart is not empty!");
+        }
       });
     } else {
       debugPrint('api failed:');
+    }
+  }
+
+  void showGreenSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.green,
+        duration: Duration(microseconds: 3),
+      ),
+    );
+  }
+
+
+  getMyOrders() async {
+    var response =
+        await ApiHelper().post(endpoint: "common/getMyOrders", body: {
+      "userid": uID,
+      "offset": "0",
+      "pageLimit": "20",
+    }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (response != null) {
+      Map<String, dynamic> responseData = jsonDecode(response);
+
+      if (responseData["status"] == 1) {
+        setState(() {
+          debugPrint('get address api successful:');
+          order = responseData;
+          order1 = order!["data"];
+          orderList = order1!["pageData"];
+        });
+      } else {
+        debugPrint('Order status is not 1');
+      }
+    } else {
+      debugPrint('API failed');
     }
   }
 
@@ -194,15 +242,46 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     apiForCategory().then((_) {
-      setState(() {
-        isLoadingCategories = false;
-      });
+      apiForAllProducts();
+      apiForPopularProducts();
+      getMyOrders();
+      checkUser();
     });
-    apiForAllProducts();
-    apiForPopularProducts();
-    getMyOrders();
-    checkUser();
+
     super.initState();
+  }
+
+  apiForAddCart(String id, String pName, String amount, String tax,
+      String category, String psize, String combinationId) async {
+    var response = await ApiHelper().post(endpoint: "cart/add", body: {
+      "userid": uID,
+      "productid": id,
+      "product": pName,
+      "price": amount,
+      "quantity": "1",
+      "tax": tax,
+      "category": category,
+      "size": "size",
+      "psize": psize,
+      "pcolor": "pcolor",
+      "combination": combinationId
+    }).catchError((err) {});
+    if (response != null) {
+      setState(() {
+        debugPrint('add to art api successful:');
+
+        Fluttertoast.showToast(
+          msg: "Item added to Cart",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      });
+    } else {
+      debugPrint('api failed:');
+    }
   }
 
   @override
@@ -210,14 +289,31 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(
-          "ARYAS",
-          style:
-              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+        toolbarHeight: 70,
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "ARYAS",
+                style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.bold),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: Text(
+                  "Chembumukku",
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
+                ),
+              )
+            ],
+          ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         actions: [
           IconButton(
               onPressed: () => Navigator.push(context, MaterialPageRoute(
@@ -252,49 +348,65 @@ class _HomePageState extends State<HomePage> {
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        border: Border.all(color: Colors.teal)),
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [Text("Search..."), Icon(Icons.search)],
+                      children: [
+                        Text(
+                          "Search for restaurants and food",
+                          style: TextStyle(
+                              fontSize: 15, color: Colors.grey.shade800),
+                        ),
+                        Icon(Iconsax.search_normal)
+                      ],
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          const Heading(text: "Recent Orders"),
-          Container(
-            child: isLoading
-                ? Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: ListView.builder(
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 1, // Set a fixed count for shimmer effect
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.0),
+          Visibility(
+            visible: orderList != null && orderList!.isNotEmpty,
+            child: Column(
+              children: [
+                Heading(text: "Recent Orders"),
+                Container(
+                  child: isLoading
+                      ? Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: ListView.builder(
+                            physics: ScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount:
+                                1, // Set a fixed count for shimmer effect
+                            itemBuilder: (context, index) {
+                              return Container(
+                                margin: EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                height: 100, // Adjust the height as needed
+                              );
+                            },
                           ),
-                          height: 100, // Adjust the height as needed
-                        );
-                      },
-                    ),
-                  )
-                : ListView.builder(
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: orderList == null ? 0 : orderList?.length,
-                    itemBuilder: (context, index) => getOrderList(index),
-                  ),
+                        )
+                      : ListView.builder(
+                          physics: ScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: orderList == null ? 0 : 1,
+                          itemBuilder: (context, index) => getOrderList(index),
+                        ),
+                ),
+              ],
+            ),
           ),
           const Heading(text: "Category"),
           Container(
-            child: isLoadingCategories
+            child: isLoading
                 ? Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
                     highlightColor: Colors.grey[100]!,
@@ -304,7 +416,7 @@ class _HomePageState extends State<HomePage> {
                         return getCategoryRow(index);
                       },
                       options: CarouselOptions(
-                        height: 300,
+                        height: 350,
                         aspectRatio: 15 / 6,
                         viewportFraction: .6,
                         initialPage: 0,
@@ -326,14 +438,14 @@ class _HomePageState extends State<HomePage> {
                       return getCategoryRow(index);
                     },
                     options: CarouselOptions(
-                      height: 300,
-                      aspectRatio: 15 / 6,
-                      viewportFraction: .6,
+                      height: 350,
+                      aspectRatio: 12 / 6,
+                      viewportFraction: .75,
                       initialPage: 0,
                       enableInfiniteScroll: true,
                       reverse: false,
                       autoPlay: false,
-                      enlargeCenterPage: true,
+                      enlargeCenterPage: false,
                       autoPlayInterval: Duration(seconds: 3),
                       autoPlayAnimationDuration: Duration(milliseconds: 800),
                       autoPlayCurve: Curves.fastOutSlowIn,
@@ -342,7 +454,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
           ),
-          const Heading(text: "Popular Items"),
+          SizedBox(
+            height: 10,
+          ),
+          Heading(text: "Popular Items"),
           Container(
             child: isLoading
                 ? Shimmer.fromColors(
@@ -384,7 +499,7 @@ class _HomePageState extends State<HomePage> {
           ),
           const Heading(text: "Top Picks For You"),
           Container(
-              child: isLoadingCategories
+              child: isLoading
                   ? Shimmer.fromColors(
                       baseColor: Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
@@ -397,7 +512,7 @@ class _HomePageState extends State<HomePage> {
                         options: CarouselOptions(
                           height: 200,
                           aspectRatio: 15 / 6,
-                          viewportFraction: .8,
+                          viewportFraction: .55,
                           initialPage: 0,
                           enableInfiniteScroll: true,
                           reverse: false,
@@ -421,7 +536,7 @@ class _HomePageState extends State<HomePage> {
                       options: CarouselOptions(
                         height: 200,
                         aspectRatio: 15 / 6,
-                        viewportFraction: .8,
+                        viewportFraction: .85,
                         initialPage: 0,
                         enableInfiniteScroll: true,
                         reverse: false,
@@ -434,7 +549,7 @@ class _HomePageState extends State<HomePage> {
                         scrollDirection: Axis.horizontal,
                       ),
                     )),
-          const Heading(text: "All Items"),
+          const Heading(text: "Today's Featured"),
           Container(
             child: isLoading
                 ? Shimmer.fromColors(
@@ -469,36 +584,98 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget getPopularRow(int index) {
-    var image = base! + finalPopularList![index]["image"];
-    var itemName = finalPopularList![index]["combinationName"].toString();
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductView(
-              id: finalPopularList![index]["id"].toString(),
-              productName:
-                  finalPopularList![index]["combinationName"].toString(),
-              url: image,
-              description: finalPopularList![index]["description"].toString(),
-              amount: finalPopularList![index]["combinationPrice"].toString(),
-              combinationId:
-                  finalPopularList![index]["combinationId"].toString(),
-              quantity: finalPopularList![index]["quantity"].toString(),
-              category: finalPopularList![index]["category"].toString(),
-              psize: finalPopularList![index]["combinationSize"].toString(),
-            ),
+  void _showDetailsBottomSheet(Map<String, dynamic> itemDetails) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        var image = UrlConstants.base + itemDetails["image"].toString();
+
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 250,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Image.network(
+                  image,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        apiForAddCart(
+                            itemDetails["id"].toString(),
+                            itemDetails["combinationName"].toString(),
+                            itemDetails["combinationPrice"].toString(),
+                            "",
+                            itemDetails["category"].toString(),
+                            itemDetails["combinationSize"].toString(),
+                            itemDetails["combinationId"].toString());
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          )),
+                      child: Text("ADD")),
+                ],
+              ),
+              SizedBox(height: 10),
+              Text(
+                itemDetails["combinationName"].toString(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                itemDetails["description"].toString(),
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 10),
+              Text(
+                "₹ ${itemDetails["combinationPrice"]}",
+                style: TextStyle(
+                  color: Color(ColorT.themeColor),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              // Add more details as needed
+            ],
           ),
         );
       },
+    );
+  }
+
+  Widget getPopularRow(int index) {
+    var image = UrlConstants.base + finalPopularList![index]["image"];
+    var itemName = finalPopularList![index]["combinationName"].toString();
+    return InkWell(
+      onTap: () {
+        _showDetailsBottomSheet(finalPopularList![index]);
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircleAvatar(
             backgroundImage: NetworkImage(image),
-            radius: 25,
+            radius: 30,
           ),
           SizedBox(
             height: 3,
@@ -517,7 +694,7 @@ class _HomePageState extends State<HomePage> {
     if (categoryList == null) {
       return Container();
     }
-    var image = base! + categoryList![index]["image"];
+    var image = UrlConstants.base + categoryList![index]["image"];
 
     return InkWell(
       onTap: () {
@@ -525,10 +702,7 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) => CategoryView(
-              url: image,
               itemname: categoryList![index]["name"].toString(),
-              description: categoryList![index]["description"].toString(),
-              price: categoryList![index]["price"].toString(),
               id: categoryList![index]["id"],
             ),
           ),
@@ -539,8 +713,12 @@ class _HomePageState extends State<HomePage> {
         width: 330,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            image:
-                DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
+            image: DecorationImage(
+                image: NetworkImage(
+                  image,
+                ),
+                filterQuality: FilterQuality.high,
+                fit: BoxFit.cover)),
       ),
     );
   }
@@ -549,7 +727,7 @@ class _HomePageState extends State<HomePage> {
     if (categoryList == null) {
       return Container(); // Handle the case when categoryList is null
     }
-    var image = base! + categoryList![index]["image"];
+    var image = UrlConstants.base + categoryList![index]["image"];
     var itemName = categoryList![index]["name"].toString();
 
     return InkWell(
@@ -558,23 +736,23 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) => CategoryView(
-              url: image,
               itemname: categoryList![index]["name"].toString(),
-              description: categoryList![index]["description"].toString(),
-              price: categoryList![index]["price"].toString(),
               id: categoryList![index]["id"],
             ),
           ),
         );
       },
       child: Container(
-        height: 300,
-        width: 250,
+        height: 350,
+        width: 300,
         decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
             borderRadius: BorderRadius.circular(20),
-            image:
-                DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
+            image: DecorationImage(
+                image: NetworkImage(image),
+                colorFilter:
+                    ColorFilter.mode(Colors.black54, BlendMode.overlay),
+                fit: BoxFit.cover)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -593,7 +771,7 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 categoryList![index]["description"].toString(),
-                maxLines: 2,
+                maxLines: 3,
                 style: TextStyle(
                   color: Colors.white,
                 ),
@@ -606,123 +784,145 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProducts(int index) {
-    var image = base! + finalProductList![index]["image"];
+    var image = UrlConstants.base + finalProductList![index]["image"];
     var price = "₹${finalProductList![index]["combinationPrice"]}";
     var pID = finalProductList![index]["id"].toString();
     var combID = finalProductList![index]["combinationId"].toString();
     return Card(
-      child: ListTile(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductView(
-                  id: finalProductList![index]["id"].toString(),
-                  productName:
-                      finalProductList![index]["combinationName"].toString(),
-                  url: image,
-                  description:
-                      finalProductList![index]["description"].toString(),
-                  amount:
-                      finalProductList![index]["combinationPrice"].toString(),
-                  combinationId:
-                      finalProductList![index]["combinationId"].toString(),
-                  quantity: finalProductList![index]["quantity"].toString(),
-                  category: finalProductList![index]["category"].toString(),
-                  psize: finalProductList![index]["combinationSize"].toString(),
+      child: InkWell(
+        onTap: () {
+          // _showDetailsBottomSheet(finalProductList![index]);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ProductView(
+                    position:index,
+                    id: finalProductList![index]["id"].toString(),
+                    productName:
+                    finalProductList![index]["combinationName"].toString(),
+                    url: image,
+                    description:
+                    finalProductList![index]["description"].toString(),
+                    amount:
+                    finalProductList![index]["combinationPrice"].toString(),
+                    combinationId:
+                    finalProductList![index]["combinationId"].toString(),
+                    quantity: finalProductList![index]["quantity"].toString(),
+                    category: finalProductList![index]["category"].toString(),
+                    psize: finalProductList![index]["combinationSize"]
+                        .toString(),
+                  ),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Container(
+                // height: 120,
+                // width: 120,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: ClipRRect(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  borderRadius: BorderRadius.circular(15), // Image border
+                  child: SizedBox.fromSize(
+                    size: Size.fromRadius(60), // Image radius
+                    child: Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
-            );
-          },
-          title: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(20),
+              SizedBox(
+                width: 15,
+              ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    finalProductList == null
+                        ? Text("null data")
+                        : Text(
+                            finalProductList![index]["combinationName"]
+                                .toString(),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                    SizedBox(
+                      height: 10,
                     ),
-                    child: ClipRRect(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      borderRadius: BorderRadius.circular(20), // Image border
-                      child: SizedBox.fromSize(
-                        size: Size.fromRadius(60), // Image radius
-                        child: Image.network(
-                          image,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    Text(
+                      finalProductList![index]["description"].toString(),
+                      maxLines: 2,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        finalProductList == null
-                            ? Text("null data")
-                            : Text(
-                                finalProductList![index]["combinationName"]
-                                    .toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          finalProductList![index]["description"].toString(),
-                          maxLines: 2,
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
                         Text(
                           price,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: Colors.green),
+                              color: Color(ColorT.themeColor)),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            addToWishlist(pID, combID);
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              shadowColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              )),
+                          child: Row(
+                            children: const [
+                              Text(
+                                "FAV",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Icon(
+                                Iconsax.heart,
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
-          trailing: ElevatedButton(
-            onPressed: () {
-              addToWishlist(pID, combID);
-            },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                shadowColor: Colors.teal[300],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      topRight: Radius.circular(10)),
-                )),
-            child: Icon(Icons.favorite_sharp),
-          )),
+        ),
+      ),
     );
   }
 
   Widget getOrderList(int index) {
-    var image = base! + orderList![index]["image"].toString();
-    return Card(
-        color: Colors.grey.shade50,
+    var image = UrlConstants.base + orderList![index]["image"].toString();
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          color: Colors.indigo.shade50,
+        ),
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -735,7 +935,7 @@ class _HomePageState extends State<HomePage> {
             );
           },
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,

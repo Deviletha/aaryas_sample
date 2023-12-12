@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Config/ApiHelper.dart';
 
@@ -35,6 +36,22 @@ class _AddAddressState extends State<AddAddress> {
 
   Future<void> addAddress() async {
     try {
+      LocationPermission permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        // Handle case where user denies permission
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      double latitude = position.latitude;
+      double longitude = position.longitude;
+
+      // print(latitude);
+      // print(longitude);
+
       var response =
           await ApiHelper().post(endpoint: "user/saveAddress", body: {
         "name": nameController.text,
@@ -44,13 +61,13 @@ class _AddAddressState extends State<AddAddress> {
         "address": addressController.text,
         "location": locationController.text,
         "state": stateController.text,
-        "latitude": "123",
-        "longitude": "1234",
+        "latitude": latitude.toString(),
+        "longitude": longitude.toString(),
         "userid": data
       });
       if (response != null) {
         setState(() {
-          debugPrint('profile api successful:');
+          debugPrint('save address api successful:');
           data = response.toString();
           responseData = jsonDecode(response);
           if (responseData?["status"] is List<dynamic>) {

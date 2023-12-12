@@ -90,11 +90,7 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         title: Text(
           "Profile",
-          style: TextStyle(color: Colors.teal[900]),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: Center(
         child: Column(

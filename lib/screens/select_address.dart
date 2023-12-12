@@ -55,14 +55,7 @@ class _SelectAddressState extends State<SelectAddress> {
       appBar: AppBar(
         title: Text(
           "Select your Address",
-          style: TextStyle(
-            color: Colors.teal[900],
-            fontWeight: FontWeight.bold,
-          ),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: ListView(
         children: [

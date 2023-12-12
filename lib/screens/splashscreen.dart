@@ -23,34 +23,17 @@ class _SplashScreenState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ClipRRect(
+          child: ClipRRect(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             borderRadius: BorderRadius.circular(20), // Image border
             child: SizedBox.fromSize(
-              size: Size.fromRadius(60), // Image radius
+              size: Size.fromRadius(90), // Image radius
               child: Image.asset(
-                "assets/img.png",
+                "assets/aryas_logo.png",
                 fit: BoxFit.cover,
               ),
             ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            "Hotel Aryas",
-            style: TextStyle(
-                fontSize: 35,
-                color: Colors.teal[900],
-                fontWeight: FontWeight.bold,
-                fontFamily: AutofillHints.familyName),
-          )
-        ],
-      )),
+          )),
     );
   }
 }

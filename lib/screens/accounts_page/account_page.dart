@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'package:aaryas_sample/screens/accounts_page/add_address.dart';
-import 'package:aaryas_sample/screens/orders_page.dart';
+import 'package:aaryas_sample/screens/accounts_page/privacy_info.dart';
+import 'package:aaryas_sample/screens/orders/orders_page.dart';
 import 'package:aaryas_sample/screens/accounts_page/settings.dart';
 import 'package:aaryas_sample/screens/accounts_page/profile_pages.dart';
 import 'package:aaryas_sample/screens/wishlist_page.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Config/ApiHelper.dart';
-import '../login_page.dart';
+import '../../theme/colors.dart';
+import '../registration/login_page.dart';
 
 class Accounts extends StatefulWidget {
   const Accounts({Key? key}) : super(key: key);
@@ -99,20 +102,13 @@ class _AccountsState extends State<Accounts> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          "ACCOUNT",
-          style: TextStyle(
-            color: Colors.teal[900],
-            fontWeight: FontWeight.bold,
-          ),
+          "Account",
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: isLoggedIn
           ? Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
+              child: ListView(
                 children: [
                   InkWell(
                     onTap: () => Navigator.push(
@@ -124,9 +120,9 @@ class _AccountsState extends State<Accounts> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.orangeAccent,
+                        color: Color(ColorT.themeColor),
                       ),
-                      height: 100,
+                      height: 150,
                       child: Center(
                         child: dataList == null
                             ? Shimmer.fromColors(
@@ -134,6 +130,7 @@ class _AccountsState extends State<Accounts> {
                                 highlightColor: Colors.grey[100]!,
                                 child: ListTile(
                                   leading: CircleAvatar(
+                                    radius: 50,
                                     backgroundColor: Colors.white,
                                     child: Text(
                                       '',
@@ -149,126 +146,116 @@ class _AccountsState extends State<Accounts> {
                               )
                             : ListTile(
                                 leading: CircleAvatar(
+                                  radius: 40,
                                   backgroundColor: Colors.white,
                                   child: Text(
                                     dataList![index]["first_name"][0]
                                         .toString(),
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(fontSize: 25, color: Color(ColorT.greyColor), fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 title: Text(
                                   dataList![index]["first_name"].toString(),
-                                  style: TextStyle(fontSize: 35),
+                                  style: TextStyle(fontSize: 35,color: Colors.white, letterSpacing: 1),
                                 ),
                                 subtitle: Text(
-                                  dataList![index]["email"].toString(),
+                                  dataList![index]["email"].toString(),style: TextStyle(color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold),
                                 ),
                               ),
                       ),
                     ),
                   ),
                   SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return AddAddress();
-                        }),
-                      ),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.add_home_outlined, size: 25),
-                          SizedBox(width: 10),
-                          Text("Add Address", style: TextStyle(fontSize: 20)),
-                        ],
-                      ),
+                  ListTile(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return AddAddress();
+                      }),
                     ),
-                  ),
-                  Divider(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return MyOrders();
-                        }),
-                      ),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.shopping_bag_outlined, size: 25),
-                          SizedBox(width: 10),
-                          Text("My Orders", style: TextStyle(fontSize: 20)),
-                        ],
-                      ),
+                    leading: Icon(
+                      Iconsax.home,color: Colors.black,size: 30,
                     ),
+                    title: Text("Add Address", style: TextStyle(fontSize: 20)),
                   ),
-                  Divider(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return Wishlist();
-                        }),
-                      ),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.favorite_border_sharp, size: 25),
-                          SizedBox(width: 10),
-                          Text("My Wishlist", style: TextStyle(fontSize: 20)),
-                        ],
-                      ),
+                  Divider(
+                    thickness: 1,
+                  ),
+                  ListTile(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return MyOrders();
+                      }),
                     ),
-                  ),
-                  Divider(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return Settings();
-                        }),
-                      ),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.settings_outlined, size: 25),
-                          SizedBox(width: 10),
-                          Text("Settings", style: TextStyle(fontSize: 20)),
-                        ],
-                      ),
+                    leading: Icon(
+                      Iconsax.bag_2,color: Colors.black,size: 30,
                     ),
+                    title: Text("My Orders", style: TextStyle(fontSize: 18)),
                   ),
-                  Divider(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () {
-                        openGmail();
-                        // launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
-                      },
-                      child: Row(
-                        children: const [
-                          Icon(
-                            Icons.help_outline_rounded,
-                            size: 25,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            "Help & Support",
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
+                  Divider(
+                    thickness: 1,
+                  ),
+                  ListTile(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return Wishlist();
+                      }),
                     ),
+                    leading: Icon(
+                      Iconsax.heart,color: Colors.black,size: 30,
+                    ),
+                    title: Text("My Wishlist", style: TextStyle(fontSize: 18)),
                   ),
-                  Divider(),
+                  Divider(
+                    thickness: 1,
+                  ),
+                  ListTile(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return Settings();
+                      }),
+                    ),
+                    leading: Icon(
+                      Iconsax.setting,color: Colors.black,size: 30,
+                    ),
+                    title: Text("Settings", style: TextStyle(fontSize: 18)),
+                  ),
+                  Divider(
+                    thickness: 1,
+                  ),
+                  ListTile(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return PrivacyInfo();
+                      }),
+                    ),
+                    leading: Icon(
+                      Iconsax.security_safe,color: Colors.black,size: 30,
+                    ),
+                    title:
+                        Text("Privacy & Terms", style: TextStyle(fontSize: 18)),
+                  ),
+                  Divider(
+                    thickness: 1,
+                  ),
+                  ListTile(
+                    onTap: () {
+                      openGmail();
+                      // launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
+                    },
+                    leading: Icon(
+                      Iconsax.info_circle,color: Colors.black,size: 30,
+                    ),
+                    title:
+                        Text("Help & Support", style: TextStyle(fontSize: 18)),
+                  ),
+                  Divider(
+                    thickness: 1,
+                  ),
                 ],
               ),
             )

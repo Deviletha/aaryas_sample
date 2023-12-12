@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
-import 'package:aaryas_sample/screens/login_page.dart';
+import 'package:aaryas_sample/screens/registration/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';

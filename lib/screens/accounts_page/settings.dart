@@ -2,6 +2,7 @@ import 'package:aaryas_sample/screens/accounts_page/editprofile.dart';
 import 'package:aaryas_sample/screens/accounts_page/password.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends StatefulWidget {
@@ -56,87 +57,56 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "SETTINGS",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          "Settings",
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () =>
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ChangeProfile();
-              })),
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.person_outline_outlined,
-                    size: 25,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "Edit Profile",
-                    style: TextStyle(fontSize: 20),
-                  )
-                ],
-              ),
-            ),
+          Divider(
+            thickness: 1,
           ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () =>
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ChangePassword();
-              })),
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.keyboard_outlined,
-                    size: 25,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "Change Password",
-                    style: TextStyle(fontSize: 20),
-                  )
-                ],
-              ),
+          ListTile(
+            onTap: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return ChangeProfile();
+            })),
+            leading: Icon(
+              Iconsax.profile_tick,
+              color: Colors.black,
+              size: 30,
             ),
+            title: Text("Edit Profile", style: TextStyle(fontSize: 18)),
           ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () => _showLogoutConfirmationDialog(),
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.logout_outlined,
-                    size: 25,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "Logout",
-                    style: TextStyle(fontSize: 20),
-                  )
-                ],
-              ),
+          Divider(
+            thickness: 1,
+          ),
+          ListTile(
+            onTap: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return ChangeProfile();
+            })),
+            leading: Icon(
+              Iconsax.keyboard,
+              color: Colors.black,
+              size: 30,
             ),
+            title: Text("Change Password", style: TextStyle(fontSize: 18)),
           ),
-          const Divider(),
+          Divider(
+            thickness: 1,
+          ),
+          ListTile(
+            onTap: () => _showLogoutConfirmationDialog(),
+            leading: Icon(
+              Iconsax.logout,
+              color: Colors.black,
+              size: 30,
+            ),
+            title: Text("Logout from App", style: TextStyle(fontSize: 18)),
+          ),
+          Divider(
+            thickness: 1,
+          ),
         ],
       ),
     );

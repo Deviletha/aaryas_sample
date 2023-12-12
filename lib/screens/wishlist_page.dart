@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'login_page.dart';
+import '../Config/image_url_const.dart';
+import '../theme/colors.dart';
+import 'registration/login_page.dart';
 
 class Wishlist extends StatefulWidget {
   const Wishlist({Key? key}) : super(key: key);
@@ -17,8 +20,6 @@ class _WishlistState extends State<Wishlist> {
   String? uID;
   bool isLoading = true;
   bool isLoggedIn = false;
-  GlobalKey<RefreshIndicatorState> refreshKey =
-      GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -41,13 +42,11 @@ class _WishlistState extends State<Wishlist> {
     }
   }
 
-  String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   String? wID;
 
   Map? prList;
   Map? prList1;
   List? finalPrList;
-  int index = 0;
 
   Future<void> apiCall() async {
     setState(() {
@@ -81,6 +80,7 @@ class _WishlistState extends State<Wishlist> {
     if (response != null) {
       setState(() {
         debugPrint('Remove api successful:');
+        apiCall();
 
         Fluttertoast.showToast(
           msg: "Removed product",
@@ -96,43 +96,29 @@ class _WishlistState extends State<Wishlist> {
     }
   }
 
-  Future<void> refreshPage() async {
-    refreshKey.currentState?.show(atTop: false);
-    await Future.delayed(Duration(seconds: 1));
-    await apiCall();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          "WISHLIST",
-          style:
-              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+          "My WishList",
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: isLoggedIn
           ? isLoading
               ? Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: Color(ColorT.themeColor),
+                  ),
                 )
               : finalPrList == null || finalPrList!.isEmpty
                   ? Center(
                       child: Image.asset("assets/wishlist-empty.jpg"),
                     )
-                  : RefreshIndicator(
-                      key: refreshKey,
-                      onRefresh: refreshPage,
-                      child: ListView.builder(
-                        itemCount:
-                            finalPrList == null ? 0 : finalPrList?.length,
-                        itemBuilder: (context, index) => getWishlist(index),
-                      ),
+                  : ListView.builder(
+                      itemCount: finalPrList == null ? 0 : finalPrList?.length,
+                      itemBuilder: (context, index) => getWishlist(index),
                     )
           : Center(
               child: Column(
@@ -163,88 +149,110 @@ class _WishlistState extends State<Wishlist> {
     );
   }
 
-  Widget getWishlist(int index) {
-    var image = base! + finalPrList![index]["image"];
-    var price = "₹ ${finalPrList![index]["combinationPrice"]}";
-    wID = finalPrList![index]["wishlistId"].toString();
+  Widget getWishlist(int index1) {
+    var image = UrlConstants.base + finalPrList![index1]["image"];
+    var price = "₹ ${finalPrList![index1]["combinationPrice"]}";
     return Card(
-      child: ListTile(
-          title: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ClipRRect(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      borderRadius: BorderRadius.circular(20), // Image border
-                      child: SizedBox.fromSize(
-                        size: Size.fromRadius(60), // Image radius
-                        child: Image.network(
-                          image,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        finalPrList == null
-                            ? Text("null data")
-                            : Text(
-                                finalPrList![index]["name"].toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          finalPrList![index]["description"].toString(),
-                          maxLines: 2,
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          price,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.green),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          trailing: TextButton(
-            onPressed: () {
-              removeFromWishlist(wID!);
-            },
-            child: Text(
-              "Remove",
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(20),
             ),
-          )),
-    );
+            child: ClipRRect(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              borderRadius: BorderRadius.circular(20), // Image border
+              child: SizedBox.fromSize(
+                size: Size.fromRadius(60), // Image radius
+                child: Image.network(
+                  image,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                finalPrList == null
+                    ? Text("null data")
+                    : Text(
+                        finalPrList![index1]["combinationName"].toString(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  finalPrList![index1]["category"].toString(),
+                  style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Card(
+                color: Colors.grey.shade600,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    price,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(color: Colors.grey)
+                ),
+                child: TextButton(
+                    onPressed: () {
+                      wID = finalPrList![index1]["wishlistId"].toString();
+                      removeFromWishlist(wID!);
+                    },
+                    child: Text(
+                      "Remove Item",
+                      style: TextStyle(color: Colors.black),
+                    )
+                    // Icon(Iconsax.trash, color: Colors.red,)
+                    ),
+              )
+            ],
+          )
+        ],
+      ),
+    ));
   }
 }

@@ -70,11 +70,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       appBar: AppBar(
         title: Text(
           "Change Password",
-          style: TextStyle(color: Colors.teal[900]),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: Column(
         children: [

@@ -14,11 +14,8 @@ class _NotificationsState extends State<Notifications> {
       appBar: AppBar(
         title: Text(
           "Notifications",
-          style: TextStyle(color: Colors.teal[900]),
+
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: Center(
         child: Text(

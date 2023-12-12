@@ -77,11 +77,7 @@ class _ChangeProfileState extends State<ChangeProfile> {
       appBar: AppBar(
         title: Text(
           "Edit Profile",
-          style: TextStyle(color: Colors.teal[900]),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: Column(
         children: [

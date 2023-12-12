@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:aaryas_sample/theme/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Config/ApiHelper.dart';
-import 'login_page.dart';
+import '../Config/image_url_const.dart';
+import 'registration/login_page.dart';
 import 'select_address.dart';
 
 class CartPage extends StatefulWidget {
@@ -15,7 +18,6 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   Map? cList;
   List? cartAddList;
   int index = 0;
@@ -48,10 +50,6 @@ class _CartPageState extends State<CartPage> {
   }
 
   apiForCart() async {
-    setState(() {
-      isLoading = true;
-    });
-
     var response = await ApiHelper().post(endpoint: "cart/get", body: {
       "userid": uID,
     }).catchError((err) {});
@@ -82,7 +80,8 @@ class _CartPageState extends State<CartPage> {
     }).catchError((err) {});
     if (response != null) {
       setState(() {
-        debugPrint('cartpage successful:');
+        debugPrint('increment qty successful:');
+        apiForCart();
       });
     } else {
       debugPrint('api failed:');
@@ -97,7 +96,8 @@ class _CartPageState extends State<CartPage> {
     }).catchError((err) {});
     if (response != null) {
       setState(() {
-        debugPrint('cartpage successful:');
+        debugPrint('decrement qty successful:');
+        apiForCart();
       });
     } else {
       debugPrint('api failed:');
@@ -112,8 +112,8 @@ class _CartPageState extends State<CartPage> {
     }).catchError((err) {});
     if (response != null) {
       setState(() {
-        debugPrint('cartpage successful:');
-
+        debugPrint('remove from cart successful:');
+        apiForCart();
         Fluttertoast.showToast(
           msg: "Item Removed",
           toastLength: Toast.LENGTH_SHORT,
@@ -131,64 +131,53 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: Text(
-          "MY CART",
-          style:
-              TextStyle(color: Colors.teal[900], fontWeight: FontWeight.bold),
+          "My Cart",
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
+      ),
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                "${cartAddList?.length ?? 0} Cart items",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              ElevatedButton(
+                  onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return SelectAddress();
+                        }),
+                      ),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(ColorT.themeColor),
+                      shadowColor: Color(ColorT.themeColor),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      )),
+                  child: Text("Place Order"))
+            ],
+          ),
+        ),
       ),
       body: isLoggedIn
           ? isLoading
               ? Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: Color(ColorT.themeColor),
+                  ),
                 )
-              : ListView(
-                  children: [
-                    Card(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            "${cartAddList!.length} Items in Cart",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          ElevatedButton(
-                              onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) {
-                                      return SelectAddress();
-                                    }),
-                                  ),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  shadowColor: Colors.teal[300],
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(10),
-                                        topLeft: Radius.circular(10)),
-                                  )),
-                              child: Text("Place Order"))
-                        ],
-                      ),
-                    ),
-                    GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: .5,
-                      ),
-                      itemCount: cartAddList == null ? 0 : cartAddList?.length,
-                      itemBuilder: (context, index) => getCartList(index),
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                    ),
-                  ],
+              : ListView.builder(
+                  itemCount: cartAddList == null ? 0 : cartAddList?.length,
+                  itemBuilder: (context, index) => getCartList(index),
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
                 )
           : Center(
               child: Column(
@@ -202,12 +191,10 @@ class _CartPageState extends State<CartPage> {
                           MaterialPageRoute(builder: (context) => LoginPage()));
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        shadowColor: Colors.teal[300],
+                        backgroundColor: Color(ColorT.themeColor),
+                        shadowColor: Color(ColorT.themeColor),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(10),
-                              topLeft: Radius.circular(10)),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
                         )),
                     child: Text(
                       "Please LogIn",
@@ -220,101 +207,125 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget getCartList(int index) {
-    var image = base! + cartAddList![index]["image"];
+    var image = UrlConstants.base + cartAddList![index]["image"];
     int quantity = cartAddList![index]["quantity"];
     int price = cartAddList![index]["price"];
     int totalAmount = quantity * price;
     return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5),
-      child: Card(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      padding: const EdgeInsets.all(5),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(15))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(
-              height: 8,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: ClipRRect(
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                borderRadius: BorderRadius.circular(20), // Image border
-                child: SizedBox.fromSize(
-                  size: Size.fromRadius(71), // Image radius
-                  child: Image.network(
-                    image,
-                    fit: BoxFit.cover,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: ClipRRect(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    borderRadius: BorderRadius.circular(20), // Image border
+                    child: SizedBox.fromSize(
+                      size: Size.fromRadius(65), // Image radius
+                      child: Image.network(
+                        image,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            cartAddList == null
-                ? Text("null data")
-                : Text(
-                    cartAddList![index]["product"].toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              totalAmount.toString(),
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.green),
-            ),
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      decrementQty(
-                        cartAddList![index]["product_id"].toString(),
-                        cartAddList![index]["size"].toString(),
-                      );
-                    },
-                    icon: Icon(Icons.remove_circle_outline_rounded)),
-                TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      cartAddList![index]["quantity"].toString(),
-                      style: TextStyle(
-                          color: Colors.green, fontWeight: FontWeight.bold),
-                    )),
-                IconButton(
-                    onPressed: () {
-                      incrementQty(
-                        cartAddList![index]["product_id"].toString(),
-                        cartAddList![index]["size"].toString(),
-                      );
-                    },
-                    icon: Icon(Icons.add_circle_outline_rounded)),
+                SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    cartAddList == null
+                        ? Text("null data")
+                        : Text(
+                            cartAddList![index]["product"].toString(),
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "₹$totalAmount",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.green),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              decrementQty(
+                                cartAddList![index]["product_id"].toString(),
+                                cartAddList![index]["size"].toString(),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.remove_circle_outline_rounded,
+                              size: 25,
+                            )),
+                        Card(
+                          color: Colors.grey.shade700,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 8, bottom: 8),
+                            child: Text(
+                              cartAddList![index]["quantity"].toString(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              incrementQty(
+                                cartAddList![index]["product_id"].toString(),
+                                cartAddList![index]["size"].toString(),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.add_circle_outline_rounded,
+                              size: 25,
+                            )),
+                        IconButton(
+                            onPressed: () {
+                              removeFromCart(
+                                cartAddList![index]["product_id"].toString(),
+                                cartAddList![index]["size"].toString(),
+                              );
+                            },
+                            icon: Icon(
+                              Iconsax.trash,
+                              color: Colors.red,
+                            )),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
-            ElevatedButton(
-                onPressed: () {
-                  removeFromCart(
-                    cartAddList![index]["product_id"].toString(),
-                    cartAddList![index]["size"].toString(),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shadowColor: Colors.teal[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(10),
-                          topLeft: Radius.circular(10)),
-                    )),
-                child: Text(
-                  "Remove Item",
-                ))
           ],
         ),
       ),

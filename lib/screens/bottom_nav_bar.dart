@@ -1,8 +1,10 @@
 import 'package:aaryas_sample/screens/wishlist_page.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+import '../theme/colors.dart';
 import 'cart_page.dart';
 import 'accounts_page/account_page.dart';
-import 'homepage.dart';
+import 'home/homepage.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -28,26 +30,26 @@ class _BottomNavState extends State<BottomNav> {
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 15,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.transparent,
-        unselectedItemColor: Colors.black45,
-        selectedItemColor: Colors.teal,
+        backgroundColor: Colors.white,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Color(ColorT.themeColor),
         elevation: 0,
         iconSize: 25,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: Icon(Iconsax.home,),
             label: "HOME",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
+            icon: Icon(Iconsax.bag_2,),
             label: "CART",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border_sharp),
+            icon: Icon(Iconsax.heart,),
             label: "FAV",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined),
+            icon: Icon(Iconsax.profile_tick,),
             label: "ACCOUNT",
           ),
         ],

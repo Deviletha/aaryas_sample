@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Config/ApiHelper.dart';
-import 'product_view.dart';
+import '../../Config/ApiHelper.dart';
+import '../../Config/image_url_const.dart';
+import '../../theme/colors.dart';
+import '../product_view/product_view.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -13,7 +16,6 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   String? uID;
   Map? search;
   Map? search1;
@@ -82,6 +84,75 @@ class _SearchState extends State<Search> {
     }
   }
 
+  void _showDetailsBottomSheet(Map<String, dynamic> itemDetails) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        var image = UrlConstants.base + itemDetails["image"].toString();
+
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 250,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Image.network(
+                  image,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          )),
+                      child: Text("ADD")),
+                ],
+              ),
+              SizedBox(height: 10),
+              Text(
+                itemDetails["name"].toString(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                itemDetails["description"].toString(),
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 10),
+              Text(
+                "₹ ${itemDetails["price"]}",
+                style: TextStyle(
+                  color: Color(ColorT.themeColor),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              // Add more details as needed
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -89,11 +160,7 @@ class _SearchState extends State<Search> {
         appBar: AppBar(
           title: Text(
             "Search Items",
-            style: TextStyle(color: Colors.teal[900]),
           ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
         ),
         body: ListView(
           children: [
@@ -134,26 +201,28 @@ class _SearchState extends State<Search> {
   }
 
   Widget getSearchList(int index) {
-    var image = base! + searchList![index]["image"].toString();
+    var image = UrlConstants.base + searchList![index]["image"].toString();
     var price = "₹${searchList![index]["price"]}";
     var pID = searchList![index]["id"].toString();
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductView(
-                id: searchList![index]["id"].toString(),
-                productName: searchList![index]["name"].toString(),
-                url: image,
-                description: searchList![index]["description"].toString(),
-                amount: price,
-                combinationId: searchList![index]["id"].toString(),
-                quantity: searchList![index]["quantity"].toString(),
-                category: searchList![index]["categories"].toString(),
-                psize: "0"),
-          ),
-        );
+        _showDetailsBottomSheet(searchList![index]);
+
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => ProductView(
+        //         id: searchList![index]["id"].toString(),
+        //         productName: searchList![index]["name"].toString(),
+        //         url: image,
+        //         description: searchList![index]["description"].toString(),
+        //         amount: price,
+        //         combinationId: searchList![index]["id"].toString(),
+        //         quantity: searchList![index]["quantity"].toString(),
+        //         category: searchList![index]["categories"].toString(),
+        //         psize: "0"),
+        //   ),
+        // );
       },
       child: Card(
           color: Colors.grey.shade50,
@@ -172,7 +241,7 @@ class _SearchState extends State<Search> {
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     borderRadius: BorderRadius.circular(20), // Image border
                     child: SizedBox.fromSize(
-                      size: Size.fromRadius(40), // Image radius
+                      size: Size.fromRadius(60), // Image radius
                       child: Image.network(
                         image,
                         fit: BoxFit.cover,
@@ -184,7 +253,9 @@ class _SearchState extends State<Search> {
                   width: 10,
                 ),
                 Expanded(
+                  flex: 2,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       searchList == null
@@ -192,17 +263,17 @@ class _SearchState extends State<Search> {
                           : Text(
                               searchList![index]["name"].toString(),
                               style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                       SizedBox(
                         height: 10,
                       ),
                       Text(
                         price,
-                        style: const TextStyle(
+                        style:  TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.green),
+                            fontSize: 18,
+                            color: Color(ColorT.themeColor)),
                       ),
                       SizedBox(
                         height: 10,
@@ -210,26 +281,26 @@ class _SearchState extends State<Search> {
                       Text(
                         searchList![index]["description"].toString(),
                         maxLines: 2,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style:  TextStyle(fontWeight: FontWeight.bold, color: Color(ColorT.greyColor)),
                       ),
-                      ElevatedButton(
-                          onPressed: () {
-                            addToWishlist(pID, pID);
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
-                              shadowColor: Colors.teal[300],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10)),
-                              )),
-                          child: Icon(
-                            Icons.favorite_outlined,
-                            color: Colors.white,
-                          ))
                     ],
                   ),
+                ),
+
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade600,
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                  ),
+                  child: IconButton(
+                      onPressed: () {
+                        addToWishlist(pID, pID);
+                      },
+                      icon: Icon(
+                        Iconsax.heart,
+                        size: 25,
+                        color: Colors.white,
+                      )),
                 )
               ],
             ),

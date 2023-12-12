@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Config/ApiHelper.dart';
+import '../../Config/ApiHelper.dart';
+import '../../Config/image_url_const.dart';
 import 'order_details.dart';
 
 class MyOrders extends StatefulWidget {
@@ -14,7 +15,6 @@ class MyOrders extends StatefulWidget {
 }
 
 class _MyOrdersState extends State<MyOrders> {
-  String? base = "https://aryaas.hawkssolutions.com/basicapi/public/";
   String? uID;
   Map? order;
   Map? order1;
@@ -58,12 +58,8 @@ class _MyOrdersState extends State<MyOrders> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "MY ORDERS",
-          style: TextStyle(fontSize: 20, color: Colors.teal[900]),
+          "My Orders",
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: ListView.builder(
         physics: ScrollPhysics(),
@@ -75,7 +71,7 @@ class _MyOrdersState extends State<MyOrders> {
   }
 
   Widget getOrderList(int index) {
-    var image = base! + orderList![index]["image"].toString();
+    var image = UrlConstants.base + orderList![index]["image"].toString();
     var price = "₹${orderList![index]["total"]}";
     return Card(
         color: Colors.grey.shade50,
