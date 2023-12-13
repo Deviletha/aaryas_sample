@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Config/ApiHelper.dart';
+import '../../theme/colors.dart';
 
 class AddAddress extends StatefulWidget {
   const AddAddress({Key? key}) : super(key: key);
@@ -14,16 +15,13 @@ class AddAddress extends StatefulWidget {
 
 class _AddAddressState extends State<AddAddress> {
   String? uID;
-  String? data;
-  Map? responseData;
-  List? userAddressList;
+
 
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       uID = prefs.getString("UID");
     });
-    AddAddress();
   }
 
   final nameController = TextEditingController();
@@ -49,8 +47,8 @@ class _AddAddressState extends State<AddAddress> {
       double latitude = position.latitude;
       double longitude = position.longitude;
 
-      // print(latitude);
-      // print(longitude);
+      print(latitude);
+      print(longitude);
 
       var response =
           await ApiHelper().post(endpoint: "user/saveAddress", body: {
@@ -63,25 +61,21 @@ class _AddAddressState extends State<AddAddress> {
         "state": stateController.text,
         "latitude": latitude.toString(),
         "longitude": longitude.toString(),
-        "userid": data
+        "userid": uID
       });
+      print(response);
       if (response != null) {
         setState(() {
-          debugPrint('save address api successful:');
-          data = response.toString();
-          responseData = jsonDecode(response);
-          if (responseData?["status"] is List<dynamic>) {
-            userAddressList = responseData?["status"] as List<dynamic>?;
-          } else {
-            userAddressList =
-                null; // or handle the case when the response is not a list
-          }
+          debugPrint('save address API successful:');
+
           if (kDebugMode) {
-            print(responseData.toString());
+            print(response);
           }
         });
+        // Navigate back to the previous page after the API call is successful
+        Navigator.pop(context);
       } else {
-        debugPrint('api failed:');
+        debugPrint('API failed:');
       }
     } catch (err) {
       debugPrint('An error occurred: $err');
@@ -96,29 +90,53 @@ class _AddAddressState extends State<AddAddress> {
         elevation: 0,
       ),
       backgroundColor: Colors.white,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(12),
+        child: SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              addAddress();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(ColorT.themeColor),
+              shadowColor: Color(ColorT.themeColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+            child: Text("Add Address", ),
+          ),
+        ),
+      ),
       body: ListView(
         children: [
           Text(
-            "Hey, User!",
+            "Haii, User!",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 35, color: Colors.teal[900]),
+            style: TextStyle(fontSize: 35, color: Color(ColorT.themeColor), fontWeight: FontWeight.bold),
           ),
           Text(
             "Complete your profile",
             textAlign: TextAlign.center,
+            style: TextStyle(
+              letterSpacing: 1
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: nameController,
+
               decoration: InputDecoration(
                 labelText: "Name",
                 prefixIcon:
                     Icon(Icons.account_circle_outlined, color: Colors.black),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                  borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.zero),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -127,7 +145,7 @@ class _AddAddressState extends State<AddAddress> {
                   return null;
                 }
               },
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
             ),
           ),
           Padding(
@@ -139,9 +157,8 @@ class _AddAddressState extends State<AddAddress> {
                     Icon(Icons.location_city_rounded, color: Colors.black),
                 labelText: "City",
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.zero),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -150,21 +167,21 @@ class _AddAddressState extends State<AddAddress> {
                   return null;
                 }
               },
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: contactController,
+              keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 prefixIcon:
                     Icon(Icons.phone_android_outlined, color: Colors.black),
                 labelText: "Mobile",
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.zero),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -173,7 +190,7 @@ class _AddAddressState extends State<AddAddress> {
                   return null;
                 }
               },
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
             ),
           ),
           Padding(
@@ -184,9 +201,8 @@ class _AddAddressState extends State<AddAddress> {
                 labelText: "Address",
                 prefixIcon: Icon(Icons.mail_outlined, color: Colors.black),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.zero),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -195,7 +211,7 @@ class _AddAddressState extends State<AddAddress> {
                   return null;
                 }
               },
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
             ),
           ),
           Padding(
@@ -206,9 +222,8 @@ class _AddAddressState extends State<AddAddress> {
                 labelText: "Town",
                 prefixIcon: Icon(Icons.villa_outlined, color: Colors.black),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.zero),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -217,21 +232,21 @@ class _AddAddressState extends State<AddAddress> {
                   return null;
                 }
               },
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
+              keyboardType: TextInputType.number,
               controller: postalController,
               decoration: InputDecoration(
                 labelText: "Pin code",
                 prefixIcon:
                     Icon(Icons.person_pin_circle_outlined, color: Colors.black),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.zero),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -240,7 +255,7 @@ class _AddAddressState extends State<AddAddress> {
                   return null;
                 }
               },
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
             ),
           ),
           Padding(
@@ -255,9 +270,8 @@ class _AddAddressState extends State<AddAddress> {
                   color: Colors.black,
                 ),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.zero),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -268,25 +282,7 @@ class _AddAddressState extends State<AddAddress> {
               },
               textInputAction: TextInputAction.done,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 30, right: 30),
-            child: ElevatedButton(
-              onPressed: () {
-                AddAddress();
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  shadowColor: Colors.teal[300],
-                  minimumSize: Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(15),
-                        topRight: Radius.circular(15)),
-                  )),
-              child: Text("Change Address"),
-            ),
-          ),
+          )
         ],
       ),
     );

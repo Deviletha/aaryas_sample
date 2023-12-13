@@ -29,6 +29,7 @@ ThemeData _buildTheme(brightness) {
   return baseTheme.copyWith(
     textTheme: GoogleFonts.robotoCondensedTextTheme(baseTheme.textTheme),
       appBarTheme: AppBarTheme(
+
         surfaceTintColor: Colors.black,
         iconTheme: IconThemeData(color: Colors.black),
         centerTitle: false,

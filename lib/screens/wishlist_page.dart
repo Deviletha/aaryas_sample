@@ -19,7 +19,7 @@ class Wishlist extends StatefulWidget {
 class _WishlistState extends State<Wishlist> {
   String? uID;
   bool isLoading = true;
-  bool isLoggedIn = false;
+  bool isLoggedIn = true;
 
   @override
   void initState() {
@@ -49,10 +49,6 @@ class _WishlistState extends State<Wishlist> {
   List? finalPrList;
 
   Future<void> apiCall() async {
-    setState(() {
-      isLoading = true;
-    });
-
     var response = await ApiHelper().post(endpoint: "wishList/get", body: {
       "userid": uID,
     }).catchError((err) {});

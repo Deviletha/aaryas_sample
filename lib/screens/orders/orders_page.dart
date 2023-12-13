@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:aaryas_sample/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,103 +74,114 @@ class _MyOrdersState extends State<MyOrders> {
   Widget getOrderList(int index) {
     var image = UrlConstants.base + orderList![index]["image"].toString();
     var price = "₹${orderList![index]["total"]}";
+    var statusNote = orderList![index]["status_note"].toString();
+
+    Color statusColor = Colors.green; // Default color, you can change it as per your requirement
+
+    // Set color based on status_note
+    if (statusNote == "Order Placed") {
+      statusColor = Colors.indigo;
+    } else if (statusNote == "Cancelled") {
+      statusColor = Colors.red;
+    }
+
     return Card(
-        color: Colors.grey.shade50,
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OrderDetails(
-                  id: orderList![index]["id"].toString(),
+      color: Colors.grey.shade50,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OrderDetails(
+                id: orderList![index]["id"].toString(),
+              ),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: ClipRRect(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  borderRadius: BorderRadius.circular(20), // Image border
+                  child: SizedBox.fromSize(
+                    size: Size.fromRadius(40), // Image radius
+                    child: Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: ClipRRect(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        borderRadius: BorderRadius.circular(20), // Image border
-                        child: SizedBox.fromSize(
-                          size: Size.fromRadius(40), // Image radius
-                          child: Image.network(
-                            image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Column(
-                      children: const [
-                        Text("ARYAS"),
-                        Text("Expected delivery time : null"),
-                      ],
-                    ),
-                    Container(
-                      height: 40,
-                      width: 80,
-                      decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                        child: Text("Order Placed"),
-                      ),
-                    )
-                  ],
-                ),
-                Column(
+              SizedBox(
+                width: 15,
+              ),
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     orderList == null
                         ? Text("null data")
                         : Text(
-                            orderList![index]["cartName"].toString(),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                      orderList![index]["cartName"].toString(),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     SizedBox(
                       height: 10,
                     ),
                     Text(
                       price,
-                      style: const TextStyle(
+                      style:  TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: Colors.green),
+                          color: Color(ColorT.themeColor)),
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     Text(
                       orderList![index]["address"].toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Colors.grey),
                     ),
                     SizedBox(
                       height: 15,
                     ),
                     Text(
                       orderList![index]["date"].toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Colors.grey, letterSpacing: .80),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              Container(
+                height: 40,
+                width: 80,
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    statusNote, style: TextStyle(
+                    fontSize: 13, color: Colors.white, letterSpacing: .86
+                  ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
+
 }

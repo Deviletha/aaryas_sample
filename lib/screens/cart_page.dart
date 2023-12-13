@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Config/ApiHelper.dart';
 import '../Config/image_url_const.dart';
 import 'registration/login_page.dart';
-import 'select_address.dart';
+import 'place_order/select_address.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _CartPageState extends State<CartPage> {
   int index = 0;
   String? uID;
   bool isLoading = true;
-  bool isLoggedIn = false;
+  bool isLoggedIn = true;
 
   @override
   void initState() {
@@ -168,41 +168,40 @@ class _CartPageState extends State<CartPage> {
       ),
       body: isLoggedIn
           ? isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    color: Color(ColorT.themeColor),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: cartAddList == null ? 0 : cartAddList?.length,
-                  itemBuilder: (context, index) => getCartList(index),
-                  physics: ScrollPhysics(),
-                  shrinkWrap: true,
-                )
+          ? Center(
+        child: CircularProgressIndicator(
+          color: Color(ColorT.themeColor),
+        ),
+      )
+          : ListView.builder(
+        itemCount: cartAddList == null ? 0 : cartAddList?.length,
+        itemBuilder: (context, index) => getCartList(index),
+        physics: ScrollPhysics(),
+        shrinkWrap: true,
+      )
           : Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image.asset("assets/img_1.png"),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(ColorT.themeColor),
-                        shadowColor: Color(ColorT.themeColor),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        )),
-                    child: Text(
-                      "Please LogIn",
-                    ),
-                  ),
-                ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Image.asset("assets/img_1.png"),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(ColorT.themeColor),
+                shadowColor: Color(ColorT.themeColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
               ),
+              child: Text("Please Log In"),
             ),
+          ],
+        ),
+      ),
     );
   }
 

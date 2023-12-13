@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:aaryas_sample/constants/title_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconsax/iconsax.dart';
@@ -9,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../Config/image_url_const.dart';
 import '../../theme/colors.dart';
+import '../cart_page.dart';
 import '../product_view/product_view.dart';
 import 'notification_page.dart';
 import '../orders/order_details.dart';
@@ -35,6 +37,7 @@ class _HomePageState extends State<HomePage> {
     });
     getMyOrders();
     apiForCart();
+    apiForWishlist();
   }
 
   ///OrderList
@@ -59,7 +62,7 @@ class _HomePageState extends State<HomePage> {
 
 
   Map? cList;
-  List? cartAddList;
+  List? cartList;
 
   apiForCart() async {
     var response = await ApiHelper().post(endpoint: "cart/get", body: {
@@ -74,32 +77,13 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         debugPrint('cartpage successful:');
         cList = jsonDecode(response);
-        cartAddList = cList!["cart"];
+        cartList = cList!["cart"];
 
-        // Check if cartAddList is not empty
-        if (cartAddList != null && cartAddList!.isNotEmpty) {
-          // Show a green snackBar
-          showGreenSnackBar("Cart is not empty!");
-        }
       });
     } else {
       debugPrint('api failed:');
     }
   }
-
-  void showGreenSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.green,
-        duration: Duration(microseconds: 3),
-      ),
-    );
-  }
-
 
   getMyOrders() async {
     var response =
@@ -114,18 +98,14 @@ class _HomePageState extends State<HomePage> {
     });
 
     if (response != null) {
-      Map<String, dynamic> responseData = jsonDecode(response);
 
-      if (responseData["status"] == 1) {
         setState(() {
           debugPrint('get address api successful:');
-          order = responseData;
+          order = jsonDecode(response);
           order1 = order!["data"];
           orderList = order1!["pageData"];
         });
-      } else {
-        debugPrint('Order status is not 1');
-      }
+
     } else {
       debugPrint('API failed');
     }
@@ -213,20 +193,43 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  addToWishlist(String id, String combination) async {
-    var response = await ApiHelper().post(endpoint: "wishList/add", body: {
+  Map? prList;
+  Map? prList1;
+  List? finalPrList;
+
+  Future<void> apiForWishlist() async {
+
+    var response = await ApiHelper().post(endpoint: "wishList/get", body: {
       "userid": uID,
-      "productid": id,
-      "combination": combination
     }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
 
     if (response != null) {
       setState(() {
-        debugPrint('add wishlist api successful:');
-        data = response.toString();
+        debugPrint('wishlist api successful:');
+        prList = jsonDecode(response);
+        prList1 = prList!["pagination"];
+        finalPrList = prList1!["pageData"];
+      });
+    } else {
+      debugPrint('api failed:');
+    }
+  }
+
+  Future<void> removeFromWishlist(String id) async {
+    var response = await ApiHelper().post(endpoint: "wishList/remove", body: {
+      "id": id,
+    }).catchError((err) {});
+    if (response != null) {
+      setState(() {
+        debugPrint('Remove api successful:');
+        checkUser();
 
         Fluttertoast.showToast(
-          msg: "Added to Wishlist",
+          msg: "Removed product",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR,
           timeInSecForIosWeb: 1,
@@ -235,16 +238,47 @@ class _HomePageState extends State<HomePage> {
         );
       });
     } else {
-      debugPrint('Add to wishlist failed:');
+      debugPrint('api failed:');
     }
   }
+
+  bool isInWishlist = false; // Add this variable
+
+  addToWishlist(String id, String combination) async {
+        var response = await ApiHelper().post(
+          endpoint: "wishList/add",
+          body: {
+            "userid": uID,
+            "productid": id,
+            "combination": combination,
+          },
+        ).catchError((err) {});
+
+        if (response != null) {
+          setState(() {
+            debugPrint('add wishlist api successful:');
+            checkUser();
+
+            Fluttertoast.showToast(
+              msg: "Added to Wishlist",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.SNACKBAR,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+            isInWishlist = true; // Set isInWishlist to true
+          });
+        } else {
+          debugPrint('Add to wishlist failed:');
+        }
+      }
 
   @override
   void initState() {
     apiForCategory().then((_) {
       apiForAllProducts();
       apiForPopularProducts();
-      getMyOrders();
       checkUser();
     });
 
@@ -329,6 +363,67 @@ class _HomePageState extends State<HomePage> {
             width: 15,
           ),
         ],
+      ),
+      bottomNavigationBar: Visibility(
+        visible: cartList != null && cartList!.isNotEmpty,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      CartPage()), // Replace with your cart page
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              // backgroundBlendMode: BlendMode.srcATop, // Example blend mode
+              gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: [
+                  Color(ColorT.lightGreen),
+                  Color(ColorT.themeColor),
+                ],
+              ),
+            ),
+            height: 55,
+            child: Padding(
+              padding:
+              const EdgeInsets.only(left: 12, right: 10, top: 8, bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Your cart items",
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ),
+                  Row(
+                    children: [
+                      Text("View Cart",
+                          style: TextStyle(color: Colors.white, fontSize: 15)),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Container(
+                        color: Colors.white,
+                        height: 20,
+                        width: 1,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        Iconsax.shopping_bag,
+                        color: Colors.white,
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
       body: ListView(
         children: [
@@ -673,9 +768,25 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(image),
-            radius: 30,
+          Container(
+           decoration: BoxDecoration(
+             borderRadius: BorderRadius.all(Radius.circular(360))
+           ),
+            height: 60,
+            width: 60,
+            clipBehavior: Clip.antiAlias,
+            child: CachedNetworkImage(
+              imageUrl: image,
+              placeholder: (context, url) => Container(
+                color: Colors.grey[300],
+              ),
+              errorWidget: (context, url, error) => Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+              ),
+              fit: BoxFit.cover,
+            ),
           ),
           SizedBox(
             height: 3,
@@ -711,14 +822,23 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         height: 200,
         width: 330,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(
-                image: NetworkImage(
-                  image,
-                ),
-                filterQuality: FilterQuality.high,
-                fit: BoxFit.cover)),
+          color: Colors.grey,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: CachedNetworkImage(
+          imageUrl: image,
+          placeholder: (context, url) => Container(
+            color: Colors.grey[300],
+          ),
+          errorWidget: (context, url, error) => Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+          ),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -788,6 +908,11 @@ class _HomePageState extends State<HomePage> {
     var price = "₹${finalProductList![index]["combinationPrice"]}";
     var pID = finalProductList![index]["id"].toString();
     var combID = finalProductList![index]["combinationId"].toString();
+
+    // Check if the current item is in the wishlist
+    bool isInWishlist = finalPrList != null &&
+        finalPrList!.any((item) => item["combinationId"].toString() == combID);
+
     return Card(
       child: InkWell(
         onTap: () {
@@ -821,22 +946,24 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             children: [
               Container(
-                // height: 120,
-                // width: 120,
+                height: 100,
+                width: 100,
+                clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: ClipRRect(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  borderRadius: BorderRadius.circular(15), // Image border
-                  child: SizedBox.fromSize(
-                    size: Size.fromRadius(60), // Image radius
-                    child: Image.network(
-                      image,
-                      fit: BoxFit.cover,
-                    ),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[300],
                   ),
+                  errorWidget: (context, url, error) => Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                  ),
+                  fit: BoxFit.cover,
                 ),
               ),
               SizedBox(
@@ -878,7 +1005,11 @@ class _HomePageState extends State<HomePage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            addToWishlist(pID, combID);
+                            if (isInWishlist) {
+                              removeFromWishlist(pID);
+                            } else {
+                              addToWishlist(pID, combID);
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
@@ -888,7 +1019,7 @@ class _HomePageState extends State<HomePage> {
                                     BorderRadius.all(Radius.circular(8)),
                               )),
                           child: Row(
-                            children: const [
+                            children:  [
                               Text(
                                 "FAV",
                                 style: TextStyle(
@@ -897,10 +1028,17 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(
                                 width: 5,
                               ),
-                              Icon(
+                              isInWishlist ? Icon(
+                                Iconsax.heart5,
+                                color: Colors.white,
+                                // Change icon color based on isInWishlist
+                                size: 17,
+                              ): Icon(
                                 Iconsax.heart,
-                                size: 18,
-                              ),
+                                color: Colors.white,
+                                // Change icon color based on isInWishlist
+                                size: 17,
+                              )
                             ],
                           ),
                         )
@@ -936,61 +1074,59 @@ class _HomePageState extends State<HomePage> {
           },
           child: Padding(
             padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: ClipRRect(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        borderRadius: BorderRadius.circular(20), // Image border
-                        child: SizedBox.fromSize(
-                          size: Size.fromRadius(40), // Image radius
-                          child: Image.network(
-                            image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+                Container(
+                  height: 100,
+                  width: 100,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: image,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[300],
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            orderList == null
-                                ? Text("null data")
-                                : Text(
-                                    "Order Placed",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17),
-                                  ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              orderList![index]["cartName"].toString(),
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blueGrey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+                    errorWidget: (context, url, error) => Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                    ),
+                    fit: BoxFit.cover,
+                  ),
                 ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        orderList == null
+                            ? Text("null data")
+                            : Text(
+                                "Order Placed",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17),
+                              ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          orderList![index]["cartName"].toString(),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueGrey),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
           ),

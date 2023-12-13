@@ -9,13 +9,17 @@ class PrivacyInfo extends StatefulWidget {
 }
 
 class _PrivacyInfoState extends State<PrivacyInfo> {
-  final String websiteUrl = "https://hotelaryas.com/privacy_poolicy";
+  final String websiteUrl = "https://hotelaryas.com/privacy_policy";
 
-  void _launchWebsite() async {
-    if (await canLaunch(websiteUrl)) {
-      await launch(websiteUrl);
-    } else {
-      throw 'Could not launch $websiteUrl';
+  Future<void> _launchWebsite() async {
+    try {
+      if (await canLaunch(websiteUrl)) {
+        await launch(websiteUrl);
+      } else {
+        throw 'Could not launch $websiteUrl';
+      }
+    } catch (e) {
+      print('Error launching URL: $e');
     }
   }
 

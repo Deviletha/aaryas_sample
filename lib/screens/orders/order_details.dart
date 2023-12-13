@@ -120,94 +120,111 @@ class _OrderDetailsState extends State<OrderDetails> {
   Widget getOrderList(int index) {
     var image = UrlConstants.base + orderList![index]["image"].toString();
     var price = "₹${orderList![index]["price"]}";
+    var status = orderList![index]["status"];
+
+    // Check if the status is -1
+    bool isCancelable = status != -1;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey.shade100,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          color: Colors.grey.shade100,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ClipRRect(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      borderRadius: BorderRadius.circular(20),
+                      child: SizedBox.fromSize(
+                        size: Size.fromRadius(40),
+                        child: Image.network(
+                          image,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                      child: ClipRRect(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        borderRadius: BorderRadius.circular(20), // Image border
-                        child: SizedBox.fromSize(
-                          size: Size.fromRadius(40), // Image radius
-                          child: Image.network(
-                            image,
-                            fit: BoxFit.cover,
-                          ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      orderList == null
+                          ? Text("null data")
+                          : Text(
+                        orderList![index]["product"].toString(),
+                        style: TextStyle(
+                          letterSpacing: 1,
+                          color: Color(ColorT.greyColor),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        orderList == null
-                            ? Text("null data")
-                            : Text(
-                                orderList![index]["product"].toString(),
-                                style: TextStyle(
-                                    letterSpacing: 1,
-                                    color: Color(ColorT.greyColor)),
-                              ),
-                        SizedBox(
-                          height: 10,
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        price,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.red,
                         ),
-                        Text(
-                          price,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.red),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        orderList![index]["address"].toString(),
+                        style: TextStyle(
+                          letterSpacing: 1,
+                          color: Color(ColorT.greyColor),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          orderList![index]["address"].toString(),
-                          style: TextStyle(
-                              letterSpacing: 1, color: Color(ColorT.greyColor)),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (isCancelable)
                     SizedBox(
                       height: 10,
                     ),
+                  if (isCancelable)
                     Card(
                       child: TextButton(
-                          onPressed: () {
-                            returnItem();
-                          },
-                          child: Text("Cancel Order",style: TextStyle(color: Colors.black),), ),
+                        onPressed: () {
+                          returnItem();
+                        },
+                        child: Text(
+                          "Cancel Order",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
                     ),
-                  ],
-                )
-              ],
-            ),
-          )),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
+
 }

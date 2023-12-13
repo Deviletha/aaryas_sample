@@ -2,15 +2,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Config/ApiHelper.dart';
-import '../Config/image_url_const.dart';
-import '../theme/colors.dart';
-import 'orders/orders_page.dart';
+import '../../Config/ApiHelper.dart';
+import '../../Config/image_url_const.dart';
+import '../../theme/colors.dart';
+import '../orders/orders_page.dart';
 
 class PlaceOrder extends StatefulWidget {
   final String id;
+  final String latitude;
+  final String longitude;
 
-  const PlaceOrder({Key? key, required this.id}) : super(key: key);
+  const PlaceOrder({Key? key, required this.id, required this.latitude, required this.longitude}) : super(key: key);
 
   @override
   State<PlaceOrder> createState() => _PlaceOrderState();
@@ -46,12 +48,12 @@ class _PlaceOrderState extends State<PlaceOrder> {
     var response = await ApiHelper().post(endpoint: "cart/placeOrder", body: {
       "id": uID,
       "address": widget.id,
-      "amount": " ",
+      "amount": calculateSubtotal().toStringAsFixed(2),
       "paid": "1",
-      "latitude": "1234",
-      "longitude": "1234",
-      "delivery_note": noteController.text,
-      "tip": tipController.text
+      "latitude": widget.latitude.toString(),
+      "longitude": widget.longitude.toString(),
+      "delivery_note": noteController.text.toString(),
+      "tip": tipController.text.toString()
     }).catchError((err) {});
     if (response != null) {
       setState(() {
@@ -67,7 +69,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
         );
       });
 
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => MyOrders(),
@@ -79,7 +81,8 @@ class _PlaceOrderState extends State<PlaceOrder> {
   }
 
   Map? cList;
-  List? cartAddList;
+  List? cartList;
+  List? cartGeneralData;
 
   apiForCart() async {
     var response = await ApiHelper().post(endpoint: "cart/get", body: {
@@ -94,7 +97,8 @@ class _PlaceOrderState extends State<PlaceOrder> {
       setState(() {
         debugPrint('cartpage successful:');
         cList = jsonDecode(response);
-        cartAddList = cList!["cart"];
+        cartList = cList!["cart"];
+        cartGeneralData = cList!["GeneralData"];
       });
     } else {
       debugPrint('api failed:');
@@ -135,6 +139,21 @@ class _PlaceOrderState extends State<PlaceOrder> {
       debugPrint('api failed:');
     }
   }
+  double calculateSubtotal() {
+    double subtotal = 0.0;
+
+    if (cartList != null) {
+      for (int index = 0; index < cartList!.length; index++) {
+        int quantity = cartList![index]["quantity"];
+        int price = cartList![index]["price"];
+        int totalAmount = quantity * price;
+        subtotal += totalAmount.toDouble();
+      }
+    }
+
+    return subtotal;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +162,26 @@ class _PlaceOrderState extends State<PlaceOrder> {
         appBar: AppBar(
           title: Text("Checkout"),
           centerTitle: true,
+        ),
+        bottomNavigationBar:  Padding(
+          padding: const EdgeInsets.all(12),
+          child: SizedBox(
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                placeOrderApi();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(ColorT.themeColor),
+                shadowColor:Color(ColorT.themeColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10),
+                  ),
+                ),
+              ),
+              child: Text("Place Order"),
+            ),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -164,7 +203,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                           ? CircularProgressIndicator()
                           : ListView.builder(
                               itemCount:
-                                  cartAddList == null ? 0 : cartAddList?.length,
+                              cartList == null ? 0 : cartList?.length,
                               itemBuilder: (context, index) =>
                                   getCartList(index),
                               physics: ScrollPhysics(),
@@ -172,7 +211,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                             ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(left: 10, right: 10, top: 20),
+                            const EdgeInsets.only(left: 15, right: 10, top: 20),
                         child: TextFormField(
                           controller: noteController,
                           decoration: InputDecoration(
@@ -207,7 +246,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
-                    children: const [
+                    children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -216,11 +255,12 @@ class _PlaceOrderState extends State<PlaceOrder> {
                             style: TextStyle(fontSize: 15, color: Colors.black),
                           ),
                           Text(
-                            "Rs.335.00",
+                            "Rs.${calculateSubtotal().toStringAsFixed(2)}",
                             style: TextStyle(fontSize: 15, color: Colors.black),
-                          )
+                          ),
                         ],
                       ),
+
                       SizedBox(
                         height: 10,
                       ),
@@ -244,7 +284,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Delivery Charges",
+                            "Packing Charges",
                             style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                           Text(
@@ -260,7 +300,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Delivery Charges",
+                            "Shipping Charges",
                             style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                           Text(
@@ -276,18 +316,16 @@ class _PlaceOrderState extends State<PlaceOrder> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Delivery Charges",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            "Grand Total",
+                            style: TextStyle(fontSize: 15, color: Colors.grey),
                           ),
                           Text(
-                            "Rs.0.00",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            "Rs.${calculateSubtotal().toStringAsFixed(2)}",
+                            style: TextStyle(fontSize: 15, color: Colors.grey),
                           )
                         ],
                       ),
-                      Divider(
-                        color: Colors.grey,
-                      ),
+                      Divider(thickness: 1,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -296,7 +334,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                             style: TextStyle(fontSize: 15, color: Colors.black),
                           ),
                           Text(
-                            "Rs.335.00",
+                            "Rs.${calculateSubtotal().toStringAsFixed(2)}",
                             style: TextStyle(fontSize: 15, color: Colors.black),
                           )
                         ],
@@ -324,7 +362,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                     controller: tipController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      labelText: "Tip (if any)",
+                      labelText: "Tip (if any)",labelStyle: TextStyle(fontWeight: FontWeight.bold)
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -337,26 +375,6 @@ class _PlaceOrderState extends State<PlaceOrder> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    placeOrderApi();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(ColorT.themeColor),
-                    shadowColor:Color(ColorT.themeColor),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10),
-                      ),
-                    ),
-                  ),
-                  child: Text("Place Order"),
-                ),
-              ),
             ],
           ),
         ),
@@ -365,9 +383,9 @@ class _PlaceOrderState extends State<PlaceOrder> {
   }
 
   Widget getCartList(int index) {
-    var image = UrlConstants.base + cartAddList![index]["image"];
-    int quantity = cartAddList![index]["quantity"];
-    int price = cartAddList![index]["price"];
+    var image = UrlConstants.base + cartList![index]["image"];
+    int quantity = cartList![index]["quantity"];
+    int price = cartList![index]["price"];
     int totalAmount = quantity * price;
     return Padding(
       padding: const EdgeInsets.all(8),
@@ -406,10 +424,10 @@ class _PlaceOrderState extends State<PlaceOrder> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    cartAddList == null
+                    cartList == null
                         ? Text("null data")
                         : Text(
-                            cartAddList![index]["product"].toString(),
+                      cartList![index]["product"].toString(),
                             style: const TextStyle(
                                 fontSize: 15, fontWeight: FontWeight.bold),
                           ),
@@ -437,8 +455,8 @@ class _PlaceOrderState extends State<PlaceOrder> {
                     IconButton(
                         onPressed: () {
                           decrementQty(
-                            cartAddList![index]["product_id"].toString(),
-                            cartAddList![index]["size"].toString(),
+                            cartList![index]["product_id"].toString(),
+                            cartList![index]["size"].toString(),
                           );
                         },
                         icon: Icon(
@@ -451,7 +469,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                         padding: const EdgeInsets.only(
                             left: 10, right: 10, top: 8, bottom: 8),
                         child: Text(
-                          cartAddList![index]["quantity"].toString(),
+                          cartList![index]["quantity"].toString(),
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
@@ -460,8 +478,8 @@ class _PlaceOrderState extends State<PlaceOrder> {
                     IconButton(
                         onPressed: () {
                           incrementQty(
-                            cartAddList![index]["product_id"].toString(),
-                            cartAddList![index]["size"].toString(),
+                            cartList![index]["product_id"].toString(),
+                            cartList![index]["size"].toString(),
                           );
                         },
                         icon: Icon(

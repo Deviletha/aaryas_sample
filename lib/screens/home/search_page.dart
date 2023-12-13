@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Config/ApiHelper.dart';
 import '../../Config/image_url_const.dart';
 import '../../theme/colors.dart';
-import '../product_view/product_view.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -23,10 +22,62 @@ class _SearchState extends State<Search> {
   String? searchKeyword;
   int index = 0;
 
+
+  Map? prList;
+  Map? prList1;
+  List? finalPrList;
+  bool isLoading = true;
+
+
   checkUser() async {
     final prefs = await SharedPreferences.getInstance();
     uID = prefs.getString("UID");
+    apiForWishlist();
   }
+
+  Future<void> apiForWishlist() async {
+    var response = await ApiHelper().post(endpoint: "wishList/get", body: {
+      "userid": uID,
+    }).catchError((err) {});
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (response != null) {
+      setState(() {
+        debugPrint('wishlist api successful:');
+        prList = jsonDecode(response);
+        prList1 = prList!["pagination"];
+        finalPrList = prList1!["pageData"];
+      });
+    } else {
+      debugPrint('api failed:');
+    }
+  }
+
+  Future<void> removeFromWishlist(String id) async {
+    var response = await ApiHelper().post(endpoint: "wishList/remove", body: {
+      "id": id,
+    }).catchError((err) {});
+    if (response != null) {
+      setState(() {
+        debugPrint('Remove api successful:');
+
+        Fluttertoast.showToast(
+          msg: "Removed product",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      });
+    } else {
+      debugPrint('api failed:');
+    }
+  }
+
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -36,30 +87,39 @@ class _SearchState extends State<Search> {
     super.initState();
   }
 
-  addToWishlist(String id, String comId) async {
-    var response = await ApiHelper().post(endpoint: "wishList/add", body: {
-      "userid": uID,
-      "productid": id,
-      "combination": comId
-    }).catchError((err) {});
+  bool isInWishlist = false; // Add this variable
 
-    if (response != null) {
-      setState(() {
-        debugPrint('add wishlist api successful:');
+  addToWishlist(String id, String combination) async {
 
-        Fluttertoast.showToast(
-          msg: "Added to Wishlist",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.SNACKBAR,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      });
-    } else {
-      debugPrint('Add to wishlist failed:');
-    }
-  }
+        // CombinationId does not exist, add to wishlist
+        var response = await ApiHelper().post(
+          endpoint: "wishList/add",
+          body: {
+            "userid": uID,
+            "productid": id,
+            "combination": combination,
+          },
+        ).catchError((err) {});
+
+        if (response != null) {
+          setState(() {
+            debugPrint('add wishlist api successful:');
+
+            checkUser();
+            Fluttertoast.showToast(
+              msg: "Added to Wishlist",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.SNACKBAR,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+          });
+        } else {
+          debugPrint('Add to wishlist failed:');
+        }
+      }
+
 
   void _performSearch() async {
     setState(() {
@@ -171,12 +231,8 @@ class _SearchState extends State<Search> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search...',
+                    hintText: 'Search for restaurants and food',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: () => _searchController.clear(),
-                    ),
-                    prefixIcon: IconButton(
                       icon: Icon(Icons.search),
                       onPressed: _performSearch,
                     ),
@@ -184,7 +240,7 @@ class _SearchState extends State<Search> {
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
-                  textInputAction: TextInputAction.done,
+                  textInputAction: TextInputAction.search,
                 ),
               ),
             ),
@@ -204,25 +260,14 @@ class _SearchState extends State<Search> {
     var image = UrlConstants.base + searchList![index]["image"].toString();
     var price = "₹${searchList![index]["price"]}";
     var pID = searchList![index]["id"].toString();
+    var combID = searchList![index]["combinationId"].toString();
+
+    // Check if the current item is in the wishlist
+     isInWishlist = finalPrList != null &&
+        finalPrList!.any((item) => item["combinationId"].toString() == combID);
     return InkWell(
       onTap: () {
         _showDetailsBottomSheet(searchList![index]);
-
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => ProductView(
-        //         id: searchList![index]["id"].toString(),
-        //         productName: searchList![index]["name"].toString(),
-        //         url: image,
-        //         description: searchList![index]["description"].toString(),
-        //         amount: price,
-        //         combinationId: searchList![index]["id"].toString(),
-        //         quantity: searchList![index]["quantity"].toString(),
-        //         category: searchList![index]["categories"].toString(),
-        //         psize: "0"),
-        //   ),
-        // );
       },
       child: Card(
           color: Colors.grey.shade50,
@@ -294,14 +339,24 @@ class _SearchState extends State<Search> {
                   ),
                   child: IconButton(
                       onPressed: () {
-                        addToWishlist(pID, pID);
+                        if (isInWishlist) {
+                          removeFromWishlist(pID);
+                        } else {
+                          addToWishlist(pID, combID);
+                        }
                       },
-                      icon: Icon(
-                        Iconsax.heart,
-                        size: 25,
+                      icon: isInWishlist ? Icon(
+                        Iconsax.heart5,
                         color: Colors.white,
-                      )),
-                )
+                        // Change icon color based on isInWishlist
+                        size: 25,
+                      ): Icon(
+                        Iconsax.heart,
+                        color: Colors.white,
+                        // Change icon color based on isInWishlist
+                        size: 25,
+                      )
+                  ),),
               ],
             ),
           )),

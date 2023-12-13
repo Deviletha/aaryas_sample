@@ -1,11 +1,13 @@
 import 'dart:convert';
 
-import 'package:aaryas_sample/screens/place_order.dart';
+import 'package:aaryas_sample/screens/place_order/place_order.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../Config/ApiHelper.dart';
+import '../../Config/ApiHelper.dart';
+import '../../theme/colors.dart';
+import '../accounts_page/add_address.dart';
 
 class SelectAddress extends StatefulWidget {
   const SelectAddress({Key? key}) : super(key: key);
@@ -16,7 +18,6 @@ class SelectAddress extends StatefulWidget {
 
 class _SelectAddressState extends State<SelectAddress> {
   String? uID;
-  int index = 0;
   Map? address;
   List? addressList;
 
@@ -55,6 +56,32 @@ class _SelectAddressState extends State<SelectAddress> {
       appBar: AppBar(
         title: Text(
           "Select your Address",
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(12),
+        child: SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddAddress(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(ColorT.themeColor),
+              shadowColor: Color(ColorT.themeColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+            child: Text("Add New Address"),
+          ),
         ),
       ),
       body: ListView(
@@ -105,14 +132,16 @@ class _SelectAddressState extends State<SelectAddress> {
     );
   }
 
-  Widget getAddressRow(int index) {
+  Widget getAddressRow(int index1) {
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PlaceOrder(
-              id: addressList![index]["id"].toString(),
+              id: addressList![index1]["id"].toString(),
+              latitude: addressList![index1]["latitude"].toString(),
+              longitude: addressList![index1]["longitude"].toString(),
             ),
           ),
         );
@@ -135,31 +164,31 @@ class _SelectAddressState extends State<SelectAddress> {
                       ),
                     )
                   : Text(
-                      addressList![index]["address"].toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      addressList![index1]["address"].toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
                     ),
               SizedBox(height: 5),
               Text(
-                addressList![index]["phone"].toString(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
+                addressList![index1]["phone"].toString(),
+                style: TextStyle(color: Color(ColorT.greyColor)),
               ),
               SizedBox(height: 5),
               Text(
-                addressList![index]["city"].toString(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                addressList![index1]["city"].toString(),
+                style: TextStyle(color: Color(ColorT.greyColor)),
               ),
               SizedBox(height: 5),
               Text(
-                addressList![index]["pincode"].toString(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                addressList![index1]["pincode"].toString(),
+                style: TextStyle(color: Color(ColorT.greyColor)),
               ),
               SizedBox(height: 5),
               Text(
-                addressList![index]["state"].toString(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                addressList![index1]["state"].toString(),
+                style: TextStyle(color: Color(ColorT.greyColor)),
               ),
             ],
           ),

@@ -27,7 +27,7 @@ class _CategoryViewState extends State<CategoryView> {
   String? wID;
 
   List<dynamic>? prCategoryList;
-  bool isLoading = false;
+  bool isLoading = true;
   String? uID;
   String? data;
 
@@ -42,9 +42,6 @@ class _CategoryViewState extends State<CategoryView> {
   List? finalPrList;
 
   Future<void> apiForWishlist() async {
-    setState(() {
-      isLoading = true;
-    });
 
     var response = await ApiHelper().post(endpoint: "wishList/get", body: {
       "userid": uID,
@@ -73,7 +70,7 @@ class _CategoryViewState extends State<CategoryView> {
     if (response != null) {
       setState(() {
         debugPrint('Remove api successful:');
-
+        checkUser();
         Fluttertoast.showToast(
           msg: "Removed product",
           toastLength: Toast.LENGTH_SHORT,
@@ -123,23 +120,8 @@ class _CategoryViewState extends State<CategoryView> {
   bool isInWishlist = false; // Add this variable
 
   addToWishlist(String id, String combination) async {
-    if (finalPrList != null) {
-      // Check if combinationId exists in finalPrList
-      bool isAlreadyInWishlist = finalPrList!
-          .any((item) => item["combinationId"].toString() == combination);
 
-      if (isAlreadyInWishlist) {
-        // CombinationId exists, remove from wishlist
-        finalPrList!.forEach((item) {
-          if (item["combinationId"].toString() == combination) {
-            removeFromWishlist(item["id"].toString());
-          }
-        });
-        setState(() {
-          isInWishlist = false; // Set isInWishlist to false
-        });
-      } else {
-        // CombinationId does not exist, add to wishlist
+
         var response = await ApiHelper().post(
           endpoint: "wishList/add",
           body: {
@@ -152,7 +134,7 @@ class _CategoryViewState extends State<CategoryView> {
         if (response != null) {
           setState(() {
             debugPrint('add wishlist api successful:');
-
+            checkUser();
             Fluttertoast.showToast(
               msg: "Added to Wishlist",
               toastLength: Toast.LENGTH_SHORT,
@@ -167,8 +149,6 @@ class _CategoryViewState extends State<CategoryView> {
           debugPrint('Add to wishlist failed:');
         }
       }
-    }
-  }
 
   apiForProductsByCategory() async {
     var response = await ApiHelper().post(
@@ -382,12 +362,17 @@ class _CategoryViewState extends State<CategoryView> {
                       addToWishlist(pID, combID);
                     }
                   },
-                  icon: Icon(
-                    Iconsax.heart,
-                    color: isInWishlist ? Colors.red : Colors.white,
+                  icon: isInWishlist ? Icon(
+                    Iconsax.heart5,
+                    color: Colors.white,
                     // Change icon color based on isInWishlist
                     size: 25,
-                  ),
+                  ): Icon(
+                    Iconsax.heart,
+                    color: Colors.white,
+                    // Change icon color based on isInWishlist
+                    size: 25,
+                  )
                 ),
               ),
             ],
