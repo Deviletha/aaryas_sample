@@ -228,8 +228,8 @@ class _SignupPageState extends State<SignupPage> {
                             },
                             icon: Icon(
                               showPass == true
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                                  ? Iconsax.eye_slash
+                                  : Iconsax.eye,
                             )),
 
                         labelText: "Password",

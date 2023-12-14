@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Config/ApiHelper.dart';
+import '../../theme/colors.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({Key? key}) : super(key: key);
@@ -72,6 +74,27 @@ class _ChangePasswordState extends State<ChangePassword> {
           "Change Password",
         ),
       ),
+      bottomNavigationBar:  Padding(
+        padding: const EdgeInsets.all(12),
+        child: SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              changePassword();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(ColorT.themeColor),
+              shadowColor:Color(ColorT.themeColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10),
+                ),
+              ),
+            ),
+            child: Text("Change Password"),
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Padding(
@@ -94,16 +117,14 @@ class _ChangePasswordState extends State<ChangePassword> {
                     },
                     icon: Icon(
                       showPass == true
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                          ? Iconsax.eye_slash
+                          : Iconsax.eye,
                     )),
                 labelText: "New Password",
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none),
               ),
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
               validator: (password) {
                 if (password!.isEmpty || password.length < 6) {
                   return "Enter a valid Password, length should be greater than 6";
@@ -133,14 +154,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                     },
                     icon: Icon(
                       showPass == true
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                          ? Iconsax.eye_slash
+                          : Iconsax.eye,
                     )),
                 labelText: "Confirm Password",
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none),
               ),
               textInputAction: TextInputAction.done,
               validator: (password) {
@@ -150,24 +169,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                   return null;
                 }
               },
-            ),
-          ),
-          SizedBox(
-            width: 350,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                ChangePassword();
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  shadowColor: Colors.teal[300],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
-                  )),
-              child: Text("Change Password"),
             ),
           ),
         ],

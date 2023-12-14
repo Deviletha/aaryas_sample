@@ -158,8 +158,8 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       icon: Icon(
                         showPass == true
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                            ? Iconsax.eye_slash
+                            : Iconsax.eye,
                       )),
                   hintText: "Password",
                   labelText: "Password",

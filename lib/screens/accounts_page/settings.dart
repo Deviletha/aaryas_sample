@@ -1,4 +1,5 @@
 import 'package:aaryas_sample/screens/accounts_page/editprofile.dart';
+import 'package:aaryas_sample/screens/accounts_page/password.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconsax/iconsax.dart';
@@ -87,7 +88,7 @@ class _SettingsState extends State<Settings> {
           ListTile(
             onTap: () =>
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return ChangeProfile();
+              return ChangePassword();
             })),
             leading: Icon(
               Iconsax.keyboard,

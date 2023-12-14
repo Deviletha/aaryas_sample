@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Config/ApiHelper.dart';
+import '../../theme/colors.dart';
 
 class ChangeProfile extends StatefulWidget {
   const ChangeProfile({Key? key}) : super(key: key);
@@ -79,6 +81,27 @@ class _ChangeProfileState extends State<ChangeProfile> {
           "Edit Profile",
         ),
       ),
+      bottomNavigationBar:   Padding(
+        padding: const EdgeInsets.all(12),
+        child: SizedBox(
+          width: 350,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              editProfile();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(ColorT.themeColor),
+              shadowColor:Color(ColorT.themeColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10),
+                ),
+              ),
+            ),
+            child: Text("Submit"),
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Padding(
@@ -87,11 +110,10 @@ class _ChangeProfileState extends State<ChangeProfile> {
             child: TextFormField(
               controller: firstnameController,
               decoration: InputDecoration(
+                prefixIcon: Icon(Iconsax.user, color: Colors.black, size: 20,),
                 labelText: "First Name",
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -100,7 +122,7 @@ class _ChangeProfileState extends State<ChangeProfile> {
                   return null;
                 }
               },
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
             ),
           ),
           Padding(
@@ -109,11 +131,10 @@ class _ChangeProfileState extends State<ChangeProfile> {
             child: TextFormField(
               controller: lastnameController,
               decoration: InputDecoration(
+                prefixIcon: Icon(Iconsax.user, color: Colors.black, size: 20,),
                 labelText: "Last Name",
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -122,7 +143,7 @@ class _ChangeProfileState extends State<ChangeProfile> {
                   return null;
                 }
               },
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
             ),
           ),
           Padding(
@@ -131,11 +152,10 @@ class _ChangeProfileState extends State<ChangeProfile> {
             child: TextFormField(
               controller: emailIdController,
               decoration: InputDecoration(
+                prefixIcon: Icon(Iconsax.message, color: Colors.black, size: 20,),
                 labelText: "Email Id ",
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
+                    borderSide: BorderSide.none),
               ),
               validator: (value) {
                 if (value!.isEmpty || !value.contains('@')) {
@@ -144,25 +164,8 @@ class _ChangeProfileState extends State<ChangeProfile> {
                   return null;
                 }
               },
+              keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.done,
-            ),
-          ),
-          SizedBox(
-            width: 350,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                editProfile();
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  shadowColor: Colors.teal[300],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
-                  )),
-              child: Text("Submit"),
             ),
           ),
         ],
