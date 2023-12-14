@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:flutter/material.dart';
@@ -128,13 +129,13 @@ class _WishlistState extends State<Wishlist> {
                           MaterialPageRoute(builder: (context) => LoginPage()));
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        shadowColor: Colors.teal[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(10),
-                              topLeft: Radius.circular(10)),
-                        )),
+                      backgroundColor: Color(ColorT.themeColor),
+                      shadowColor:Color(ColorT.themeColor),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10),
+                        ),
+                      ),
+                    ),
                     child: Text(
                       "Please LogIn",
                     ),
@@ -154,20 +155,24 @@ class _WishlistState extends State<Wishlist> {
       child: Row(
         children: [
           Container(
+            height: 120,
+            width: 120,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: Colors.grey,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: ClipRRect(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              borderRadius: BorderRadius.circular(20), // Image border
-              child: SizedBox.fromSize(
-                size: Size.fromRadius(60), // Image radius
-                child: Image.network(
-                  image,
-                  fit: BoxFit.cover,
-                ),
+            child: CachedNetworkImage(
+              imageUrl: image,
+              placeholder: (context, url) => Container(
+                color: Colors.grey[300],
               ),
+              errorWidget: (context, url, error) => Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+              ),
+              fit: BoxFit.cover,
             ),
           ),
           SizedBox(

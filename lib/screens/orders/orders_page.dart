@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:aaryas_sample/theme/colors.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -105,20 +106,24 @@ class _MyOrdersState extends State<MyOrders> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
+                height: 120,
+                width: 120,
+                clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: ClipRRect(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  borderRadius: BorderRadius.circular(20), // Image border
-                  child: SizedBox.fromSize(
-                    size: Size.fromRadius(40), // Image radius
-                    child: Image.network(
-                      image,
-                      fit: BoxFit.cover,
-                    ),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[300],
                   ),
+                  errorWidget: (context, url, error) => Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                  ),
+                  fit: BoxFit.cover,
                 ),
               ),
               SizedBox(

@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:aaryas_sample/screens/bottom_nav_bar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../theme/colors.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,10 +25,81 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  checkUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    uID = prefs.getString("UID");
+  apiForLogin() async {
+    String username = usernameController.text.toString();
+    String password = passwordController.text.toString();
+    if (username.isNotEmpty && password.isNotEmpty) {
+      var response =
+      await ApiHelper().post(endpoint: "common/authenticate", body: {
+        'username': username,
+        'password': password,
+      }).catchError((err) {});
+
+      if (response != null) {
+        var jsonResponse = jsonDecode(response);
+        if (jsonResponse is List && jsonResponse.isNotEmpty) {
+          if (jsonResponse[0]["error"] == "username or password is incorrect") {
+            // Username or password is incorrect
+            debugPrint('API failed:');
+            Fluttertoast.showToast(
+              msg: "Username or password is incorrect",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.SNACKBAR,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+          } else {
+            // Successful login
+            setState(() {
+              debugPrint('API successful:');
+              userList = jsonResponse;
+              if (kDebugMode) {
+                print(response);
+              }
+            });
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString("UID", userList![0]["id"].toString());
+
+            Fluttertoast.showToast(
+              msg: "Login success",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.SNACKBAR,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BottomNav()),
+            );
+          }
+        }
+      } else {
+        // API call failed
+        debugPrint('API failed:');
+        Fluttertoast.showToast(
+          msg: "Login failed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } else {
+      // Username or password is empty
+      Fluttertoast.showToast(
+        msg: "Please enter username and password",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.SNACKBAR,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +122,11 @@ class _LoginPageState extends State<LoginPage> {
               child: TextFormField(
                 controller: usernameController,
                 decoration: InputDecoration(
-                  suffixIcon: const Icon(Icons.account_box_sharp),
+                  suffixIcon: const Icon(Iconsax.user),
                   hintText: "Phone Number",
                   labelText: 'Phone Number',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10))),
+                      borderSide: BorderSide.none)
                 ),
                 textInputAction: TextInputAction.next,
                 validator: (uname) {
@@ -91,10 +163,8 @@ class _LoginPageState extends State<LoginPage> {
                       )),
                   hintText: "Password",
                   labelText: "Password",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10))),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide.none)
                 ),
                 textInputAction: TextInputAction.done,
                 validator: (password) {
@@ -106,73 +176,25 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
             ),
-            SizedBox(
-              width: 350,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () async {
-                  String username = usernameController.text.toString();
-                  String password = passwordController.text.toString();
-                  if (username.isNotEmpty && password.isNotEmpty) {
-                    var response = await ApiHelper()
-                        .post(endpoint: "common/authenticate", body: {
-                      'username': username,
-                      'password': password,
-                    }).catchError((err) {});
-                    if (response != null) {
-                      setState(() {
-                        debugPrint('API successful:');
-                        userList = jsonDecode(response);
-                      });
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString(
-                          "UID", userList![0]["id"].toString());
-                      checkUser();
-                      Fluttertoast.showToast(
-                        msg: "Login success",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.SNACKBAR,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.white,
-                        fontSize: 16.0,
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BottomNav()),
-                      );
-                    } else {
-                      // API call failed
-                      debugPrint('API failed:');
-                      Fluttertoast.showToast(
-                        msg: "Login failed",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.SNACKBAR,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.white,
-                        fontSize: 16.0,
-                      );
-                    }
-                  } else {
-                    // Username or password is empty
-                    Fluttertoast.showToast(
-                      msg: "Please enter username and password",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.SNACKBAR,
-                      timeInSecForIosWeb: 1,
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shadowColor: Colors.teal[300],
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    apiForLogin();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(ColorT.themeColor),
+                    shadowColor:Color(ColorT.themeColor),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)),
-                    )),
-                child: Text("Login"),
+                      borderRadius: BorderRadius.all(Radius.circular(10),
+                      ),
+                    ),
+                  ),
+                  child: Text("Login"),
+                ),
               ),
             ),
             TextButton(

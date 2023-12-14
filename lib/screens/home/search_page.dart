@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconsax/iconsax.dart';
@@ -278,20 +279,24 @@ class _SearchState extends State<Search> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
+                  height: 120,
+                  width: 120,
+                  clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     color: Colors.grey,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: ClipRRect(
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    borderRadius: BorderRadius.circular(20), // Image border
-                    child: SizedBox.fromSize(
-                      size: Size.fromRadius(60), // Image radius
-                      child: Image.network(
-                        image,
-                        fit: BoxFit.cover,
-                      ),
+                  child: CachedNetworkImage(
+                    imageUrl: image,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[300],
                     ),
+                    errorWidget: (context, url, error) => Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                    ),
+                    fit: BoxFit.cover,
                   ),
                 ),
                 SizedBox(

@@ -695,12 +695,21 @@ class _HomePageState extends State<HomePage> {
               Container(
                 height: 250,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
                 clipBehavior: Clip.antiAlias,
-                child: Image.network(
-                  image,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[300],
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                  ),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -946,8 +955,8 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             children: [
               Container(
-                height: 100,
-                width: 100,
+                height: 150,
+                width: 150,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   color: Colors.grey,

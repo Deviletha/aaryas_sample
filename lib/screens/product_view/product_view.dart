@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:aaryas_sample/screens/product_view/widgets/relatedItemsCard.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
@@ -183,11 +184,24 @@ class _ProductViewState extends State<ProductView> {
                 Container(
                   height: 250,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
                   clipBehavior: Clip.antiAlias,
-                    child: Image.network(widget.url, fit: BoxFit.cover),),
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.url,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[300],
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
                 SizedBox(
                   height: 15,
                 ),

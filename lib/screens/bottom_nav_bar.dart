@@ -49,7 +49,7 @@ class _BottomNavState extends State<BottomNav> {
             label: "FAV",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Iconsax.profile_tick,),
+            icon: Icon(Iconsax.user,),
             label: "ACCOUNT",
           ),
         ],

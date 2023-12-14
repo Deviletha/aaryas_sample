@@ -1,9 +1,10 @@
 import 'package:aaryas_sample/screens/accounts_page/editprofile.dart';
-import 'package:aaryas_sample/screens/accounts_page/password.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../bottom_nav_bar.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -31,7 +32,10 @@ class _SettingsState extends State<Settings> {
             TextButton(
               child: const Text('Logout'),
               onPressed: () async {
-                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => BottomNav()),
+                );
 
                 // Clear the user session data
                 final prefs = await SharedPreferences.getInstance();

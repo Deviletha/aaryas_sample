@@ -93,140 +93,141 @@ class _ProfileState extends State<Profile> {
         ),
       ),
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                _image != null
-                    ? CircleAvatar(
-                        radius: 65,
-                        backgroundImage: MemoryImage(_image!),
-                      )
-                    : CircleAvatar(
-                        radius: 65,
-                        backgroundImage: AssetImage("assets/img_2.png"),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            children: [
+              dataList == null
+                  ? Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Container(
+                            width: 120,
+                            height: 30,
+                            color: Colors.white,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            width: 80,
+                            height: 20,
+                            color: Colors.white,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            width: 120,
+                            height: 20,
+                            color: Colors.white,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            width: 80,
+                            height: 20,
+                            color: Colors.white,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            width: 100,
+                            height: 20,
+                            color: Colors.white,
+                          ),
+                        ],
                       ),
-                IconButton(
-                  onPressed: () {
-                    selectImage();
-                  },
-                  icon: Icon(Icons.add_a_photo),
-                ),
-              ],
-            ),
-            dataList == null
-                ? Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: Column(
+                    )
+                  : Column(
                       children: [
-                        SizedBox(height: 20),
-                        Container(
-                          width: 120,
-                          height: 30,
-                          color: Colors.white,
+                        Card(
+                          color: Colors.orange.shade50,
+                          child: Column(
+                            children: [
+                              Text(
+                                dataList![index]["first_name"].toString(),
+                                style: TextStyle(fontSize: 35,letterSpacing: 1),
+                              ),
+                              Text(
+                                dataList![index]["phone"].toString(), style: const TextStyle(fontSize: 17, letterSpacing: 1),
+                              ),
+                              Text(
+                                dataList![index]["email"].toString(), style: const TextStyle(fontSize: 17, letterSpacing: 1),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 10),
-                        Container(
-                          width: 80,
+
+                        SizedBox(
                           height: 20,
-                          color: Colors.white,
                         ),
-                        SizedBox(height: 10),
-                        Container(
-                          width: 120,
-                          height: 20,
-                          color: Colors.white,
-                        ),
-                        SizedBox(height: 10),
-                        Container(
-                          width: 80,
-                          height: 20,
-                          color: Colors.white,
-                        ),
-                        SizedBox(height: 10),
-                        Container(
-                          width: 100,
-                          height: 20,
-                          color: Colors.white,
+                        ListView.builder(
+                          physics: ScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount:
+                              addressList == null ? 0 : addressList!.length,
+                          itemBuilder: (context, index) => getAddressRow(index),
                         ),
                       ],
                     ),
-                  )
-                : Column(
-                    children: [
-                      Text(
-                        dataList![index]["first_name"].toString(),
-                        style: TextStyle(fontSize: 35),
-                      ),
-                      Text(
-                        dataList![index]["phone"].toString(),
-                      ),
-                      Text(
-                        dataList![index]["email"].toString(),
-                      ),
-                      ListView.builder(
-                        physics: ScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount:
-                            addressList == null ? 0 : addressList!.length,
-                        itemBuilder: (context, index) => getAddressRow(index),
-                      ),
-                    ],
-                  ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget getAddressRow(int index) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            addressList == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Text(
-                    addressList![index]["address"].toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              addressList![index]["phone"].toString(),
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.red),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              addressList![index]["city"].toString(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              addressList![index]["pincode"].toString(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              addressList![index]["state"].toString(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.all(Radius.circular(15))
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              addressList == null
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Text(
+                      addressList![index]["address"].toString(),
+                      style: const TextStyle(fontSize: 17, letterSpacing: 1),
+                    ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                addressList![index]["phone"].toString(),
+                style: const TextStyle(fontSize: 17, letterSpacing: 1, color: Colors.red),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                addressList![index]["city"].toString(),
+                style: const TextStyle(fontSize: 17, letterSpacing: 1),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                addressList![index]["pincode"].toString(),
+                style: const TextStyle(fontSize: 17, letterSpacing: 1),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                addressList![index]["state"].toString(),
+                style: const TextStyle(fontSize: 17, letterSpacing: 1),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -28,6 +28,7 @@ class _AccountsState extends State<Accounts> {
   List? dataList;
   int index = 0;
   bool isLoggedIn = true;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -48,6 +49,10 @@ class _AccountsState extends State<Accounts> {
     try {
       var response = await ApiHelper().post(endpoint: "common/profile", body: {
         "id": uID,
+      }).catchError((err) {});
+
+      setState(() {
+        isLoading = false;
       });
       if (response != null) {
         setState(() {
@@ -106,159 +111,190 @@ class _AccountsState extends State<Accounts> {
         ),
       ),
       body: isLoggedIn
-          ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView(
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return Profile();
-                      }),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color(ColorT.themeColor),
-                      ),
-                      height: 150,
-                      child: Center(
-                        child: dataList == null
-                            ? Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    radius: 50,
-                                    backgroundColor: Colors.white,
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(fontSize: 20),
+          ? isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: Color(ColorT.themeColor),
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView(
+                    children: [
+                      InkWell(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return Profile();
+                          }),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(ColorT.themeColor),
+                          ),
+                          height: 150,
+                          child: Center(
+                            child: dataList == null
+                                ? Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[100]!,
+                                    child: ListTile(
+                                      leading: CircleAvatar(
+                                        radius: 50,
+                                        backgroundColor: Colors.white,
+                                        child: Text(
+                                          '',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      ),
+                                      title: Text(
+                                        '',
+                                        style: TextStyle(fontSize: 35),
+                                      ),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                : ListTile(
+                                    leading: CircleAvatar(
+                                      radius: 40,
+                                      backgroundColor: Colors.white,
+                                      child: Text(
+                                        dataList![index]["first_name"][0]
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            color: Color(ColorT.greyColor),
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      dataList![index]["first_name"].toString(),
+                                      style: TextStyle(
+                                          fontSize: 35,
+                                          color: Colors.white,
+                                          letterSpacing: 1),
+                                    ),
+                                    subtitle: Text(
+                                      dataList![index]["email"].toString(),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          letterSpacing: 1,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
-                                  title: Text(
-                                    '',
-                                    style: TextStyle(fontSize: 35),
-                                  ),
-                                  subtitle: Text(''),
-                                ),
-                              )
-                            : ListTile(
-                                leading: CircleAvatar(
-                                  radius: 40,
-                                  backgroundColor: Colors.white,
-                                  child: Text(
-                                    dataList![index]["first_name"][0]
-                                        .toString(),
-                                    style: TextStyle(fontSize: 25, color: Color(ColorT.greyColor), fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                title: Text(
-                                  dataList![index]["first_name"].toString(),
-                                  style: TextStyle(fontSize: 35,color: Colors.white, letterSpacing: 1),
-                                ),
-                                subtitle: Text(
-                                  dataList![index]["email"].toString(),style: TextStyle(color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold),
-                                ),
-                              ),
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(height: 15),
+                      ListTile(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return AddAddress();
+                          }),
+                        ),
+                        leading: Icon(
+                          Iconsax.home,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        title:
+                            Text("Add Address", style: TextStyle(fontSize: 20)),
+                      ),
+                      Divider(
+                        thickness: 1,
+                      ),
+                      ListTile(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return MyOrders();
+                          }),
+                        ),
+                        leading: Icon(
+                          Iconsax.bag_2,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        title:
+                            Text("My Orders", style: TextStyle(fontSize: 18)),
+                      ),
+                      Divider(
+                        thickness: 1,
+                      ),
+                      ListTile(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return Wishlist();
+                          }),
+                        ),
+                        leading: Icon(
+                          Iconsax.heart,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        title:
+                            Text("My Wishlist", style: TextStyle(fontSize: 18)),
+                      ),
+                      Divider(
+                        thickness: 1,
+                      ),
+                      ListTile(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return Settings();
+                          }),
+                        ),
+                        leading: Icon(
+                          Iconsax.setting,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        title: Text("Settings", style: TextStyle(fontSize: 18)),
+                      ),
+                      Divider(
+                        thickness: 1,
+                      ),
+                      ListTile(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return PrivacyInfo();
+                          }),
+                        ),
+                        leading: Icon(
+                          Iconsax.security_safe,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        title: Text("Privacy & Terms",
+                            style: TextStyle(fontSize: 18)),
+                      ),
+                      Divider(
+                        thickness: 1,
+                      ),
+                      ListTile(
+                        onTap: () {
+                          openGmail();
+                          // launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
+                        },
+                        leading: Icon(
+                          Iconsax.info_circle,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        title: Text("Help & Support",
+                            style: TextStyle(fontSize: 18)),
+                      ),
+                      Divider(
+                        thickness: 1,
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 15),
-                  ListTile(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return AddAddress();
-                      }),
-                    ),
-                    leading: Icon(
-                      Iconsax.home,color: Colors.black,size: 30,
-                    ),
-                    title: Text("Add Address", style: TextStyle(fontSize: 20)),
-                  ),
-                  Divider(
-                    thickness: 1,
-                  ),
-                  ListTile(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return MyOrders();
-                      }),
-                    ),
-                    leading: Icon(
-                      Iconsax.bag_2,color: Colors.black,size: 30,
-                    ),
-                    title: Text("My Orders", style: TextStyle(fontSize: 18)),
-                  ),
-                  Divider(
-                    thickness: 1,
-                  ),
-                  ListTile(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return Wishlist();
-                      }),
-                    ),
-                    leading: Icon(
-                      Iconsax.heart,color: Colors.black,size: 30,
-                    ),
-                    title: Text("My Wishlist", style: TextStyle(fontSize: 18)),
-                  ),
-                  Divider(
-                    thickness: 1,
-                  ),
-                  ListTile(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return Settings();
-                      }),
-                    ),
-                    leading: Icon(
-                      Iconsax.setting,color: Colors.black,size: 30,
-                    ),
-                    title: Text("Settings", style: TextStyle(fontSize: 18)),
-                  ),
-                  Divider(
-                    thickness: 1,
-                  ),
-                  ListTile(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return PrivacyInfo();
-                      }),
-                    ),
-                    leading: Icon(
-                      Iconsax.security_safe,color: Colors.black,size: 30,
-                    ),
-                    title:
-                        Text("Privacy & Terms", style: TextStyle(fontSize: 18)),
-                  ),
-                  Divider(
-                    thickness: 1,
-                  ),
-                  ListTile(
-                    onTap: () {
-                      openGmail();
-                      // launch("mailto:aryaashelp&support@gmail.com?subject=  &body=  ");
-                    },
-                    leading: Icon(
-                      Iconsax.info_circle,color: Colors.black,size: 30,
-                    ),
-                    title:
-                        Text("Help & Support", style: TextStyle(fontSize: 18)),
-                  ),
-                  Divider(
-                    thickness: 1,
-                  ),
-                ],
-              ),
-            )
+                )
           : Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -273,12 +309,11 @@ class _AccountsState extends State<Accounts> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      shadowColor: Colors.teal[300],
+                      backgroundColor: Color(ColorT.themeColor),
+                      shadowColor: Color(ColorT.themeColor),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(10),
-                          topLeft: Radius.circular(10),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
                         ),
                       ),
                     ),

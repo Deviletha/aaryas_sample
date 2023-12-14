@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:aaryas_sample/theme/colors.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
@@ -131,7 +132,7 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           "My Cart",
@@ -211,12 +212,12 @@ class _CartPageState extends State<CartPage> {
     int price = cartAddList![index]["price"];
     int totalAmount = quantity * price;
     return Padding(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(8),
       child: Container(
         clipBehavior: Clip.antiAlias,
         width: double.infinity,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.blueGrey.shade50,
             borderRadius: BorderRadius.all(Radius.circular(15))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -225,21 +226,24 @@ class _CartPageState extends State<CartPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
+                  height: 120,
+                  width: 120,
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     color: Colors.grey,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: ClipRRect(
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    borderRadius: BorderRadius.circular(20), // Image border
-                    child: SizedBox.fromSize(
-                      size: Size.fromRadius(65), // Image radius
-                      child: Image.network(
-                        image,
-                        fit: BoxFit.cover,
-                      ),
+                  child: CachedNetworkImage(
+                    imageUrl: image,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[300],
                     ),
+                    errorWidget: (context, url, error) => Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                    ),
+                    fit: BoxFit.cover,
                   ),
                 ),
                 SizedBox(

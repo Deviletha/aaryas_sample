@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconsax/iconsax.dart';
@@ -159,6 +160,11 @@ class _CategoryViewState extends State<CategoryView> {
       },
     ).catchError((err) {});
 
+
+    setState(() {
+      isLoading = false;
+    });
+
     if (response != null) {
       setState(() {
         debugPrint('get products api successful:');
@@ -184,12 +190,21 @@ class _CategoryViewState extends State<CategoryView> {
               Container(
                 height: 250,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
                 clipBehavior: Clip.antiAlias,
-                child: Image.network(
-                  image,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[300],
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                  ),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -266,7 +281,13 @@ class _CategoryViewState extends State<CategoryView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
-        child: ListView.builder(
+        child:
+        isLoading? Center(
+          child: CircularProgressIndicator(
+            color: Color(ColorT.themeColor),
+          ),
+        ) :
+        ListView.builder(
           scrollDirection: Axis.vertical,
           itemCount: prCategoryList?.length ?? 0,
           itemBuilder: (context, index) => getCatView(index),
@@ -295,14 +316,25 @@ class _CategoryViewState extends State<CategoryView> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox.fromSize(
-                  size: Size.fromRadius(70),
-                  child: Image.network(
-                    image,
-                    fit: BoxFit.cover,
+              Container(
+                height: 150,
+                width: 150,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[300],
                   ),
+                  errorWidget: (context, url, error) => Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                  ),
+                  fit: BoxFit.cover,
                 ),
               ),
               SizedBox(

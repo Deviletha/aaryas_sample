@@ -24,6 +24,12 @@ class _AddAddressState extends State<AddAddress> {
     });
   }
 
+  @override
+  void initState() {
+    checkUser();
+    super.initState();
+  }
+
   final nameController = TextEditingController();
   final contactController = TextEditingController();
   final localityController = TextEditingController();
@@ -52,16 +58,16 @@ class _AddAddressState extends State<AddAddress> {
 
       var response =
           await ApiHelper().post(endpoint: "user/saveAddress", body: {
-        "name": nameController.text,
-        "contact": contactController.text,
-        "locality": localityController.text,
-        "postal": postalController.text,
-        "address": addressController.text,
-        "location": locationController.text,
-        "state": stateController.text,
+        "first_name": nameController.text.toString(),
+        "contact": contactController.text.toString(),
+        "locality": localityController.text.toString(),
+        "postal": postalController.text.toString(),
+        "address": addressController.text.toString(),
+        "location": locationController.text.toString(),
+        "state": stateController.text.toString(),
         "latitude": latitude.toString(),
         "longitude": longitude.toString(),
-        "userid": uID
+        "userid": uID.toString()
       });
       print(response);
       if (response != null) {
@@ -129,7 +135,6 @@ class _AddAddressState extends State<AddAddress> {
             padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
             child: TextFormField(
               controller: nameController,
-
               decoration: InputDecoration(
                 labelText: "Name",
                 prefixIcon:
