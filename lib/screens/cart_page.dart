@@ -169,40 +169,40 @@ class _CartPageState extends State<CartPage> {
       ),
       body: isLoggedIn
           ? isLoading
-          ? Center(
-        child: CircularProgressIndicator(
-          color: Color(ColorT.themeColor),
-        ),
-      )
-          : ListView.builder(
-        itemCount: cartAddList == null ? 0 : cartAddList?.length,
-        itemBuilder: (context, index) => getCartList(index),
-        physics: ScrollPhysics(),
-        shrinkWrap: true,
-      )
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: Color(ColorT.themeColor),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: cartAddList == null ? 0 : cartAddList?.length,
+                  itemBuilder: (context, index) => getCartList(index),
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                )
           : Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset("assets/img_1.png"),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(ColorT.themeColor),
-                shadowColor: Color(ColorT.themeColor),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Image.asset("assets/img_1.png"),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(ColorT.themeColor),
+                      shadowColor: Color(ColorT.themeColor),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    child: Text("Please Log In"),
+                  ),
+                ],
               ),
-              child: Text("Please Log In"),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -241,7 +241,11 @@ class _CartPageState extends State<CartPage> {
                     errorWidget: (context, url, error) => Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                              image: AssetImage(
+                                "assets/aryas_logo.png",
+                              ),
+                              colorFilter: ColorFilter.mode(
+                                  Colors.grey, BlendMode.color))),
                     ),
                     fit: BoxFit.cover,
                   ),

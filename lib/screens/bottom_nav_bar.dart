@@ -37,19 +37,27 @@ class _BottomNavState extends State<BottomNav> {
         iconSize: 25,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Iconsax.home,),
+            icon: Icon(
+              Iconsax.home,
+            ),
             label: "HOME",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Iconsax.bag_2,),
+            icon: Icon(
+              Iconsax.bag_2,
+            ),
             label: "CART",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Iconsax.heart,),
+            icon: Icon(
+              Iconsax.heart,
+            ),
             label: "FAV",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Iconsax.user,),
+            icon: Icon(
+              Iconsax.user,
+            ),
             label: "ACCOUNT",
           ),
         ],

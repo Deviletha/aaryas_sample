@@ -41,8 +41,10 @@ class _OrderDetailsState extends State<OrderDetails> {
     });
     getMyOrders();
   }
+
   returnItem() async {
-    var response = await ApiHelper().post(endpoint: "common/orderReturn", body: {
+    var response =
+        await ApiHelper().post(endpoint: "common/orderReturn", body: {
       "orderid": widget.id,
       "reason": reasonController.text,
     }).catchError((err) {});
@@ -72,7 +74,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   getMyOrders() async {
     var response =
-    await ApiHelper().post(endpoint: "common/getOrderDetails", body: {
+        await ApiHelper().post(endpoint: "common/getOrderDetails", body: {
       "orderid": widget.id,
       "offset": "0",
       "pageLimit": "10",
@@ -105,16 +107,16 @@ class _OrderDetailsState extends State<OrderDetails> {
       ),
       body: isLoading
           ? Center(
-        child: CircularProgressIndicator(
-          color: Color(ColorT.themeColor),
-        ),
-      )
+              child: CircularProgressIndicator(
+                color: Color(ColorT.themeColor),
+              ),
+            )
           : ListView.builder(
-        physics: ScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: orderList == null ? 0 : orderList?.length,
-        itemBuilder: (context, index) => getOrderList(index),
-      ),
+              physics: ScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: orderList == null ? 0 : orderList?.length,
+              itemBuilder: (context, index) => getOrderList(index),
+            ),
     );
   }
 
@@ -158,7 +160,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                       errorWidget: (context, url, error) => Container(
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                                image: AssetImage(
+                                  "assets/aryas_logo.png",
+                                ),
+                                colorFilter: ColorFilter.mode(
+                                    Colors.grey, BlendMode.color))),
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -172,12 +178,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                       orderList == null
                           ? Text("null data")
                           : Text(
-                        orderList![index]["product"].toString(),
-                        style: TextStyle(
-                          letterSpacing: 1,
-                          color: Color(ColorT.greyColor),
-                        ),
-                      ),
+                              orderList![index]["product"].toString(),
+                              style: TextStyle(
+                                letterSpacing: 1,
+                                color: Color(ColorT.greyColor),
+                              ),
+                            ),
                       SizedBox(
                         height: 10,
                       ),
@@ -231,5 +237,4 @@ class _OrderDetailsState extends State<OrderDetails> {
       ),
     );
   }
-
 }

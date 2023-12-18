@@ -9,11 +9,12 @@ class PrivacyInfo extends StatefulWidget {
 }
 
 class _PrivacyInfoState extends State<PrivacyInfo> {
-
   final String privacyPolicyUrl = "https://hotelaryas.com/privacy_policy";
-  final String termsConditionUrl = "https://hotelaryas.com/terms_and_conditions";
+  final String termsConditionUrl =
+      "https://hotelaryas.com/terms_and_conditions";
   final String refundPolicyUrl = "https://hotelaryas.com/refund_policy";
-  final String shippingAndDeliveryPolicyUrl = "https://hotelaryas.com/shipping_policy";
+  final String shippingAndDeliveryPolicyUrl =
+      "https://hotelaryas.com/shipping_policy";
   final String contactUsUrl = "https://hotelaryas.com/contact_us";
   final String aboutUsUrl = "https://hotelaryas.com";
 
@@ -32,7 +33,6 @@ class _PrivacyInfoState extends State<PrivacyInfo> {
       print('Error launching URL: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +55,14 @@ class _PrivacyInfoState extends State<PrivacyInfo> {
           Divider(thickness: 1),
           ListTile(
             onTap: () => _launchUrl(refundPolicyUrl),
-            title: Text("Cancellation & Refund Policy", style: TextStyle(fontSize: 18)),
+            title: Text("Cancellation & Refund Policy",
+                style: TextStyle(fontSize: 18)),
           ),
           Divider(thickness: 1),
           ListTile(
             onTap: () => _launchUrl(shippingAndDeliveryPolicyUrl),
-            title: Text("Shipping & Delivery Policy", style: TextStyle(fontSize: 18)),
+            title: Text("Shipping & Delivery Policy",
+                style: TextStyle(fontSize: 18)),
           ),
           Divider(thickness: 1),
           ListTile(

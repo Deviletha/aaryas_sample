@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -15,7 +14,6 @@ class AddAddress extends StatefulWidget {
 
 class _AddAddressState extends State<AddAddress> {
   String? uID;
-
 
   Future<void> checkUser() async {
     final prefs = await SharedPreferences.getInstance();
@@ -53,9 +51,6 @@ class _AddAddressState extends State<AddAddress> {
       double latitude = position.latitude;
       double longitude = position.longitude;
 
-      print(latitude);
-      print(longitude);
-
       var response =
           await ApiHelper().post(endpoint: "user/saveAddress", body: {
         "first_name": nameController.text.toString(),
@@ -69,7 +64,7 @@ class _AddAddressState extends State<AddAddress> {
         "longitude": longitude.toString(),
         "userid": uID.toString()
       });
-      print(response);
+
       if (response != null) {
         setState(() {
           debugPrint('save address API successful:');
@@ -113,7 +108,9 @@ class _AddAddressState extends State<AddAddress> {
                 ),
               ),
             ),
-            child: Text("Add Address", ),
+            child: Text(
+              "Add Address",
+            ),
           ),
         ),
       ),
@@ -122,14 +119,15 @@ class _AddAddressState extends State<AddAddress> {
           Text(
             "Haii, User!",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 35, color: Color(ColorT.themeColor), fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 35,
+                color: Color(ColorT.themeColor),
+                fontWeight: FontWeight.bold),
           ),
           Text(
             "Complete your profile",
             textAlign: TextAlign.center,
-            style: TextStyle(
-              letterSpacing: 1
-            ),
+            style: TextStyle(letterSpacing: 1),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
@@ -140,7 +138,7 @@ class _AddAddressState extends State<AddAddress> {
                 prefixIcon:
                     Icon(Icons.account_circle_outlined, color: Colors.black),
                 border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
+                    borderSide: BorderSide.none,
                     borderRadius: BorderRadius.zero),
               ),
               validator: (value) {

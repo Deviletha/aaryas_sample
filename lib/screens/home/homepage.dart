@@ -60,7 +60,6 @@ class _HomePageState extends State<HomePage> {
   List? finalPopularList;
   int index = 0;
 
-
   Map? cList;
   List? cartList;
 
@@ -78,7 +77,6 @@ class _HomePageState extends State<HomePage> {
         debugPrint('cartpage successful:');
         cList = jsonDecode(response);
         cartList = cList!["cart"];
-
       });
     } else {
       debugPrint('api failed:');
@@ -98,14 +96,12 @@ class _HomePageState extends State<HomePage> {
     });
 
     if (response != null) {
-
-        setState(() {
-          debugPrint('get address api successful:');
-          order = jsonDecode(response);
-          order1 = order!["data"];
-          orderList = order1!["pageData"];
-        });
-
+      setState(() {
+        debugPrint('get address api successful:');
+        order = jsonDecode(response);
+        order1 = order!["data"];
+        orderList = order1!["pageData"];
+      });
     } else {
       debugPrint('API failed');
     }
@@ -198,7 +194,6 @@ class _HomePageState extends State<HomePage> {
   List? finalPrList;
 
   Future<void> apiForWishlist() async {
-
     var response = await ApiHelper().post(endpoint: "wishList/get", body: {
       "userid": uID,
     }).catchError((err) {});
@@ -245,34 +240,34 @@ class _HomePageState extends State<HomePage> {
   bool isInWishlist = false; // Add this variable
 
   addToWishlist(String id, String combination) async {
-        var response = await ApiHelper().post(
-          endpoint: "wishList/add",
-          body: {
-            "userid": uID,
-            "productid": id,
-            "combination": combination,
-          },
-        ).catchError((err) {});
+    var response = await ApiHelper().post(
+      endpoint: "wishList/add",
+      body: {
+        "userid": uID,
+        "productid": id,
+        "combination": combination,
+      },
+    ).catchError((err) {});
 
-        if (response != null) {
-          setState(() {
-            debugPrint('add wishlist api successful:');
-            checkUser();
+    if (response != null) {
+      setState(() {
+        debugPrint('add wishlist api successful:');
+        checkUser();
 
-            Fluttertoast.showToast(
-              msg: "Added to Wishlist",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.SNACKBAR,
-              timeInSecForIosWeb: 1,
-              textColor: Colors.white,
-              fontSize: 16.0,
-            );
-            isInWishlist = true; // Set isInWishlist to true
-          });
-        } else {
-          debugPrint('Add to wishlist failed:');
-        }
-      }
+        Fluttertoast.showToast(
+          msg: "Added to Wishlist",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.SNACKBAR,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        isInWishlist = true; // Set isInWishlist to true
+      });
+    } else {
+      debugPrint('Add to wishlist failed:');
+    }
+  }
 
   @override
   void initState() {
@@ -390,7 +385,7 @@ class _HomePageState extends State<HomePage> {
             height: 55,
             child: Padding(
               padding:
-              const EdgeInsets.only(left: 12, right: 10, top: 8, bottom: 8),
+                  const EdgeInsets.only(left: 12, right: 10, top: 8, bottom: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -708,7 +703,11 @@ class _HomePageState extends State<HomePage> {
                   errorWidget: (context, url, error) => Container(
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                            image: AssetImage(
+                              "assets/aryas_logo.png",
+                            ),
+                            colorFilter: ColorFilter.mode(
+                                Colors.grey, BlendMode.color))),
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -778,9 +777,8 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-           decoration: BoxDecoration(
-             borderRadius: BorderRadius.all(Radius.circular(360))
-           ),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(360))),
             height: 60,
             width: 60,
             clipBehavior: Clip.antiAlias,
@@ -792,7 +790,11 @@ class _HomePageState extends State<HomePage> {
               errorWidget: (context, url, error) => Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                        image: AssetImage(
+                          "assets/aryas_logo.png",
+                        ),
+                        colorFilter:
+                            ColorFilter.mode(Colors.grey, BlendMode.color))),
               ),
               fit: BoxFit.cover,
             ),
@@ -844,7 +846,11 @@ class _HomePageState extends State<HomePage> {
           errorWidget: (context, url, error) => Container(
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                    image: AssetImage(
+                      "assets/aryas_logo.png",
+                    ),
+                    colorFilter:
+                        ColorFilter.mode(Colors.grey, BlendMode.color))),
           ),
           fit: BoxFit.cover,
         ),
@@ -929,24 +935,20 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  ProductView(
-                    position:index,
-                    id: finalProductList![index]["id"].toString(),
-                    productName:
+              builder: (context) => ProductView(
+                position: index,
+                id: finalProductList![index]["id"].toString(),
+                productName:
                     finalProductList![index]["combinationName"].toString(),
-                    url: image,
-                    description:
-                    finalProductList![index]["description"].toString(),
-                    amount:
-                    finalProductList![index]["combinationPrice"].toString(),
-                    combinationId:
+                url: image,
+                description: finalProductList![index]["description"].toString(),
+                amount: finalProductList![index]["combinationPrice"].toString(),
+                combinationId:
                     finalProductList![index]["combinationId"].toString(),
-                    quantity: finalProductList![index]["quantity"].toString(),
-                    category: finalProductList![index]["category"].toString(),
-                    psize: finalProductList![index]["combinationSize"]
-                        .toString(),
-                  ),
+                quantity: finalProductList![index]["quantity"].toString(),
+                category: finalProductList![index]["category"].toString(),
+                psize: finalProductList![index]["combinationSize"].toString(),
+              ),
             ),
           );
         },
@@ -970,7 +972,11 @@ class _HomePageState extends State<HomePage> {
                   errorWidget: (context, url, error) => Container(
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                            image: AssetImage(
+                              "assets/aryas_logo.png",
+                            ),
+                            colorFilter: ColorFilter.mode(
+                                Colors.grey, BlendMode.color))),
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -1028,7 +1034,7 @@ class _HomePageState extends State<HomePage> {
                                     BorderRadius.all(Radius.circular(8)),
                               )),
                           child: Row(
-                            children:  [
+                            children: [
                               Text(
                                 "FAV",
                                 style: TextStyle(
@@ -1037,17 +1043,19 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(
                                 width: 5,
                               ),
-                              isInWishlist ? Icon(
-                                Iconsax.heart5,
-                                color: Colors.white,
-                                // Change icon color based on isInWishlist
-                                size: 17,
-                              ): Icon(
-                                Iconsax.heart,
-                                color: Colors.white,
-                                // Change icon color based on isInWishlist
-                                size: 17,
-                              )
+                              isInWishlist
+                                  ? Icon(
+                                      Iconsax.heart5,
+                                      color: Colors.white,
+                                      // Change icon color based on isInWishlist
+                                      size: 17,
+                                    )
+                                  : Icon(
+                                      Iconsax.heart,
+                                      color: Colors.white,
+                                      // Change icon color based on isInWishlist
+                                      size: 17,
+                                    )
                             ],
                           ),
                         )
@@ -1103,7 +1111,11 @@ class _HomePageState extends State<HomePage> {
                     errorWidget: (context, url, error) => Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                              image: AssetImage(
+                                "assets/aryas_logo.png",
+                              ),
+                              colorFilter: ColorFilter.mode(
+                                  Colors.grey, BlendMode.color))),
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -1120,8 +1132,7 @@ class _HomePageState extends State<HomePage> {
                             : Text(
                                 "Order Placed",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17),
+                                    fontWeight: FontWeight.bold, fontSize: 17),
                               ),
                         SizedBox(
                           height: 10,

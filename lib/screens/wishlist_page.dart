@@ -130,9 +130,10 @@ class _WishlistState extends State<Wishlist> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(ColorT.themeColor),
-                      shadowColor:Color(ColorT.themeColor),
+                      shadowColor: Color(ColorT.themeColor),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
                         ),
                       ),
                     ),
@@ -170,7 +171,11 @@ class _WishlistState extends State<Wishlist> {
               errorWidget: (context, url, error) => Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                        image: AssetImage(
+                          "assets/aryas_logo.png",
+                        ),
+                        colorFilter:
+                            ColorFilter.mode(Colors.grey, BlendMode.color))),
               ),
               fit: BoxFit.cover,
             ),
@@ -235,9 +240,8 @@ class _WishlistState extends State<Wishlist> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  border: Border.all(color: Colors.grey)
-                ),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    border: Border.all(color: Colors.grey)),
                 child: TextButton(
                     onPressed: () {
                       wID = finalPrList![index1]["wishlistId"].toString();

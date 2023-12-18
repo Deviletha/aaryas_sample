@@ -331,7 +331,9 @@ class _SearchState extends State<Search> {
                       Text(
                         searchList![index]["description"].toString(),
                         maxLines: 2,
-                        style:  TextStyle(fontWeight: FontWeight.bold, color: Color(ColorT.greyColor)),
+                        style:  TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(ColorT.greyColor)),
                       ),
                     ],
                   ),

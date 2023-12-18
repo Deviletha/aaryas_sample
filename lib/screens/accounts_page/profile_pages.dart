@@ -144,18 +144,22 @@ class _ProfileState extends State<Profile> {
                             children: [
                               Text(
                                 dataList![index]["first_name"].toString(),
-                                style: TextStyle(fontSize: 35,letterSpacing: 1),
+                                style:
+                                    TextStyle(fontSize: 35, letterSpacing: 1),
                               ),
                               Text(
-                                dataList![index]["phone"].toString(), style: const TextStyle(fontSize: 17, letterSpacing: 1),
+                                dataList![index]["phone"].toString(),
+                                style: const TextStyle(
+                                    fontSize: 17, letterSpacing: 1),
                               ),
                               Text(
-                                dataList![index]["email"].toString(), style: const TextStyle(fontSize: 17, letterSpacing: 1),
+                                dataList![index]["email"].toString(),
+                                style: const TextStyle(
+                                    fontSize: 17, letterSpacing: 1),
                               ),
                             ],
                           ),
                         ),
-
                         SizedBox(
                           height: 20,
                         ),
@@ -180,10 +184,9 @@ class _ProfileState extends State<Profile> {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.all(Radius.circular(15))
-        ),
+            color: Colors.grey.shade50,
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.all(Radius.circular(15))),
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
@@ -203,7 +206,8 @@ class _ProfileState extends State<Profile> {
               ),
               Text(
                 addressList![index]["phone"].toString(),
-                style: const TextStyle(fontSize: 17, letterSpacing: 1, color: Colors.red),
+                style: const TextStyle(
+                    fontSize: 17, letterSpacing: 1, color: Colors.red),
               ),
               SizedBox(
                 height: 5,

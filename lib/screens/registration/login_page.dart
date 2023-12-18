@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     String password = passwordController.text.toString();
     if (username.isNotEmpty && password.isNotEmpty) {
       var response =
-      await ApiHelper().post(endpoint: "common/authenticate", body: {
+          await ApiHelper().post(endpoint: "common/authenticate", body: {
         'username': username,
         'password': password,
       }).catchError((err) {});
@@ -100,7 +100,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -122,12 +121,10 @@ class _LoginPageState extends State<LoginPage> {
               child: TextFormField(
                 controller: usernameController,
                 decoration: InputDecoration(
-                  suffixIcon: const Icon(Iconsax.user),
-                  hintText: "Phone Number",
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide.none)
-                ),
+                    suffixIcon: const Icon(Iconsax.user),
+                    hintText: "Phone Number",
+                    labelText: 'Phone Number',
+                    border: OutlineInputBorder(borderSide: BorderSide.none)),
                 textInputAction: TextInputAction.next,
                 validator: (uname) {
                   if (uname!.isEmpty || !uname.contains('')) {
@@ -146,26 +143,22 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: showPass,
                 obscuringCharacter: "*",
                 decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          if (showPass) {
-                            showPass = false;
-                          } else {
-                            showPass = true;
-                          }
-                        });
-                      },
-                      icon: Icon(
-                        showPass == true
-                            ? Iconsax.eye_slash
-                            : Iconsax.eye,
-                      )),
-                  hintText: "Password",
-                  labelText: "Password",
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide.none)
-                ),
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (showPass) {
+                              showPass = false;
+                            } else {
+                              showPass = true;
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          showPass == true ? Iconsax.eye_slash : Iconsax.eye,
+                        )),
+                    hintText: "Password",
+                    labelText: "Password",
+                    border: OutlineInputBorder(borderSide: BorderSide.none)),
                 textInputAction: TextInputAction.done,
                 validator: (password) {
                   if (password!.isEmpty || password.length < 6) {
@@ -187,9 +180,10 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(ColorT.themeColor),
-                    shadowColor:Color(ColorT.themeColor),
+                    shadowColor: Color(ColorT.themeColor),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
                       ),
                     ),
                   ),

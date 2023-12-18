@@ -24,16 +24,16 @@ class _SplashScreenState extends State {
     return Scaffold(
       body: Center(
           child: ClipRRect(
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            borderRadius: BorderRadius.circular(20), // Image border
-            child: SizedBox.fromSize(
-              size: Size.fromRadius(90), // Image radius
-              child: Image.asset(
-                "assets/aryas_logo.png",
-                fit: BoxFit.cover,
-              ),
-            ),
-          )),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        borderRadius: BorderRadius.circular(20), // Image border
+        child: SizedBox.fromSize(
+          size: Size.fromRadius(90), // Image radius
+          child: Image.asset(
+            "assets/aryas_logo.png",
+            fit: BoxFit.cover,
+          ),
+        ),
+      )),
     );
   }
 }

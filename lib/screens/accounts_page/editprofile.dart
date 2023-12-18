@@ -133,8 +133,7 @@ class _ChangeProfileState extends State<ChangeProfile> {
               decoration: InputDecoration(
                 prefixIcon: Icon(Iconsax.user, color: Colors.black, size: 20,),
                 labelText: "Last Name",
-                border: OutlineInputBorder(
-                    borderSide: BorderSide.none),
+                border: OutlineInputBorder(borderSide: BorderSide.none),
               ),
               validator: (value) {
                 if (value!.isEmpty) {

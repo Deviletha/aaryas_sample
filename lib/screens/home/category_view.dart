@@ -203,7 +203,11 @@ class _CategoryViewState extends State<CategoryView> {
                   errorWidget: (context, url, error) => Container(
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                            image: AssetImage(
+                              "assets/aryas_logo.png",
+                            ),
+                            colorFilter: ColorFilter.mode(
+                                Colors.grey, BlendMode.color))),
                   ),
                   fit: BoxFit.cover,
                 ),

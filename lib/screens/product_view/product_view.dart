@@ -149,10 +149,7 @@ class _ProductViewState extends State<ProductView> {
 
     if (loginId != null && loginId.isNotEmpty) {
       // User is logged in, proceed with adding to cart
-      apiForCart(
-        prID,
-        productName,price, category,pSize,combinationId
-      );
+      apiForCart(prID, productName, price, category, pSize, combinationId);
     } else {
       // User is not logged in, navigate to LoginPage
       Navigator.push(
@@ -197,7 +194,11 @@ class _ProductViewState extends State<ProductView> {
                     errorWidget: (context, url, error) => Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                              image: AssetImage(
+                                "assets/aryas_logo.png",
+                              ),
+                              colorFilter: ColorFilter.mode(
+                                  Colors.grey, BlendMode.color))),
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -207,14 +208,16 @@ class _ProductViewState extends State<ProductView> {
                 ),
                 Text(
                   "₹ ${widget.amount}",
-                  style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 SizedBox(
                   height: 15,
                 ),
                 Text(
                   widget.productName.toString(),
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 SizedBox(
                   height: 15,
@@ -231,7 +234,14 @@ class _ProductViewState extends State<ProductView> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        checkLoggedIn(context,widget.id, widget.productName,widget.amount,widget.category,widget.psize, widget.combinationId);
+                        checkLoggedIn(
+                            context,
+                            widget.id,
+                            widget.productName,
+                            widget.amount,
+                            widget.category,
+                            widget.psize,
+                            widget.combinationId);
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Color(ColorT.themeColor),
@@ -248,17 +258,18 @@ class _ProductViewState extends State<ProductView> {
               height: 10,
             ),
             Text(
-              "Related Products", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "Related Products",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(
               height: 10,
             ),
             isLoading
                 ? Center(
-                  child: CircularProgressIndicator(
+                    child: CircularProgressIndicator(
                       color: Color(ColorT.themeColor),
                     ),
-                )
+                  )
                 : CarouselSlider.builder(
                     itemCount: relatedProductList == null
                         ? 0
@@ -312,8 +323,8 @@ class _ProductViewState extends State<ProductView> {
           pSize = relatedProductList![index]["size"].toString();
           combinationId =
               relatedProductList![index]["combinationid"].toString();
-          checkLoggedIn(
-              context, productID! , productName!, offerPrice!,category!, pSize!, combinationId!);
+          checkLoggedIn(context, productID!, productName!, offerPrice!,
+              category!, pSize!, combinationId!);
         } else {
           Fluttertoast.showToast(
               msg: "Product is out of stock!",
@@ -324,7 +335,6 @@ class _ProductViewState extends State<ProductView> {
               fontSize: 16.0);
         }
       },
-
     );
   }
 }

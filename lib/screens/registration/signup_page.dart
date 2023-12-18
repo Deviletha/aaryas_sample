@@ -38,7 +38,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController latitudeController = TextEditingController();
   TextEditingController longitudeController = TextEditingController();
 
-  Future <void> apiForSignup() async {
+  Future<void> apiForSignup() async {
     try {
       LocationPermission permission = await Geolocator.requestPermission();
 
@@ -52,9 +52,6 @@ class _SignupPageState extends State<SignupPage> {
 
       double latitude = position.latitude;
       double longitude = position.longitude;
-
-      print(latitude);
-      print(longitude);
 
       var response = await ApiHelper().post(endpoint: "common/signUP", body: {
         "contact": contactController.text,
@@ -73,8 +70,8 @@ class _SignupPageState extends State<SignupPage> {
         setState(() async {
           debugPrint('api successful:');
           signupList = jsonDecode(response);
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => LoginPage()));
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LoginPage()));
 
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString("UID", signupList![0]["id"].toString());
@@ -91,8 +88,7 @@ class _SignupPageState extends State<SignupPage> {
       } else {
         debugPrint('api failed:');
       }
-    }
-    catch (err) {
+    } catch (err) {
       debugPrint('An error occurred: $err');
     }
   }
@@ -115,18 +111,17 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 Padding(
-                  padding:
-                  const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, top: 10, bottom: 5),
                   child: TextFormField(
                     controller: firstNameController,
                     decoration: InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.all(10),
                         labelText: "First Name",
-                        prefixIcon:
-                        Icon(Iconsax.user, color: Colors.black),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none)),
+                        prefixIcon: Icon(Iconsax.user, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -139,7 +134,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                      const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                   child: TextFormField(
                     controller: lastNameController,
                     decoration: InputDecoration(
@@ -147,10 +142,9 @@ class _SignupPageState extends State<SignupPage> {
                         isDense: true,
                         contentPadding: EdgeInsets.all(10),
                         labelText: "Last Name",
-                        prefixIcon:
-                        Icon(Iconsax.user, color: Colors.black),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none)),
+                        prefixIcon: Icon(Iconsax.user, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -162,18 +156,17 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, bottom: 15),
+                  padding:
+                      const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                   child: TextFormField(
                     controller: emailController,
                     decoration: InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.all(10),
                         labelText: "Email ID",
-                        prefixIcon:
-                        Icon(Iconsax.message, color: Colors.black),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none)),
+                        prefixIcon: Icon(Iconsax.message, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty || !value.contains('@')) {
@@ -185,17 +178,17 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                  padding:
+                      const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                   child: TextFormField(
                     controller: contactController,
                     decoration: InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.all(10),
                         labelText: "Mobile",
-                        prefixIcon:
-                        Icon(Iconsax.mobile, color: Colors.black),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide.none)),
+                        prefixIcon: Icon(Iconsax.mobile, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -208,7 +201,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                      const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                   child: TextFormField(
                     controller: passwordController,
                     obscureText: showPass,
@@ -231,12 +224,10 @@ class _SignupPageState extends State<SignupPage> {
                                   ? Iconsax.eye_slash
                                   : Iconsax.eye,
                             )),
-
                         labelText: "Password",
-                        prefixIcon:
-                        Icon(Iconsax.lock, color: Colors.black),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none)),
+                        prefixIcon: Icon(Iconsax.lock, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.done,
                     validator: (password) {
                       if (password!.isEmpty || password.length < 6) {
@@ -247,7 +238,6 @@ class _SignupPageState extends State<SignupPage> {
                     },
                   ),
                 ),
-
                 Padding(
                   padding:
                       const EdgeInsets.only(left: 10, right: 10, bottom: 15),
@@ -258,9 +248,9 @@ class _SignupPageState extends State<SignupPage> {
                         contentPadding: EdgeInsets.all(10),
                         labelText: "Address",
                         prefixIcon:
-                        Icon(Iconsax.buildings, color: Colors.black),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none)),
+                            Icon(Iconsax.buildings, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -280,10 +270,9 @@ class _SignupPageState extends State<SignupPage> {
                         isDense: true,
                         contentPadding: EdgeInsets.all(10),
                         labelText: "State",
-                        prefixIcon:
-                        Icon(Iconsax.location, color: Colors.black),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none)),
+                        prefixIcon: Icon(Iconsax.location, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -303,10 +292,9 @@ class _SignupPageState extends State<SignupPage> {
                         isDense: true,
                         contentPadding: EdgeInsets.all(10),
                         labelText: "Town",
-                        prefixIcon:
-                        Icon(Iconsax.building, color: Colors.black),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none)),
+                        prefixIcon: Icon(Iconsax.building, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -326,10 +314,9 @@ class _SignupPageState extends State<SignupPage> {
                         isDense: true,
                         contentPadding: EdgeInsets.all(10),
                         labelText: "Postal code",
-                        prefixIcon:
-                        Icon(Iconsax.keyboard, color: Colors.black),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none)),
+                        prefixIcon: Icon(Iconsax.keyboard, color: Colors.black),
+                        border:
+                            OutlineInputBorder(borderSide: BorderSide.none)),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -351,9 +338,10 @@ class _SignupPageState extends State<SignupPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(ColorT.themeColor),
-                      shadowColor:Color(ColorT.themeColor),
+                      shadowColor: Color(ColorT.themeColor),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
                         ),
                       ),
                     ),
@@ -376,5 +364,3 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 }
-
-

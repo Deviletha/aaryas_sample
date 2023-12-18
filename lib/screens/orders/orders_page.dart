@@ -77,7 +77,8 @@ class _MyOrdersState extends State<MyOrders> {
     var price = "₹${orderList![index]["total"]}";
     var statusNote = orderList![index]["status_note"].toString();
 
-    Color statusColor = Colors.green; // Default color, you can change it as per your requirement
+    Color statusColor = Colors
+        .green; // Default color, you can change it as per your requirement
 
     // Set color based on status_note
     if (statusNote == "Order Placed") {
@@ -121,7 +122,11 @@ class _MyOrdersState extends State<MyOrders> {
                   errorWidget: (context, url, error) => Container(
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/aryas_logo.png",), colorFilter: ColorFilter.mode(Colors.grey, BlendMode.color))),
+                            image: AssetImage(
+                              "assets/aryas_logo.png",
+                            ),
+                            colorFilter: ColorFilter.mode(
+                                Colors.grey, BlendMode.color))),
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -137,15 +142,15 @@ class _MyOrdersState extends State<MyOrders> {
                     orderList == null
                         ? Text("null data")
                         : Text(
-                      orderList![index]["cartName"].toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                            orderList![index]["cartName"].toString(),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                     SizedBox(
                       height: 10,
                     ),
                     Text(
                       price,
-                      style:  TextStyle(
+                      style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: Color(ColorT.themeColor)),
@@ -162,7 +167,8 @@ class _MyOrdersState extends State<MyOrders> {
                     ),
                     Text(
                       orderList![index]["date"].toString(),
-                      style: const TextStyle(color: Colors.grey, letterSpacing: .80),
+                      style: const TextStyle(
+                          color: Colors.grey, letterSpacing: .80),
                     ),
                   ],
                 ),
@@ -176,9 +182,9 @@ class _MyOrdersState extends State<MyOrders> {
                 ),
                 child: Center(
                   child: Text(
-                    statusNote, style: TextStyle(
-                    fontSize: 13, color: Colors.white, letterSpacing: .86
-                  ),
+                    statusNote,
+                    style: TextStyle(
+                        fontSize: 13, color: Colors.white, letterSpacing: .86),
                   ),
                 ),
               ),
@@ -188,5 +194,4 @@ class _MyOrdersState extends State<MyOrders> {
       ),
     );
   }
-
 }

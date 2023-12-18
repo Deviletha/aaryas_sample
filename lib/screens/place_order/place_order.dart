@@ -12,7 +12,12 @@ class PlaceOrder extends StatefulWidget {
   final String latitude;
   final String longitude;
 
-  const PlaceOrder({Key? key, required this.id, required this.latitude, required this.longitude}) : super(key: key);
+  const PlaceOrder(
+      {Key? key,
+      required this.id,
+      required this.latitude,
+      required this.longitude})
+      : super(key: key);
 
   @override
   State<PlaceOrder> createState() => _PlaceOrderState();
@@ -139,6 +144,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
       debugPrint('api failed:');
     }
   }
+
   double calculateSubtotal() {
     double subtotal = 0.0;
 
@@ -154,7 +160,6 @@ class _PlaceOrderState extends State<PlaceOrder> {
     return subtotal;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -163,7 +168,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
           title: Text("Checkout"),
           centerTitle: true,
         ),
-        bottomNavigationBar:  Padding(
+        bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(12),
           child: SizedBox(
             height: 50,
@@ -173,9 +178,10 @@ class _PlaceOrderState extends State<PlaceOrder> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(ColorT.themeColor),
-                shadowColor:Color(ColorT.themeColor),
+                shadowColor: Color(ColorT.themeColor),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
                   ),
                 ),
               ),
@@ -203,7 +209,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                           ? CircularProgressIndicator()
                           : ListView.builder(
                               itemCount:
-                              cartList == null ? 0 : cartList?.length,
+                                  cartList == null ? 0 : cartList?.length,
                               itemBuilder: (context, index) =>
                                   getCartList(index),
                               physics: ScrollPhysics(),
@@ -260,7 +266,6 @@ class _PlaceOrderState extends State<PlaceOrder> {
                           ),
                         ],
                       ),
-
                       SizedBox(
                         height: 10,
                       ),
@@ -325,7 +330,9 @@ class _PlaceOrderState extends State<PlaceOrder> {
                           )
                         ],
                       ),
-                      Divider(thickness: 1,),
+                      Divider(
+                        thickness: 1,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -361,9 +368,9 @@ class _PlaceOrderState extends State<PlaceOrder> {
                   child: TextFormField(
                     controller: tipController,
                     decoration: InputDecoration(
-                      border: InputBorder.none,
-                      labelText: "Tip (if any)",labelStyle: TextStyle(fontWeight: FontWeight.bold)
-                    ),
+                        border: InputBorder.none,
+                        labelText: "Tip (if any)",
+                        labelStyle: TextStyle(fontWeight: FontWeight.bold)),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'tip';
@@ -427,7 +434,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
                     cartList == null
                         ? Text("null data")
                         : Text(
-                      cartList![index]["product"].toString(),
+                            cartList![index]["product"].toString(),
                             style: const TextStyle(
                                 fontSize: 15, fontWeight: FontWeight.bold),
                           ),

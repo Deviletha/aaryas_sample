@@ -74,7 +74,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           "Change Password",
         ),
       ),
-      bottomNavigationBar:  Padding(
+      bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(12),
         child: SizedBox(
           width: double.infinity,
@@ -85,9 +85,10 @@ class _ChangePasswordState extends State<ChangePassword> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(ColorT.themeColor),
-              shadowColor:Color(ColorT.themeColor),
+              shadowColor: Color(ColorT.themeColor),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
                 ),
               ),
             ),
@@ -116,13 +117,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                       });
                     },
                     icon: Icon(
-                      showPass == true
-                          ? Iconsax.eye_slash
-                          : Iconsax.eye,
+                      showPass == true ? Iconsax.eye_slash : Iconsax.eye,
                     )),
                 labelText: "New Password",
-                border: OutlineInputBorder(
-                    borderSide: BorderSide.none),
+                border: OutlineInputBorder(borderSide: BorderSide.none),
               ),
               textInputAction: TextInputAction.next,
               validator: (password) {
@@ -153,13 +151,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                       });
                     },
                     icon: Icon(
-                      showPass == true
-                          ? Iconsax.eye_slash
-                          : Iconsax.eye,
+                      showPass == true ? Iconsax.eye_slash : Iconsax.eye,
                     )),
                 labelText: "Confirm Password",
-                border: OutlineInputBorder(
-                    borderSide: BorderSide.none),
+                border: OutlineInputBorder(borderSide: BorderSide.none),
               ),
               textInputAction: TextInputAction.done,
               validator: (password) {

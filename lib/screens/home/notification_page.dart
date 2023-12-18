@@ -14,7 +14,6 @@ class _NotificationsState extends State<Notifications> {
       appBar: AppBar(
         title: Text(
           "Notifications",
-
         ),
       ),
       body: Center(
