@@ -2,6 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:aaryas_sample/constants/title_widget.dart';
+import 'package:aaryas_sample/screens/home/widgets/category_card.dart';
+import 'package:aaryas_sample/screens/home/widgets/popular_item_card.dart';
+import 'package:aaryas_sample/screens/home/widgets/recent_order_card.dart';
+import 'package:aaryas_sample/screens/home/widgets/top_pick_card.dart';
+import 'package:aaryas_sample/screens/home/widgets/viewcart_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../Config/image_url_const.dart';
 import '../../theme/colors.dart';
-import '../cart_page.dart';
+import '../cartpage/cart_page.dart';
 import '../product_view/product_view.dart';
 import 'notification_page.dart';
 import '../orders/order_details.dart';
@@ -58,7 +63,6 @@ class _HomePageState extends State<HomePage> {
   Map? popularList;
   Map? popularList1;
   List? finalPopularList;
-  int index = 0;
 
   Map? cList;
   List? cartList;
@@ -215,13 +219,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> removeFromWishlist(String id) async {
-    var response = await ApiHelper().post(endpoint: "wishList/remove", body: {
-      "id": id,
+    var response = await ApiHelper().post(endpoint: "wishList/removeByProduct", body: {
+      "userid" : uID,
+      "productid": id,
     }).catchError((err) {});
     if (response != null) {
       setState(() {
         debugPrint('Remove api successful:');
-        checkUser();
+        apiForWishlist();
 
         Fluttertoast.showToast(
           msg: "Removed product",
@@ -252,7 +257,7 @@ class _HomePageState extends State<HomePage> {
     if (response != null) {
       setState(() {
         debugPrint('add wishlist api successful:');
-        checkUser();
+        apiForWishlist();
 
         Fluttertoast.showToast(
           msg: "Added to Wishlist",
@@ -361,7 +366,7 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: Visibility(
         visible: cartList != null && cartList!.isNotEmpty,
-        child: InkWell(
+        child: ViewCartTile(
           onTap: () {
             Navigator.push(
               context,
@@ -370,54 +375,6 @@ class _HomePageState extends State<HomePage> {
                       CartPage()), // Replace with your cart page
             );
           },
-          child: Container(
-            decoration: BoxDecoration(
-              // backgroundBlendMode: BlendMode.srcATop, // Example blend mode
-              gradient: LinearGradient(
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft,
-                colors: [
-                  Color(ColorT.lightGreen),
-                  Color(ColorT.themeColor),
-                ],
-              ),
-            ),
-            height: 55,
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 12, right: 10, top: 8, bottom: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Your cart items",
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  Row(
-                    children: [
-                      Text("View Cart",
-                          style: TextStyle(color: Colors.white, fontSize: 15)),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Container(
-                        color: Colors.white,
-                        height: 20,
-                        width: 1,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Iconsax.shopping_bag,
-                        color: Colors.white,
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
         ),
       ),
       body: ListView(
@@ -768,47 +725,12 @@ class _HomePageState extends State<HomePage> {
   Widget getPopularRow(int index) {
     var image = UrlConstants.base + finalPopularList![index]["image"];
     var itemName = finalPopularList![index]["combinationName"].toString();
-    return InkWell(
+    return PopularItemTile(
       onTap: () {
         _showDetailsBottomSheet(finalPopularList![index]);
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(360))),
-            height: 60,
-            width: 60,
-            clipBehavior: Clip.antiAlias,
-            child: CachedNetworkImage(
-              imageUrl: image,
-              placeholder: (context, url) => Container(
-                color: Colors.grey[300],
-              ),
-              errorWidget: (context, url, error) => Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(
-                          "assets/aryas_logo.png",
-                        ),
-                        colorFilter:
-                            ColorFilter.mode(Colors.grey, BlendMode.color))),
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(
-            height: 3,
-          ),
-          Text(
-            itemName,
-            style: TextStyle(fontSize: 12),
-            maxLines: 1,
-          ),
-        ],
-      ),
+      imagePath: image,
+      itemName: itemName,
     );
   }
 
@@ -818,7 +740,8 @@ class _HomePageState extends State<HomePage> {
     }
     var image = UrlConstants.base + categoryList![index]["image"];
 
-    return InkWell(
+    return TopPicksTile(
+      imagePath: image,
       onTap: () {
         Navigator.push(
           context,
@@ -830,31 +753,6 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       },
-      child: Container(
-        height: 200,
-        width: 330,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: CachedNetworkImage(
-          imageUrl: image,
-          placeholder: (context, url) => Container(
-            color: Colors.grey[300],
-          ),
-          errorWidget: (context, url, error) => Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(
-                      "assets/aryas_logo.png",
-                    ),
-                    colorFilter:
-                        ColorFilter.mode(Colors.grey, BlendMode.color))),
-          ),
-          fit: BoxFit.cover,
-        ),
-      ),
     );
   }
 
@@ -865,7 +763,7 @@ class _HomePageState extends State<HomePage> {
     var image = UrlConstants.base + categoryList![index]["image"];
     var itemName = categoryList![index]["name"].toString();
 
-    return InkWell(
+    return CategoryTile(
       onTap: () {
         Navigator.push(
           context,
@@ -877,44 +775,9 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       },
-      child: Container(
-        height: 350,
-        width: 300,
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(20),
-            image: DecorationImage(
-                image: NetworkImage(image),
-                colorFilter:
-                    ColorFilter.mode(Colors.black54, BlendMode.overlay),
-                fit: BoxFit.cover)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 10,
-              ),
-              child: Text(
-                itemName,
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                categoryList![index]["description"].toString(),
-                maxLines: 3,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      itemName: itemName,
+      description: categoryList![index]["description"].toString(),
+      imagePath: image,
     );
   }
 
@@ -1020,6 +883,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
+                            pID = finalProductList![index]["id"].toString();
+                            combID = finalProductList![index]["combinationId"]
+                                .toString();
                             if (isInWishlist) {
                               removeFromWishlist(pID);
                             } else {
@@ -1073,83 +939,19 @@ class _HomePageState extends State<HomePage> {
 
   Widget getOrderList(int index) {
     var image = UrlConstants.base + orderList![index]["image"].toString();
-    return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
-          color: Colors.indigo.shade50,
-        ),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OrderDetails(
-                  id: orderList![index]["id"].toString(),
-                ),
-              ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 100,
-                  width: 100,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl: image,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey[300],
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(
-                                "assets/aryas_logo.png",
-                              ),
-                              colorFilter: ColorFilter.mode(
-                                  Colors.grey, BlendMode.color))),
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        orderList == null
-                            ? Text("null data")
-                            : Text(
-                                "Order Placed",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 17),
-                              ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          orderList![index]["cartName"].toString(),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
+    return RecentOrdersTile(
+      itemName: orderList![index]["cartName"].toString(),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OrderDetails(
+              id: orderList![index]["id"].toString(),
             ),
           ),
-        ));
+        );
+      },
+      imagePath: image,
+    );
   }
 }

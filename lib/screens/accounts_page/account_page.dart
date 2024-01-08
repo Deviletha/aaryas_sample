@@ -4,7 +4,7 @@ import 'package:aaryas_sample/screens/accounts_page/privacy_info.dart';
 import 'package:aaryas_sample/screens/orders/orders_page.dart';
 import 'package:aaryas_sample/screens/accounts_page/settings.dart';
 import 'package:aaryas_sample/screens/accounts_page/profile_pages.dart';
-import 'package:aaryas_sample/screens/wishlist_page.dart';
+import 'package:aaryas_sample/screens/wishlist/wishlist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';

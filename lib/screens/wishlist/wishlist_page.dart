@@ -1,14 +1,12 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:aaryas_sample/screens/wishlist/widget/wishlistcard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:aaryas_sample/Config/ApiHelper.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Config/image_url_const.dart';
-import '../theme/colors.dart';
-import 'registration/login_page.dart';
+import '../../Config/image_url_const.dart';
+import '../../theme/colors.dart';
+import '../registration/login_page.dart';
 
 class Wishlist extends StatefulWidget {
   const Wishlist({Key? key}) : super(key: key);
@@ -150,114 +148,15 @@ class _WishlistState extends State<Wishlist> {
   Widget getWishlist(int index1) {
     var image = UrlConstants.base + finalPrList![index1]["image"];
     var price = "₹ ${finalPrList![index1]["combinationPrice"]}";
-    return Card(
-        child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Container(
-            height: 120,
-            width: 120,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: CachedNetworkImage(
-              imageUrl: image,
-              placeholder: (context, url) => Container(
-                color: Colors.grey[300],
-              ),
-              errorWidget: (context, url, error) => Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(
-                          "assets/aryas_logo.png",
-                        ),
-                        colorFilter:
-                            ColorFilter.mode(Colors.grey, BlendMode.color))),
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(
-            width: 15,
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                finalPrList == null
-                    ? Text("null data")
-                    : Text(
-                        finalPrList![index1]["combinationName"].toString(),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  finalPrList![index1]["category"].toString(),
-                  style: const TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Card(
-                color: Colors.grey.shade600,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    price,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.white),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    border: Border.all(color: Colors.grey)),
-                child: TextButton(
-                    onPressed: () {
-                      wID = finalPrList![index1]["wishlistId"].toString();
-                      removeFromWishlist(wID!);
-                    },
-                    child: Text(
-                      "Remove Item",
-                      style: TextStyle(color: Colors.black),
-                    )
-                    // Icon(Iconsax.trash, color: Colors.red,)
-                    ),
-              )
-            ],
-          )
-        ],
-      ),
-    ));
+    return WishlistTile(
+      imagePath: image,
+      categoryName: finalPrList![index1]["category"].toString(),
+      itemName: finalPrList![index1]["combinationName"].toString(),
+      price: price,
+      onPressed: () {
+        wID = finalPrList![index1]["wishlistId"].toString();
+        removeFromWishlist(wID!);
+      },
+    );
   }
 }

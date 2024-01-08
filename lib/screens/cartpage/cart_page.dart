@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:aaryas_sample/screens/cartpage/widgets/cart_card.dart';
 import 'package:aaryas_sample/theme/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
@@ -6,10 +7,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Config/ApiHelper.dart';
-import '../Config/image_url_const.dart';
-import 'registration/login_page.dart';
-import 'place_order/select_address.dart';
+import '../../Config/ApiHelper.dart';
+import '../../Config/image_url_const.dart';
+import '../registration/login_page.dart';
+import '../place_order/select_address.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -211,131 +212,29 @@ class _CartPageState extends State<CartPage> {
     int quantity = cartAddList![index]["quantity"];
     int price = cartAddList![index]["price"];
     int totalAmount = quantity * price;
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        width: double.infinity,
-        decoration: BoxDecoration(
-            color: Colors.blueGrey.shade50,
-            borderRadius: BorderRadius.all(Radius.circular(15))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 120,
-                  width: 120,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl: image,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey[300],
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(
-                                "assets/aryas_logo.png",
-                              ),
-                              colorFilter: ColorFilter.mode(
-                                  Colors.grey, BlendMode.color))),
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    cartAddList == null
-                        ? Text("null data")
-                        : Text(
-                            cartAddList![index]["product"].toString(),
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "₹$totalAmount",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.green),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              decrementQty(
-                                cartAddList![index]["product_id"].toString(),
-                                cartAddList![index]["size"].toString(),
-                              );
-                            },
-                            icon: Icon(
-                              Icons.remove_circle_outline_rounded,
-                              size: 25,
-                            )),
-                        Card(
-                          color: Colors.grey.shade700,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 8, bottom: 8),
-                            child: Text(
-                              cartAddList![index]["quantity"].toString(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                            onPressed: () {
-                              incrementQty(
-                                cartAddList![index]["product_id"].toString(),
-                                cartAddList![index]["size"].toString(),
-                              );
-                            },
-                            icon: Icon(
-                              Icons.add_circle_outline_rounded,
-                              size: 25,
-                            )),
-                        IconButton(
-                            onPressed: () {
-                              removeFromCart(
-                                cartAddList![index]["product_id"].toString(),
-                                cartAddList![index]["size"].toString(),
-                              );
-                            },
-                            icon: Icon(
-                              Iconsax.trash,
-                              color: Colors.red,
-                            )),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return CartTile(
+      imagePath: image,
+      price: totalAmount.toString(),
+      quantity: quantity.toString(),
+      itemName: cartAddList![index]["product"].toString(),
+      onTap: () {
+        removeFromCart(
+          cartAddList![index]["product_id"].toString(),
+          cartAddList![index]["size"].toString(),
+        );
+      },
+      decrement: () {
+        decrementQty(
+          cartAddList![index]["product_id"].toString(),
+          cartAddList![index]["size"].toString(),
+        );
+      },
+      increment: () {
+        incrementQty(
+          cartAddList![index]["product_id"].toString(),
+          cartAddList![index]["size"].toString(),
+        );
+      },
     );
   }
 }

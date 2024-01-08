@@ -1,8 +1,8 @@
-import 'package:aaryas_sample/screens/wishlist_page.dart';
+import 'package:aaryas_sample/screens/wishlist/wishlist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../theme/colors.dart';
-import 'cart_page.dart';
+import 'cartpage/cart_page.dart';
 import 'accounts_page/account_page.dart';
 import 'home/homepage.dart';
 

@@ -86,7 +86,10 @@ class _CategoryViewState extends State<CategoryView> {
     }
   }
 
-  apiForAddCart(String id, String pName, String amount, String tax, String category, String psize, String combinationId) async {
+  apiForAddCart(String id,
+      String pName, String amount,
+      String tax, String category,
+      String psize, String combinationId) async {
     var response = await ApiHelper().post(endpoint: "cart/add", body: {
       "userid": uID,
       "productid": id,
